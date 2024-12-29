@@ -1,15 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import axios from "axios"
-// POST https://github.com/login/oauth/access_token
-// Content-Type: application/json
-// Accept: application/json
 
-// {
-//     "client_id": "YOUR_CLIENT_ID",
-//     "client_secret": "YOUR_CLIENT_SECRET",
-//     "code": "AUTHORIZATION_CODE",
-//     "redirect_uri": "YOUR_CALLBACK_URL"
-// }
 
 export  async function GET(request:NextRequest){
     console.log(request.url)
@@ -25,13 +16,12 @@ export  async function GET(request:NextRequest){
         },
         {
             headers: {
-              'Content-Type': 'application/json',  // To send JSON data
-              'Accept': 'application/json',         // To accept JSON response
+              'Content-Type': 'application/json',  
+              'Accept': 'application/json',         
             },
         }
     )).data
     console.log(response.access_token)
-    //get request to get user details
     const userResponse= (
         await axios.get("https://api.github.com/user",
             {
