@@ -1,36 +1,58 @@
 import { NextRequest, NextResponse } from "next/server";
-import axios from "axios"
+import axios from "axios";
 
+export async function GET(request: NextRequest) {
+  try {
+    const searchParams = new URL(request.url).searchParams;
+    const code = searchParams.get("code");
 
-export  async function GET(request:NextRequest){
-    console.log(request.url)
-    const searchParams=new URL(request.url).searchParams
-    const code=searchParams.get("code")
-    const response =( await axios.post('https://github.com/login/oauth/access_token',
+    if (!code) {
+      return NextResponse.error();
+    }
 
-        {
-            "client_id":process.env.GITHUB_CLIENTID,
-            "client_secret":process.env.GITHUB_SECRET,
-            "code":code,
-            "redirect_uri":process.env.REDIRECT_URI
+    const response = await axios.post(
+      'https://github.com/login/oauth/access_token',
+      new URLSearchParams({
+        client_id: process.env.GITHUB_CLIENTID!,
+        client_secret: process.env.GITHUB_SECRET!,
+        code: code,
+        redirect_uri: process.env.REDIRECT_URI!
+      }).toString(),
+      {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Accept': 'application/json',
         },
-        {
-            headers: {
-              'Content-Type': 'application/json',  
-              'Accept': 'application/json',         
-            },
-        }
-    )).data
-    console.log(response.access_token)
-    const userResponse= (
-        await axios.get("https://api.github.com/user",
-            {
-                headers:{
-                    Authorization:`Bearer ${response.access_token}`
-                }
-            }
-        )
-    ).data
-    console.log(userResponse)
-    return NextResponse.json({message:'authentication succeeded'})
+      }
+    );
+
+    const accessToken = response.data.access_token;
+
+    if (!accessToken) {
+      return NextResponse.error();
+    }
+
+    const userResponse = await axios.get('https://api.github.com/user', {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    console.log(userResponse.data); 
+
+    const responseWithCookie = NextResponse.redirect(new URL('/home', request.url));
+
+    responseWithCookie.cookies.set('access_token', accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production', 
+      sameSite: 'strict', 
+      maxAge: 60 * 60 * 24 * 7, 
+    });
+
+    return responseWithCookie;
+
+  } catch (error) {
+    console.error('Error during GitHub OAuth process:', error);
+    return NextResponse.error();
+  }
 }

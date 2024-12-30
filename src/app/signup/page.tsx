@@ -19,6 +19,8 @@ import { Input } from "@/components/ui/input"
 import Link from "next/link";
 import axios, { AxiosError } from "axios";
 import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
+import PulseLoader from "react-spinners/ClipLoader";
 
 const formSchema = z.object({
     email: z.string()
@@ -33,19 +35,21 @@ const formSchema = z.object({
         .regex(/[@$!%*?&#]/, { message: "Password must contain at least one special character." }),
 });
 
+
 export default function SignupForm() {
-    const {toast}=useToast()
+    const { toast } = useToast()
+    const [loading,setLoading]=useState(false)
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             email: "",
-            password:""
+            password: ""
         },
     })
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         //from here we would post it directly to the backend
-        
+        setLoading(true)
         try {
             const response = (
                 await axios.post('/api/auth/signup',
@@ -53,20 +57,23 @@ export default function SignupForm() {
                 )
             )
             console.log(response)
-            if(response.status===201){
-                toast({description:"User created successfully",className:"bg-green-500 text-white font-bold"})
-            }          
+            if (response.status === 201) {
+                toast({ description: "User created successfully", className: "bg-green-500 text-white font-bold" })
+                setTimeout(() => window.location.href = '/verify')
+            }
+            setLoading(false)
         } catch (error) {
             console.log(error)
-            const axiosError=error as AxiosError
-            if(axiosError.status===409){
-                toast({description:"user already exists",className:"bg-red-500 text-white font-bold"})
-            }else{
-
-                toast({description:"please try again",className:"bg-red-500 text-white font-bold"})            
-            }  
+            setLoading(false)
+            const axiosError = error as AxiosError
+            if (axiosError.status === 409) {
+                toast({ description: "user already exists", className: "bg-red-500 text-white font-bold" })
+            } else {
+                toast({ description: "please try again", className: "bg-red-500 text-white font-bold" })
+            }
         }
-        
+
+
 
     }
 
@@ -107,7 +114,19 @@ export default function SignupForm() {
                             </FormItem>
                         )}
                     />
-                    <Button style={{ borderRadius: "5px" }} className="rounded-md" type="submit">Submit</Button>
+                    <Button disabled={loading} style={{ borderRadius: "5px" }} className="rounded-md" type="submit">
+                        {!loading?
+                        <p>Submit</p>
+                        :
+                        <PulseLoader
+                        color={"black"}
+                        loading={loading}
+                        size={30}
+                        aria-label="Loading Spinner"
+                        data-testid="loader"
+                      />                        }
+
+                    </Button>
                 </form>
             </Form>
             <hr className="text-gray-600 w-96 mt-10" />
