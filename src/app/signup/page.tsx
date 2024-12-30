@@ -59,6 +59,7 @@ export default function SignupForm() {
             console.log(response)
             if (response.status === 201) {
                 toast({ description: "User created successfully", className: "bg-green-500 text-white font-bold" })
+                window.localStorage.setItem('email',values.email)
                 setTimeout(() => window.location.href = '/verify')
             }
             setLoading(false)

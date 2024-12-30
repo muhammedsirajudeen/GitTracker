@@ -1,5 +1,6 @@
 import { hashPassword } from "@/lib/bcryptHelper"
 import { sendEmail } from "@/lib/emailHelper"
+import { RedisOtpHelper } from "@/lib/redisHelper"
 import { User } from "@/models/User"
 import UserServiceInstance from "@/service/UserService"
 import { NextResponse } from "next/server"
@@ -20,8 +21,11 @@ export async function POST(request: Request) {
             const newUser=await UserServiceInstance.InsertUser(signupRequest)
             if(newUser){
                 const otp=generateSixDigitRandomNumber()
-                //from here put it on the redis cache and complete that flow essentially
                 await sendEmail(signupRequest.email,'USER VERIFICATION',`your otp is ${otp}`)
+                const status=await RedisOtpHelper(signupRequest.email,otp)
+                if(!status){
+                    return NextResponse.json({message:'please try again'},{status:500})
+                }
                 return NextResponse.json({ message: 'success' },{status:201}) 
             }else{
                 return NextResponse.json({ message: 'please try again' },{status:500})

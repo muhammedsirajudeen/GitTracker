@@ -4,6 +4,7 @@ import { User } from "@/models/User"
 interface IUserService {
     getUserByEmail: (email: string) => Promise<User | null>
     InsertUser: (user: User) => Promise<boolean>
+    VerifyUser:(email:string)=>Promise<boolean>
 }
 class UserService implements IUserService {
     _UserRepo: IUserRepository
@@ -15,10 +16,13 @@ class UserService implements IUserService {
         return user
     };
     async InsertUser(user: User) {
-        console.log(user)
         const status = await this._UserRepo.InsertUser(user)
         return status
     };
+    async VerifyUser(email:string){
+        const status=await this._UserRepo.VerifyUser(email)
+        return status
+    }
 }
 const UserServiceInstance = new UserService(UserRepostoryInstance)
 export default UserServiceInstance
