@@ -3,7 +3,8 @@ import mongoose, { Schema, Document, Model } from 'mongoose';
 export interface User {
   email: string;
   password: string;
-  verified:boolean
+  verified:boolean;
+  avatar_url?:string
 }
 
 export interface IUser extends User, Document {}
@@ -27,6 +28,10 @@ const userSchema: Schema<IUser> = new mongoose.Schema(
       type:Boolean,
       required:false,
       default:false
+    },
+    avatar_url:{
+      type:String,
+      required:false
     }
   },
   { timestamps: true }

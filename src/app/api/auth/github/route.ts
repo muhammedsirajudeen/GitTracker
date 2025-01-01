@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
+import { generateSixDigitRandomNumber } from "../signup/route";
+import { hashPassword } from "@/lib/bcryptHelper";
+import UserServiceInstance from "@/service/UserService";
+import { generateToken } from "@/lib/jwtHelper";
 
 export async function GET(request: NextRequest) {
   try {
@@ -39,10 +43,25 @@ export async function GET(request: NextRequest) {
     });
 
     console.log(userResponse.data); 
-
+    const email=userResponse.data.login //this is actually the username
+    const password=await hashPassword(generateSixDigitRandomNumber().toString())
+    const user=await UserServiceInstance.getUserByEmail(email)
+    const newUserBody={email:email,verified:true}
+    if(!user){
+      const newUser=UserServiceInstance.InsertUser({email:email,password:password,verified:true,avatar_url:userResponse.data.avatar_url})
+      if(!newUser){
+        return NextResponse.json({message:'internal server error'},{status:500})
+      }
+    }
     const responseWithCookie = NextResponse.redirect(new URL('/home', request.url));
-
-    responseWithCookie.cookies.set('access_token', accessToken, {
+    const token=generateToken(newUserBody)
+    responseWithCookie.cookies.set('access_token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production', 
+      sameSite: 'strict', 
+      maxAge: 60 * 60 * 24 * 7, 
+    });
+    responseWithCookie.cookies.set('github_token', accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production', 
       sameSite: 'strict', 

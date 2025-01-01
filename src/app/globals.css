@@ -14,7 +14,7 @@ body {
 
 @layer base {
   :root {
-    --background: 240 10% 3.9%; /* Dark mode background */
+    --background: "black"; /* Dark mode background */
     --foreground: 0 0% 98%; /* Dark mode foreground (light text) */
     --card: 240 10% 3.9%;
     --card-foreground: 0 0% 98%;

@@ -33,7 +33,7 @@ export default function RootLayout({
       >
         <SidebarProvider defaultOpen={false}>
           <AppSidebar />
-          <main className="w-full" >
+          <main className="w-full bg-black text-white" >
             <SidebarTrigger />
             {children}
           </main>

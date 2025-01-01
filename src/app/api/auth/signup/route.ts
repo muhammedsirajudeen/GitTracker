@@ -5,7 +5,7 @@ import { User } from "@/models/User"
 import UserServiceInstance from "@/service/UserService"
 import { NextResponse } from "next/server"
 
-function generateSixDigitRandomNumber(): number {
+export function generateSixDigitRandomNumber(): number {
     return Math.floor(100000 + Math.random() * 900000);
   }
 
