@@ -93,20 +93,7 @@ export default function RepositoryDialog() {
                             className="pl-8"
                         />
                     </div>
-                    {/* You can add your repository list here */}
-                    {/* <div className="w-full  overflow-y-scroll border flex-col rounded-md h-72 flex items-center justify-center text-muted-foreground">
-                        <ClipLoader size={40} color='white' loading={respository.length===0} />
-                        {
-                            respository.map((repository)=>{
-                                return(
-                                    <div key={repository.id} className='flex w-full'  >
-                                        <h1>{repository.name}</h1>
-                                    </div>
-                                )
-                            })
-                        }
-                        {/* Repository list will appear here */}
-                    {/* </div> */}
+
                     <ScrollArea className="h-72 overflow-y-scroll w-full pr-4">
                         {loading ? (
                             <div className="flex items-center justify-center h-full">

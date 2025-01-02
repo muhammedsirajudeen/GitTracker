@@ -2,11 +2,24 @@
 
 import RepositoryDialog from "@/components/repositoryDialog"
 import { Input } from "@/components/ui/input"
+// import { Repository } from "@/models/Repository"
+// import axios from "axios"
 import { Search } from 'lucide-react'
+// import { useEffect, useState } from "react"
+
+// async function GetRepo(){
+//   console.log('hey')
+// }
 
 export default function Home() {
+  // const [repositories,setRepositories]=useState<Repository[]>([])
+  // useEffect(()=>{
+  //   async function GetRepositories(){
+  //     const response=(await axios.get('/api/repository',{withCredentials:true}))
+  //   }
+  // },[])
   return (
-    <div className="w-full py-4 px-4 sm:px-6 lg:px-8">
+    <div className="w-full py-4 px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <div className="relative w-full sm:w-auto">
@@ -18,9 +31,7 @@ export default function Home() {
             />
           </div>
           <RepositoryDialog/>
-          {/* <Button className="w-full sm:w-auto bg-white outfit-card-custom font-semibold py-2 px-4 rounded-md transition duration-200 ease-in-out transform hover:scale-105">
-            Add Repository
-          </Button> */}
+
         </div>
       </div>
     </div>
