@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 import { useToast } from '@/hooks/use-toast'
 import ClipLoader from 'react-spinners/ClipLoader'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card'
@@ -52,8 +52,24 @@ export default function RepositoryDialog() {
             toast({ description: "Please try again", variant: "destructive", className: "bg-red-500 text-white" })
         }
     }
-    function addRepositoryHandler(repo:Repository){
+    async function addRepositoryHandler(repo:Repository){
         console.log(repo)
+        try {
+            const response=await axios.post('/api/repository',{
+                repository:repo
+            })
+            if(response.status===201){
+                toast({description:"added repository",className:"bg-green-500 text-white"})
+            }
+        } catch (error) {
+            console.log(error)
+            const axiosError=error as AxiosError
+            if(axiosError.status===409){
+                toast({description:"repo has already been saved",className:"bg-orange-500 text-white"})
+            }else{
+                toast({description:"please try again",className:"bg-red-500 text-white"})
+            }
+        }
     }
     return (
         <Dialog>

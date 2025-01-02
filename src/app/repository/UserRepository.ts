@@ -4,7 +4,7 @@ import { Model } from "mongoose"
 export interface IUserRepository {
     getUserByEmail: (email: string) => Promise<User | null>
     InsertUser: (user: User) => Promise<boolean>
-    VerifyUser:(user:string)=>Promise<boolean>
+    VerifyUser: (user: string) => Promise<boolean>
 }
 
 
@@ -35,9 +35,9 @@ class UserRepository implements IUserRepository {
     };
     async VerifyUser(email: string) {
         try {
-            const findUser=await this._userModel.findOne({email})
-            if(findUser){
-                findUser.verified=true
+            const findUser = await this._userModel.findOne({ email })
+            if (findUser) {
+                findUser.verified = true
                 await findUser.save()
                 return true
             }

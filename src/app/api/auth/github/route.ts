@@ -4,6 +4,11 @@ import { generateSixDigitRandomNumber } from "../signup/route";
 import { hashPassword } from "@/lib/bcryptHelper";
 import UserServiceInstance from "@/service/UserService";
 import { generateToken } from "@/lib/jwtHelper";
+import { User } from "@/models/User";
+
+export interface UserWithId extends User{
+  id:string
+}
 
 export async function GET(request: NextRequest) {
   try {
@@ -45,8 +50,8 @@ export async function GET(request: NextRequest) {
     console.log(userResponse.data); 
     const email=userResponse.data.login //this is actually the username
     const password=await hashPassword(generateSixDigitRandomNumber().toString())
-    const user=await UserServiceInstance.getUserByEmail(email)
-    const newUserBody={email:email,verified:true}
+    const user=await UserServiceInstance.getUserByEmail(email) as UserWithId
+    const newUserBody={email:email,verified:true,id:user.id}
     if(!user){
       const newUser=UserServiceInstance.InsertUser({email:email,password:password,verified:true,avatar_url:userResponse.data.avatar_url})
       if(!newUser){
