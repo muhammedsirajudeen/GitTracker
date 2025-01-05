@@ -133,7 +133,7 @@ export default function SignupForm() {
             <hr className="text-gray-600 w-96 mt-10" />
             <p className="text-xs mt-4" >continue to <Link className="font-bold text-blue-700" href={"/login"} >login</Link></p>
             <Button onClick={() => {
-                window.location.href = `https://github.com/login/oauth/authorize?client_id=Ov23li0zclDZ7XsACEGa&redirect_uri=http://localhost:3000/api/auth/github&scope=read:user`
+                window.location.href = `https://github.com/login/oauth/authorize?client_id=Ov23li0zclDZ7XsACEGa&redirect_uri=http://localhost:3000/api/auth/github&scope=repo`
             }} style={{ borderRadius: "5px" }} className="mt-4 bg-black text-white" >Continue With Github
                 <Image width={30} height={30} src="/github.png" alt="github login" />
             </Button>

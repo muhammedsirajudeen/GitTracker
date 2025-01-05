@@ -30,13 +30,13 @@ const formSchema = z.object({
 })
 
 export default function LoginForm() {
-    const {toast}=useToast()
-    const [loading,setLoading]=useState(false)
+    const { toast } = useToast()
+    const [loading, setLoading] = useState(false)
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             email: "",
-            password:""
+            password: ""
         },
     })
 
@@ -44,24 +44,24 @@ export default function LoginForm() {
         setLoading(true)
         console.log(values)
         try {
-            const response=( await axios.post('/api/auth/login',
+            const response = (await axios.post('/api/auth/login',
                 values,
             ))
             console.log(response)
-            if(response.status===200){
-                toast({description:"user verified successfully",className:"bg-green-500 text-white"})
-                setTimeout(()=>window.location.href="/home",1000)
-            }          
-            setLoading(false)  
+            if (response.status === 200) {
+                toast({ description: "user verified successfully", className: "bg-green-500 text-white" })
+                setTimeout(() => window.location.href = "/home", 1000)
+            }
+            setLoading(false)
         } catch (error) {
             console.log(error)
-            const axiosError=error as AxiosError
-            if(axiosError.status===404){
-                toast({description:"please signup first",className:"bg-red-500 text-white"})
-            }else if(axiosError.status===401){
-                toast({description:"invalid credentials",className:"bg-red-500 text-white"})
-            }else{
-                toast({description:"please try again",className:"bg-red-500 text-white"})
+            const axiosError = error as AxiosError
+            if (axiosError.status === 404) {
+                toast({ description: "please signup first", className: "bg-red-500 text-white" })
+            } else if (axiosError.status === 401) {
+                toast({ description: "invalid credentials", className: "bg-red-500 text-white" })
+            } else {
+                toast({ description: "please try again", className: "bg-red-500 text-white" })
             }
             setLoading(false)
         }
@@ -104,26 +104,26 @@ export default function LoginForm() {
                             </FormItem>
                         )}
                     />
-                  <Button disabled={loading} style={{ borderRadius: "5px" }} className="rounded-md" type="submit">
-                        {!loading?
-                        <p>Submit</p>
-                        :
-                        <PulseLoader
-                        color={"black"}
-                        loading={loading}
-                        size={30}
-                        aria-label="Loading Spinner"
-                        data-testid="loader"
-                      />                        }
+                    <Button disabled={loading} style={{ borderRadius: "5px" }} className="rounded-md" type="submit">
+                        {!loading ?
+                            <p>Submit</p>
+                            :
+                            <PulseLoader
+                                color={"black"}
+                                loading={loading}
+                                size={30}
+                                aria-label="Loading Spinner"
+                                data-testid="loader"
+                            />}
 
                     </Button>
                 </form>
             </Form>
             <hr className="text-gray-600 w-96 mt-10" />
-            <Button onClick={()=>{
-                window.location.href=`https://github.com/login/oauth/authorize?client_id=Ov23li0zclDZ7XsACEGa&redirect_uri=http://localhost:3000/api/auth/github&scope=read:user`
-            }} style={{borderRadius:"5px"}} className="mt-10 bg-black text-white" >Continue With Github
-                <Image width={30} height={30} src="/github.png" alt="github login"/>
+            <Button onClick={() => {
+                window.location.href = `https://github.com/login/oauth/authorize?client_id=Ov23li0zclDZ7XsACEGa&redirect_uri=http://localhost:3000/api/auth/github&scope=repo`;
+            }} style={{ borderRadius: "5px" }} className="mt-10 bg-black text-white" >Continue With Github
+                <Image width={30} height={30} src="/github.png" alt="github login" />
             </Button>
         </div>
     )
