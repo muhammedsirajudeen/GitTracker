@@ -34,7 +34,9 @@ export async function GET(request: Request) {
                 },
             });
             console.log(response.data)
-            return NextResponse.json({ message: 'success', repositories:response.data??[] }, { status: 200 })
+            const returnResponse=NextResponse.json({ message: 'success', repositories:response.data??[] }, { status: 200 })
+            returnResponse.headers.set('Cache-Control','no-store')
+            return returnResponse
 
         } catch (error) {
             console.log(error)

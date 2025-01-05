@@ -16,7 +16,7 @@ import axios, { AxiosError } from 'axios'
 import { useToast } from '@/hooks/use-toast'
 import ClipLoader from 'react-spinners/ClipLoader'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card'
-import { Star, GitFork, Eye, Search, PlusCircle } from 'lucide-react'
+import { Star, GitFork, Eye, Search, PlusCircle, Github } from 'lucide-react'
 import { ScrollArea } from '@radix-ui/react-scroll-area'
 import { Badge } from './ui/badge'
 
@@ -37,9 +37,11 @@ export default function RepositoryDialog() {
     const { toast } = useToast()
     const [respository, setRepository] = useState<Repository[]>([])
     const [loading, setLoading] = useState(true)
+    const [error,setError]=useState(false)
     async function repoHandler() {
         // console.log('clicked')
         try {
+            setError(false)
             const response = await axios.get('/api/repository', { withCredentials: true })
             console.log(response)
             if (response.status === 200) {
@@ -49,6 +51,8 @@ export default function RepositoryDialog() {
             }
         } catch (error) {
             console.log(error)
+            setError(true)
+            setLoading(false)
             toast({ description: "Please try again", variant: "destructive", className: "bg-red-500 text-white" })
         }
     }
@@ -95,12 +99,37 @@ export default function RepositoryDialog() {
                     </div>
 
                     <ScrollArea className="h-72 overflow-y-scroll w-full pr-4">
+                        {
+                            error && (
+                                <div className="flex items-center justify-center bg-background p-4">
+                                <Card className="w-full max-w-md">
+                                  <CardHeader className="text-center">
+                                    <div className="mx-auto bg-muted rounded-full p-3 w-16 h-16 flex items-center justify-center mb-4">
+                                      <Github className="w-8 h-8 text-primary" />
+                                    </div>
+                                    <CardTitle className="text-2xl font-bold">Link Your GitHub Account</CardTitle>
+                                    <CardDescription>
+                                      Connect your GitHub account to enable seamless integration and access additional features.
+                                    </CardDescription>
+                                  </CardHeader>
+                                  <CardContent className="flex justify-center">
+                                    <Button onClick={()=>{
+                                        window.location.href = `https://github.com/login/oauth/authorize?client_id=Ov23li0zclDZ7XsACEGa&redirect_uri=http://localhost:3000/api/auth/github&scope=repo`;
+
+                                    }} className="bg-[#2da44e] text-white hover:bg-[#2c974b] px-6">
+                                      <Github className="mr-2 h-4 w-4" />
+                                      Link GitHub
+                                    </Button>
+                                  </CardContent>
+                                </Card>
+                              </div>                            )
+                        }
                         {loading ? (
                             <div className="flex items-center justify-center h-full">
                                 <ClipLoader size={40} color="hsl(var(--primary))" />
                             </div>
                         ) : respository.length === 0 ? (
-                            <div className="flex items-center justify-center h-full text-muted-foreground">
+                            <div className="flex items-center justify-center h-10 text-muted-foreground">
                                 No repositories found
                             </div>
                         ) : (
