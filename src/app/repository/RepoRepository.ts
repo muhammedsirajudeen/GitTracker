@@ -1,10 +1,12 @@
 import RepositoryModel, { IRepositoryModel, Repository } from "@/models/Repository";
 import mongoose, { Model } from "mongoose";
 
-interface IRepoRepository {
-    addRepo: (repo: Repository) => Promise<boolean | null>
+export interface IRepoRepository {
+    addRepo: (repo: Repository) => Promise<Repository | null>
     getRepoByFullName:(fullname:string,owner_id:string)=>Promise<boolean|null>
     getRepoByUser:(userid:string)=>Promise<Repository[]>
+    deleteRepo:(userid:string)=>Promise<boolean|null>
+    
 }
 class RepoRepository implements IRepoRepository {
     _RepoModel: Model<IRepositoryModel>
@@ -24,8 +26,8 @@ class RepoRepository implements IRepoRepository {
                 owner_id:repo.owner_id 
             }
             const newRepo = new this._RepoModel(RepoToAdd)
-            await newRepo.save()
-            return true
+            const savedRepo=await newRepo.save()
+            return savedRepo
         } catch (error) {
             console.log(error)
             return null
@@ -46,6 +48,19 @@ class RepoRepository implements IRepoRepository {
     async getRepoByUser (userid: string) {
         const repositories=await this._RepoModel.find({owner_id:new mongoose.Types.ObjectId(userid)})
         return repositories
+    };
+    async deleteRepo (repoid: string) {
+        try {            
+            const data=await this._RepoModel.deleteOne({_id:new mongoose.Types.ObjectId(repoid)})
+            if(data.deletedCount!==0){
+                return true
+            }else{
+                return false
+            }
+        } catch (error) {
+            console.log(error)
+            return null
+        }
     };
 
 }

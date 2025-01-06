@@ -21,11 +21,11 @@ import { ScrollArea } from '@radix-ui/react-scroll-area'
 import { Badge } from './ui/badge'
 
 interface ExtendedRepo extends Repository{
-    id:string
+    _id:string
 }
 import {produce} from "immer"
 import { Repository } from '@/models/Repository'
-export default function RepositoryDialog({setRepositories}:{setRepositories:Dispatch<SetStateAction<Repository[]>>}) {
+export default function RepositoryDialog({setRepositories}:{setRepositories: Dispatch<SetStateAction<ExtendedRepo[]>>}) {
     const [searchQuery, setSearchQuery] = useState('')
     const { toast } = useToast()
     const [respository, setRepository] = useState<ExtendedRepo[]>([])
@@ -56,10 +56,12 @@ export default function RepositoryDialog({setRepositories}:{setRepositories:Disp
                 repository:repo
             })
             if(response.status===201){
+                console.log(response.data)
+                const newRepo=response.data.repository as ExtendedRepo
                 toast({description:"added repository",className:"bg-green-500 text-white"})
                 setRepositories(
                     produce((draft) => {
-                      draft.push(repo);
+                      draft.push(newRepo ?? []);
                     })
                   );
             }
@@ -132,7 +134,7 @@ export default function RepositoryDialog({setRepositories}:{setRepositories:Disp
                             </div>
                         ) : (
                             respository.map((repo) => (
-                                <Card key={repo.id} className="mb-4 last:mb-0">
+                                <Card key={repo._id} className="mb-4 last:mb-0">
                                     <CardHeader>
                                         <CardTitle className="text-lg">{repo.name}</CardTitle>
                                         <CardDescription>{repo.description || 'No description provided'}</CardDescription>

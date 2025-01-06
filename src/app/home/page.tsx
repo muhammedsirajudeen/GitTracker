@@ -1,13 +1,13 @@
 'use client'
 import RepositoryDialog from "@/components/repositoryDialog"
-import RepositoryListing from "@/components/RepositoryListing"
+import RepositoryListing, { ExtendedRepo } from "@/components/RepositoryListing"
 import { Input } from "@/components/ui/input"
 import { Repository } from "@/models/Repository"
 import { Search } from 'lucide-react'
 import { useState } from "react"
 
 export default function Home() {
-  const [repositories,setRepositories]=useState<Repository[]>([])
+  const [repositories,setRepositories]=useState<ExtendedRepo[]>([])
   return (
     <div className="w-full py-4 px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center">
       <div className="max-w-7xl mx-auto">

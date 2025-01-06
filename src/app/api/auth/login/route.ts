@@ -4,34 +4,34 @@ import UserServiceInstance from "@/service/UserService"
 import { NextResponse } from "next/server"
 import { UserWithId } from "../github/route"
 
-export  async function POST(request:Request){
+export async function POST(request: Request) {
     try {
-        const loginRequest=await request.json()
-        const user=await UserServiceInstance.getUserByEmail(loginRequest.email) as UserWithId
-        if(!user){
-            return NextResponse.json({message:'user not found'},{status:404})
+        const loginRequest = await request.json()
+        const user = await UserServiceInstance.getUserByEmail(loginRequest.email) as UserWithId
+        if (!user) {
+            return NextResponse.json({ message: 'user not found' }, { status: 404 })
         }
-        else if(user.verified===false){
-            return NextResponse.json({message:'unauthorized'},{status:401})
+        else if (user.verified === false) {
+            return NextResponse.json({ message: 'unauthorized' }, { status: 401 })
         }
-        const verify=await verifyPassword(loginRequest.password,user.password)
+        const verify = await verifyPassword(loginRequest.password, user.password)
         console.log(verify)
-        if(!verify){
-            return NextResponse.json({message:'invalid credentials'},{status:401})
+        if (!verify) {
+            return NextResponse.json({ message: 'invalid credentials' }, { status: 401 })
         }
-        const token=generateToken({email:user.email,id:user.id})   
+        const token = generateToken({ email: user.email, id: user.id })
         const response = NextResponse.json({ message: 'Success', token }, { status: 200 });
 
         response.cookies.set('access_token', token, {
-          httpOnly: true,  
-          secure: process.env.NODE_ENV === 'production',  
-          maxAge: 60 * 60,  
-          path: '/',
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            maxAge: 60 * 60,
+            path: '/',
         });
-      
+
         return response;
     } catch (error) {
         console.log(error)
-        return NextResponse.json({message:'internal server error'},{status:500})
+        return NextResponse.json({ message: 'internal server error' }, { status: 500 })
     }
 }

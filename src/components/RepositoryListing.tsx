@@ -2,59 +2,149 @@
 import { Repository } from "@/models/Repository"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card"
 import { Badge } from "./ui/badge"
-import { Eye, GitFork, Star } from "lucide-react"
+import { Delete, Ellipsis, Eye, GitFork, MoreVertical, Settings, Star, Trash2, User } from "lucide-react"
 import useSWR from 'swr';
-import { Dispatch, SetStateAction, useEffect } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton"
 
+import {
+    ContextMenu,
+    ContextMenuContent,
+    ContextMenuItem,
+    ContextMenuTrigger,
+} from "@/components/ui/context-menu"
+import { ContextMenuSeparator } from "@radix-ui/react-context-menu";
+import { Button } from "./ui/button";
+import axios from "axios";
+import { toast } from "@/hooks/use-toast";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
+import { produce } from "immer";
 
+export interface ExtendedRepo extends Repository {
+    _id: string
+}
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
-export default   function RepositoryListing({repositories,setRepositories}:{repositories:Repository[],setRepositories:Dispatch<SetStateAction<Repository[]>>}) {
-    const fetcher = (url:string) => fetch(url).then((res) => res.json());
-    const { data,isLoading } = useSWR('/api/repouser', fetcher);
-    useEffect(()=>{
-        setRepositories(data?.repositories as Repository[]?? [])
-    },[data?.repositories, setRepositories])
-    
+export default function RepositoryListing({ repositories, setRepositories }: { repositories: ExtendedRepo[], setRepositories: Dispatch<SetStateAction<ExtendedRepo[]>> }) {
+    const { data, isLoading } = useSWR('/api/repouser', fetcher);
+    const [repository,setRepository]=useState<ExtendedRepo>()
+    const [dialog,setDialog]=useState<boolean>(false)
+    useEffect(() => {
+        setRepositories(data?.repositories as ExtendedRepo[] ?? [])
+    }, [data?.repositories, setRepositories])
+
+    async function DeleteHandler() {
+        try {
+            const response = (await axios.delete(`/api/repository/${repository?._id}`, { withCredentials: true }))
+            if (response.status === 200) {
+                toast({ description: "Repo unlisted successfully", className: "bg-green-500 text-white" })
+                setRepositories((prev)=>prev.filter(p=>p._id!==repository?._id))
+                setDialog(false)
+            }
+
+        } catch (error) {
+            console.log(error)
+            toast({ description: "Please try againt", className: "bg-red-500 text-white" })
+        }
+    }
     return (
-        isLoading ? (
-            [...Array(10)].map((_, index) => (
-                <div key={index} className="flex items-center space-x-4">
-                  <Skeleton className="h-12 w-12 rounded-full" />
-                  <div className="space-y-2">
-                    <Skeleton className="h-4 w-[250px]" />
-                    <Skeleton className="h-4 w-[200px]" />
-                  </div>
-                </div>
-              ))        )
-        :
-        repositories.map((repo, index) => (
-            <Card key={index} className="mb-4 last:mb-0 w-72 h-auto">
-                <CardHeader>
-                    <CardTitle className="text-lg">{repo.name}</CardTitle>
-                    <CardDescription>{repo.description || 'No description provided'}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <div className="flex items-center justify-between">
-                        <Badge variant={"outline"}>{repo.language || 'Unknown'}</Badge>
-                        <div className="flex items-center space-x-4">
-                            <div className="flex items-center space-x-1">
-                                <Star className="w-4 h-4" />
-                                <span>{repo.stargazers_count}</span>
-                            </div>
-                             <div className="flex items-center space-x-1">
-                                <GitFork className="w-4 h-4" />
-                                <span>{repo.forks_count}</span>
-                            </div>
-                            <div className="flex items-center space-x-1">
-                                <Eye className="w-4 h-4" />
-                                <span>{repo.watchers_count}</span>
-                            </div>
+        <>
+            {isLoading ? (
+                [...Array(10)].map((_, index) => (
+                    <div key={index} className="flex items-center space-x-4">
+                        <Skeleton className="h-12 w-12 rounded-full" />
+                        <div className="space-y-2">
+                            <Skeleton className="h-4 w-[250px]" />
+                            <Skeleton className="h-4 w-[200px]" />
                         </div>
                     </div>
+                )))
+                :
+                repositories.map((repo, index) => (
+                    <Card key={index} className="mb-4  w-80 h-auto">
+                        <CardHeader>
+                            <CardTitle className="text-lg">{repo.name}</CardTitle>
+                            <CardDescription>{repo.description || 'No description provided'}</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="flex items-center justify-between">
+                                <Badge variant={"outline"}>{repo.language || 'Unknown'}</Badge>
+                                <div className="flex items-center space-x-4">
+                                    <div className="flex items-center space-x-1">
+                                        <Star className="w-4 h-4" />
+                                        <span>{repo.stargazers_count}</span>
+                                    </div>
+                                    <div className="flex items-center space-x-1">
+                                        <GitFork className="w-4 h-4" />
+                                        <span>{repo.forks_count}</span>
+                                    </div>
+                                    <div className="flex items-center space-x-1">
+                                        <Eye className="w-4 h-4" />
+                                        <span>{repo.watchers_count}</span>
+                                        <ContextMenu>
+                                            <ContextMenuTrigger>
+                                                <Button variant="ghost" size="icon">
+                                                    <Ellipsis />
+                                                    <span className="sr-only">More options</span>
+                                                </Button>
+                                            </ContextMenuTrigger>
+                                            <ContextMenuContent className="w-56">
+                                                {/* <ContextMenuItem>Profile</ContextMenuItem>
+                                <ContextMenuItem>Billing</ContextMenuItem>
+                                <ContextMenuItem>Team</ContextMenuItem>
+                                <ContextMenuItem>Subscription</ContextMenuItem>
+                                <ContextMenuSeparator /> */}
+                                                <ContextMenuItem className=" ">
+                                                    <Settings /> <p className="ml-4" >Settings</p>
+                                                </ContextMenuItem>
+                                                <ContextMenuItem className=" ">
+                                                    <User /> <p className="ml-4" >Profile</p>
+                                                </ContextMenuItem>
+                                                <ContextMenuItem onClick={()=>{
+                                                    setDialog(true)
+                                                    setRepository(repo)
+                                                }
+                                                }  className="text-red-600 ">
+                                                    <Delete /><p className="ml-4" >Delete</p>
+                                                </ContextMenuItem>
+                                            </ContextMenuContent>
+                                        </ContextMenu>
+                                    </div>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                ))
+            }
+    <Dialog open={dialog}  >
+      <DialogContent className="bg-black" >
+        <DialogHeader>
+          <DialogTitle>Delete Repository</DialogTitle>
+          <DialogDescription className="text-white" >
+            Are you absolutely sure you want to delete the repository "{repository?.name}"? This action cannot be undone.
+            This will permanently delete the repository and remove all its data from our servers.
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+          <Button variant="outline" onClick={()=>setDialog(false)} >
+            Cancel
+          </Button>
+          <Button variant="destructive" onClick={DeleteHandler}>
+                <Trash2 className="w-4 h-4 mr-2" />
+                Delete Repository
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
 
-                </CardContent>
-            </Card>
-        ))
+        </>
     )
 }

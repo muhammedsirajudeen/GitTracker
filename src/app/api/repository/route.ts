@@ -33,8 +33,8 @@ export async function GET(request: Request) {
                     Accept: 'application/vnd.github+json',
                 },
             });
-            const returnResponse=NextResponse.json({ message: 'success', repositories:response.data??[] }, { status: 200 })
-            returnResponse.headers.set('Cache-Control','no-store')
+            const returnResponse = NextResponse.json({ message: 'success', repositories: response.data ?? [] }, { status: 200 })
+            returnResponse.headers.set('Cache-Control', 'no-store')
             return returnResponse
 
         } catch (error) {
@@ -66,18 +66,19 @@ export async function POST(request: NextRequest) {
         const repoRequest = await request.json()
         const repository = repoRequest.repository as Repository
         repository.owner_id = new mongoose.Types.ObjectId(decodedUser.id)
-        const existStatus = await RepositoryServiceInstance.getRepoByFullName(repository.full_name,decodedUser.id)
+        const existStatus = await RepositoryServiceInstance.getRepoByFullName(repository.full_name, decodedUser.id)
         //this would lead to conflict
         if (existStatus) {
             return NextResponse.json({ message: 'repo already saved' }, { status: 409 })
         }
-        const status = await RepoRepositoryInstance.addRepo(repository)
-        if (!status) {
+        const newRepository = await RepoRepositoryInstance.addRepo(repository)
+        if (!newRepository) {
             return NextResponse.json({ message: 'internal server error occured' }, { status: 500 })
         }
-        return NextResponse.json({ message: 'success' }, { status: 201 })
+        return NextResponse.json({ message: 'success',repository:newRepository }, { status: 201 })
     } catch (error) {
         console.log(error)
         return NextResponse.json({ message: 'internal server error occured' }, { status: 501 })
     }
 }
+
