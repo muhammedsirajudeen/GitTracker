@@ -1,5 +1,5 @@
 'use client'
-import { Calendar, Home, Inbox, LogOut, Settings } from "lucide-react"
+import { Home, InboxIcon, LogOut, LucideDollarSign, Settings } from "lucide-react"
 
 import {
   Sidebar,
@@ -21,18 +21,18 @@ function clearAllCookies() {
 const items = [
   {
     title: "Home",
-    url: "#",
+    url: "/home",
     icon: Home,
   },
   {
-    title: "Inbox",
-    url: "#",
-    icon: Inbox,
+    title: "Issues",
+    url: "/issues",
+    icon: InboxIcon,
   },
   {
-    title: "Calendar",
-    url: "#",
-    icon: Calendar,
+    title: "Bounties",
+    url: "/bounties",
+    icon: LucideDollarSign,
   },
   {
     title: "Settings",

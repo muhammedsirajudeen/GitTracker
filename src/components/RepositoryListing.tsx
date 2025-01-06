@@ -55,6 +55,9 @@ export default function RepositoryListing({ repositories, setRepositories }: { r
             toast({ description: "Please try againt", className: "bg-red-500 text-white" })
         }
     }
+    function navHandler(id:string){
+        window.location.href=`/home/${id}`
+    }
     return (
         <>
             {isLoading ? (
@@ -69,7 +72,7 @@ export default function RepositoryListing({ repositories, setRepositories }: { r
                 )))
                 :
                 repositories.map((repo, index) => (
-                    <Card key={index} className="mb-4  w-80 h-auto">
+                    <Card onClick={()=>navHandler(repo._id)}  key={index} className="mb-4  w-80 h-auto">
                         <CardHeader>
                             <CardTitle className="text-lg">{repo.name}</CardTitle>
                             <CardDescription>{repo.description || 'No description provided'}</CardDescription>
@@ -108,7 +111,8 @@ export default function RepositoryListing({ repositories, setRepositories }: { r
                                                 <ContextMenuItem className=" ">
                                                     <User /> <p className="ml-4" >Profile</p>
                                                 </ContextMenuItem>
-                                                <ContextMenuItem onClick={()=>{
+                                                <ContextMenuItem onClick={(e)=>{
+                                                    e.stopPropagation()
                                                     setDialog(true)
                                                     setRepository(repo)
                                                 }
