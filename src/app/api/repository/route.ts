@@ -33,7 +33,6 @@ export async function GET(request: Request) {
                     Accept: 'application/vnd.github+json',
                 },
             });
-            console.log(response.data)
             const returnResponse=NextResponse.json({ message: 'success', repositories:response.data??[] }, { status: 200 })
             returnResponse.headers.set('Cache-Control','no-store')
             return returnResponse

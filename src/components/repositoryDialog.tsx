@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { Dispatch, SetStateAction, useState } from 'react'
 import {
     Dialog,
     DialogContent,
@@ -20,22 +20,15 @@ import { Star, GitFork, Eye, Search, PlusCircle, Github } from 'lucide-react'
 import { ScrollArea } from '@radix-ui/react-scroll-area'
 import { Badge } from './ui/badge'
 
-//id name fullname avatarurl htmlurl
-interface Repository {
-    id: number
-    name: string
-    fullname: string
-    description: string
-    language: string
-    stargazers_count: number
-    forks_count: number
-    watchers_count: number
-
+interface ExtendedRepo extends Repository{
+    id:string
 }
-export default function RepositoryDialog() {
+import {produce} from "immer"
+import { Repository } from '@/models/Repository'
+export default function RepositoryDialog({setRepositories}:{setRepositories:Dispatch<SetStateAction<Repository[]>>}) {
     const [searchQuery, setSearchQuery] = useState('')
     const { toast } = useToast()
-    const [respository, setRepository] = useState<Repository[]>([])
+    const [respository, setRepository] = useState<ExtendedRepo[]>([])
     const [loading, setLoading] = useState(true)
     const [error,setError]=useState(false)
     async function repoHandler() {
@@ -57,13 +50,18 @@ export default function RepositoryDialog() {
         }
     }
     async function addRepositoryHandler(repo:Repository){
-        console.log(repo)
+
         try {
             const response=await axios.post('/api/repository',{
                 repository:repo
             })
             if(response.status===201){
                 toast({description:"added repository",className:"bg-green-500 text-white"})
+                setRepositories(
+                    produce((draft) => {
+                      draft.push(repo);
+                    })
+                  );
             }
         } catch (error) {
             console.log(error)

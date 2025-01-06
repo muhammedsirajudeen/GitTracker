@@ -1,9 +1,10 @@
 import RepositoryModel, { IRepositoryModel, Repository } from "@/models/Repository";
-import { Model } from "mongoose";
+import mongoose, { Model } from "mongoose";
 
 interface IRepoRepository {
     addRepo: (repo: Repository) => Promise<boolean | null>
     getRepoByFullName:(fullname:string)=>Promise<boolean|null>
+    getRepoByUser:(userid:string)=>Promise<Repository[]>
 }
 class RepoRepository implements IRepoRepository {
     _RepoModel: Model<IRepositoryModel>
@@ -42,6 +43,10 @@ class RepoRepository implements IRepoRepository {
             return null
         }
     }
+    async getRepoByUser (userid: string) {
+        const repositories=await this._RepoModel.find({owner_id:new mongoose.Types.ObjectId(userid)})
+        return repositories
+    };
 
 }
 

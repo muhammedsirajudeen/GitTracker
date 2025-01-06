@@ -1,23 +1,15 @@
 'use client'
-
 import RepositoryDialog from "@/components/repositoryDialog"
+import RepositoryListing from "@/components/RepositoryListing"
 import { Input } from "@/components/ui/input"
-// import { Repository } from "@/models/Repository"
-// import axios from "axios"
+import { Repository } from "@/models/Repository"
 import { Search } from 'lucide-react'
-// import { useEffect, useState } from "react"
+import { useState } from "react"
 
-// async function GetRepo(){
-//   console.log('hey')
-// }
+
 
 export default function Home() {
-  // const [repositories,setRepositories]=useState<Repository[]>([])
-  // useEffect(()=>{
-  //   async function GetRepositories(){
-  //     const response=(await axios.get('/api/repository',{withCredentials:true}))
-  //   }
-  // },[])
+  const [repositories,setRepositories]=useState<Repository[]>([])
   return (
     <div className="w-full py-4 px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center">
       <div className="max-w-7xl mx-auto">
@@ -30,9 +22,11 @@ export default function Home() {
               className="pl-10 pr-4 py-2 w-full sm:w-96 text-xs border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
-          <RepositoryDialog/>
-
+          <RepositoryDialog setRepositories={setRepositories} />
         </div>
+      </div>
+      <div className="flex items-center justify-center flex-wrap gap-10 mt-10">
+          <RepositoryListing repositories={repositories} setRepositories={setRepositories} />
       </div>
     </div>
   )

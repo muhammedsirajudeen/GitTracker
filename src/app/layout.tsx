@@ -21,6 +21,7 @@ export const metadata: Metadata = {
   description: "The next gen knowledge aggregator",
 };
 
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -35,7 +36,9 @@ export default function RootLayout({
           <AppSidebar />
           <main className="w-full bg-black text-white" >
             <SidebarTrigger />
+
             {children}
+
           </main>
         </SidebarProvider>
         <Toaster />
