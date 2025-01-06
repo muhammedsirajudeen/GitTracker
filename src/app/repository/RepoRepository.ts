@@ -3,7 +3,7 @@ import mongoose, { Model } from "mongoose";
 
 interface IRepoRepository {
     addRepo: (repo: Repository) => Promise<boolean | null>
-    getRepoByFullName:(fullname:string)=>Promise<boolean|null>
+    getRepoByFullName:(fullname:string,owner_id:string)=>Promise<boolean|null>
     getRepoByUser:(userid:string)=>Promise<Repository[]>
 }
 class RepoRepository implements IRepoRepository {
@@ -31,9 +31,9 @@ class RepoRepository implements IRepoRepository {
             return null
         }
     };
-    async getRepoByFullName (fullname: string) {
+    async getRepoByFullName (fullname: string,owner_id:string) {
         try {
-            const getRepo=await this._RepoModel.findOne({full_name:fullname})
+            const getRepo=await this._RepoModel.findOne({full_name:fullname,owner_id:new mongoose.Types.ObjectId(owner_id)})
             if(getRepo){
                 return true
             }

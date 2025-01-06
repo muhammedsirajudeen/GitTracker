@@ -12,6 +12,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import axios from "axios"
+import { toast } from "@/hooks/use-toast"
 function clearAllCookies() {
   // clear response from the server for clearing cookies thats the possible way
 }
@@ -44,8 +45,15 @@ const items = [
     HandlerFunction:async ()=>{
       clearAllCookies()
       const response=await axios.get('/api/auth/logout')
-      
-      window.location.href='/'
+      if(response.status===200){
+        toast({description:"user logged out successfully",className:"bg-green-500 text-white"})
+      }else{
+        toast({description:"please try again",className:"bg-red-500 text-white"})
+
+      }
+      setTimeout(()=>{
+        window.location.href='/'
+      },1000)
     }
   },
   

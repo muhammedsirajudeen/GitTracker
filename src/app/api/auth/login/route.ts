@@ -2,11 +2,12 @@ import { verifyPassword } from "@/lib/bcryptHelper"
 import { generateToken } from "@/lib/jwtHelper"
 import UserServiceInstance from "@/service/UserService"
 import { NextResponse } from "next/server"
+import { UserWithId } from "../github/route"
 
 export  async function POST(request:Request){
     try {
         const loginRequest=await request.json()
-        const user=await UserServiceInstance.getUserByEmail(loginRequest.email)
+        const user=await UserServiceInstance.getUserByEmail(loginRequest.email) as UserWithId
         if(!user){
             return NextResponse.json({message:'user not found'},{status:404})
         }
@@ -18,7 +19,7 @@ export  async function POST(request:Request){
         if(!verify){
             return NextResponse.json({message:'invalid credentials'},{status:401})
         }
-        const token=generateToken({email:user.email})   
+        const token=generateToken({email:user.email,id:user.id})   
         const response = NextResponse.json({ message: 'Success', token }, { status: 200 });
 
         response.cookies.set('access_token', token, {

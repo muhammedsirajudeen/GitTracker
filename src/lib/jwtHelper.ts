@@ -1,8 +1,9 @@
+import { User } from '@/models/User';
 import jwt from 'jsonwebtoken';
 
 // Define your secret key and token expiration
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secure-secret'; // Use an environment variable in production
-const TOKEN_EXPIRATION = '1h'; // Adjust as needed (e.g., '1h', '7d', etc.)
+const TOKEN_EXPIRATION = '4h'; // Adjust as needed (e.g., '1h', '7d', etc.)
 
 /**
  * Generates a JWT token for a given payload.
@@ -19,12 +20,12 @@ export function generateToken(payload: object): string {
  * @returns The decoded payload.
  * @throws An error if the token is invalid or expired.
  */
-export function verifyToken(token: string): object {
+export function verifyToken(token: string): User | null {
   try {
-    return jwt.verify(token, JWT_SECRET) as object;
+    return jwt.verify(token, JWT_SECRET) as User;
   } catch (err) {
     console.log(err)
-    throw new Error('Invalid or expired token');
+    return null
   }
 }
 
