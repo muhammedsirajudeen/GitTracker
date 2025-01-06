@@ -133,8 +133,8 @@ export default function RepositoryDialog({setRepositories}:{setRepositories: Dis
                                 No repositories found
                             </div>
                         ) : (
-                            respository.map((repo) => (
-                                <Card key={repo._id} className="mb-4 last:mb-0">
+                            respository.map((repo,index) => (
+                                <Card key={index} className="mb-4 last:mb-0">
                                     <CardHeader>
                                         <CardTitle className="text-lg">{repo.name}</CardTitle>
                                         <CardDescription>{repo.description || 'No description provided'}</CardDescription>

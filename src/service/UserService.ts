@@ -3,7 +3,7 @@ import { User } from "@/models/User"
 
 interface IUserService {
     getUserByEmail: (email: string) => Promise<User | null>
-    InsertUser: (user: User) => Promise<boolean>
+    InsertUser: (user: User) => Promise<User|null>
     VerifyUser:(email:string)=>Promise<boolean>
 }
 class UserService implements IUserService {

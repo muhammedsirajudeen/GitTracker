@@ -24,7 +24,6 @@ export function verifyToken(token: string): User | null {
   try {
     return jwt.verify(token, JWT_SECRET) as User;
   } catch (err) {
-    console.log(err)
     return null
   }
 }

@@ -3,7 +3,7 @@ import { Model } from "mongoose"
 
 export interface IUserRepository {
     getUserByEmail: (email: string) => Promise<User | null>
-    InsertUser: (user: User) => Promise<boolean>
+    InsertUser: (user: User) => Promise<User|null>
     VerifyUser: (user: string) => Promise<boolean>
 }
 
@@ -25,11 +25,11 @@ class UserRepository implements IUserRepository {
     async InsertUser(user: User) {
         try {
             const newUser = new this._userModel(user)
-            await newUser.save()
-            return true
+            const savedUser=await newUser.save()
+            return savedUser
         } catch (error) {
             console.log(error)
-            return false
+            return null
         }
 
     };
