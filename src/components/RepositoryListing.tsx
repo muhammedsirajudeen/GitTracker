@@ -100,11 +100,6 @@ export default function RepositoryListing({ repositories, setRepositories }: { r
                                                 </Button>
                                             </ContextMenuTrigger>
                                             <ContextMenuContent className="w-56">
-                                                {/* <ContextMenuItem>Profile</ContextMenuItem>
-                                <ContextMenuItem>Billing</ContextMenuItem>
-                                <ContextMenuItem>Team</ContextMenuItem>
-                                <ContextMenuItem>Subscription</ContextMenuItem>
-                                <ContextMenuSeparator /> */}
                                                 <ContextMenuItem className=" ">
                                                     <Settings /> <p className="ml-4" >Settings</p>
                                                 </ContextMenuItem>
