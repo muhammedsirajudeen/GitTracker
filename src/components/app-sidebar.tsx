@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/sidebar"
 import axios from "axios"
 import { toast } from "@/hooks/use-toast"
+import useGlobalStore from "@/store/GlobalStore"
 function clearAllCookies() {
   // clear response from the server for clearing cookies thats the possible way
 }
@@ -60,6 +61,7 @@ const items = [
 ]
 
 export function AppSidebar() {
+  const {user}=useGlobalStore()
   return (
     <Sidebar>
       <SidebarContent>
@@ -77,6 +79,8 @@ export function AppSidebar() {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+              {/* make this more interactive now only forgot password pending i guess */}
+              <p>{user?.email}</p>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

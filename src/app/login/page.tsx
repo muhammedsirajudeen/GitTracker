@@ -67,11 +67,19 @@ export default function LoginForm() {
         }
 
     }
-
+    function forgotHandler(){
+        const email=form.getValues().email
+        if(!email){
+            toast({description:'Enter a email first',className:'bg-orange-500 text-white'})
+        }
+        window.localStorage.setItem('forgot-email',email)
+        //send email here and send the magic link and also add it to the cache and verify it that way
+        window.location.href='/forgot'
+    }
     return (
         <div className="flex items-center justify-center flex-col">
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 flex items-center justify-center flex-col mt-72">
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 flex items-center justify-center flex-col mt-64">
                     <FormField
                         control={form.control}
                         name="email"
@@ -104,6 +112,7 @@ export default function LoginForm() {
                             </FormItem>
                         )}
                     />
+                    <button type="button" className="bg-black w-full flex justify-end text-end text-xs text-gray-300" onClick={forgotHandler}>forgot password</button>
                     <Button disabled={loading} style={{ borderRadius: "5px" }} className="rounded-md" type="submit">
                         {!loading ?
                             <p>Submit</p>

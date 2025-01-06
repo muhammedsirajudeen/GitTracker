@@ -1,13 +1,14 @@
-// store.ts
 import { User } from '@/models/User';
-import {create} from 'zustand';
+import { create } from 'zustand';
 
-interface BearState {
-  user?: User;
+interface GlobalState {
+  user: User | null;
+  setUser: (user: User) => void;
 }
 
-const useGlobalStore = create<BearState>((set) => ({
-    setUser:(user:User)=>set(()=>({user:user}))
+const useGlobalStore = create<GlobalState>()((set) => ({
+  user: null,
+  setUser: (user: User) => set({ user }),
 }));
 
 export default useGlobalStore;
