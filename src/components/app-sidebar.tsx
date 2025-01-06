@@ -1,4 +1,5 @@
-import { Calendar, Home, Inbox, Search, Settings } from "lucide-react"
+'use client'
+import { Calendar, Home, Inbox, LogOut, Settings } from "lucide-react"
 
 import {
   Sidebar,
@@ -10,7 +11,10 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-
+import axios from "axios"
+function clearAllCookies() {
+  // clear response from the server for clearing cookies thats the possible way
+}
 // Menu items.
 const items = [
   {
@@ -29,15 +33,22 @@ const items = [
     icon: Calendar,
   },
   {
-    title: "Search",
-    url: "#",
-    icon: Search,
-  },
-  {
     title: "Settings",
     url: "#",
     icon: Settings,
   },
+  {
+    title: "Logout",
+    url: "#",
+    icon: LogOut,
+    HandlerFunction:async ()=>{
+      clearAllCookies()
+      const response=await axios.get('/api/auth/logout')
+      
+      window.location.href='/'
+    }
+  },
+  
 ]
 
 export function AppSidebar() {
@@ -50,7 +61,7 @@ export function AppSidebar() {
             <SidebarMenu>
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
+                  <SidebarMenuButton onClick={item.title==='Logout'?item.HandlerFunction:()=>{}} asChild>
                     <a href={item.url}>
                       <item.icon />
                       <span>{item.title}</span>

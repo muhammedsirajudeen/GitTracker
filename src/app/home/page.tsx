@@ -6,8 +6,6 @@ import { Repository } from "@/models/Repository"
 import { Search } from 'lucide-react'
 import { useState } from "react"
 
-
-
 export default function Home() {
   const [repositories,setRepositories]=useState<Repository[]>([])
   return (
