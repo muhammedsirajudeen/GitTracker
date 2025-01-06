@@ -1,11 +1,23 @@
 // middleware.ts
+import { parse } from 'cookie';
 import { NextRequest, NextResponse } from 'next/server';
+import { verifyToken } from './lib/jwtHelper';
 
-export function middleware(request: NextRequest) {
-    const url = request.nextUrl;
-    //try addding the verify logic operation here
-    console.log(request.headers.get('cookie'))
-    return NextResponse.next();
+export async function middleware(request: NextRequest) {
+    try {        
+        //try addding the verify logic operation here
+        const cookies=parse(request.headers.get('cookie') || '')
+        const access_token=cookies['access_token']
+        const decodedUser=await verifyToken(access_token as string)
+        if(decodedUser){
+            return NextResponse.redirect(new URL('/home', request.url));        
+        }
+        return NextResponse.next();
+
+    } catch (error) {
+        console.log(error)
+        return NextResponse.next();
+    }
 }
 
 export const config = {

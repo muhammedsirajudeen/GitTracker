@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
 
     const accessToken = response.data.access_token;
 
-    const decodedUser = verifyToken(access_token_jwt) as UserWithId;
+    const decodedUser =await  verifyToken(access_token_jwt) as UserWithId;
     console.log(decodedUser)
     const userResponse = await axios.get('https://api.github.com/user', {
       headers: {

@@ -1,5 +1,6 @@
 import { User } from '@/models/User';
 import jwt from 'jsonwebtoken';
+import { jwtVerify } from 'jose';
 
 // Define your secret key and token expiration
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secure-secret'; // Use an environment variable in production
@@ -20,10 +21,13 @@ export function generateToken(payload: object): string {
  * @returns The decoded payload.
  * @throws An error if the token is invalid or expired.
  */
-export function verifyToken(token: string): User | null {
+export async function verifyToken(token: string): Promise<User | null> {
   try {
-    return jwt.verify(token, JWT_SECRET) as User;
+    const {payload}=await  jwtVerify(token, new TextEncoder().encode(JWT_SECRET));
+    // return payload as User
+    return payload as unknown as User
   } catch (err) {
+    console.log("from jwt verification",err)
     return null
   }
 }

@@ -12,7 +12,7 @@ export async function GET(request: Request) {
     try {
         const cookies = parse(request.headers.get('cookie') || '')
         const access_token = cookies['access_token'] ?? ""
-        const user = verifyToken(access_token) as ExtendedUser
+        const user =await  verifyToken(access_token) as ExtendedUser
         console.log(user)
         if (!user) {
             return NextResponse.json({ message: 'invalid token' }, { status: 401 })

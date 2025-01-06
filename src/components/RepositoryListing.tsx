@@ -2,7 +2,7 @@
 import { Repository } from "@/models/Repository"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card"
 import { Badge } from "./ui/badge"
-import { Delete, Ellipsis, Eye, GitFork, MoreVertical, Settings, Star, Trash2, User } from "lucide-react"
+import { Delete, Ellipsis, Eye, GitFork, Settings, Star, Trash2, User } from "lucide-react"
 import useSWR from 'swr';
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton"
@@ -13,7 +13,6 @@ import {
     ContextMenuItem,
     ContextMenuTrigger,
 } from "@/components/ui/context-menu"
-import { ContextMenuSeparator } from "@radix-ui/react-context-menu";
 import { Button } from "./ui/button";
 import axios from "axios";
 import { toast } from "@/hooks/use-toast";
@@ -24,14 +23,15 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
 } from "@/components/ui/dialog"
-import { produce } from "immer";
 
 export interface ExtendedRepo extends Repository {
     _id: string
 }
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
+
+
+
 
 export default function RepositoryListing({ repositories, setRepositories }: { repositories: ExtendedRepo[], setRepositories: Dispatch<SetStateAction<ExtendedRepo[]>> }) {
     const { data, isLoading } = useSWR('/api/repouser', fetcher);
@@ -129,7 +129,7 @@ export default function RepositoryListing({ repositories, setRepositories }: { r
         <DialogHeader>
           <DialogTitle>Delete Repository</DialogTitle>
           <DialogDescription className="text-white" >
-            Are you absolutely sure you want to delete the repository "{repository?.name}"? This action cannot be undone.
+            Are you absolutely sure you want to delete the repository {repository?.name}? This action cannot be undone.
             This will permanently delete the repository and remove all its data from our servers.
           </DialogDescription>
         </DialogHeader>

@@ -61,12 +61,12 @@ export async function POST(request: NextRequest) {
             cookies.split('; ').map((cookie) => cookie.split('='))
         );
         const access_token = parsedCookies['access_token'] as string
-        const decodedUser = verifyToken(access_token) as UserWithId
+        const decodedUser = await verifyToken(access_token) as UserWithId| null
         console.log(decodedUser)
         const repoRequest = await request.json()
         const repository = repoRequest.repository as Repository
-        repository.owner_id = new mongoose.Types.ObjectId(decodedUser.id)
-        const existStatus = await RepositoryServiceInstance.getRepoByFullName(repository.full_name, decodedUser.id)
+        repository.owner_id = new mongoose.Types.ObjectId(decodedUser?.id)
+        const existStatus = await RepositoryServiceInstance.getRepoByFullName(repository.full_name, decodedUser?.id as string)
         //this would lead to conflict
         if (existStatus) {
             return NextResponse.json({ message: 'repo already saved' }, { status: 409 })
