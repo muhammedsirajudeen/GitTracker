@@ -36,7 +36,9 @@ export default function RootLayout({
       >
         <UserComponent/>
         <SidebarProvider defaultOpen={false}>
+          
           <AppSidebar />
+          
           <main className="w-full bg-black text-white" >
             <SidebarTrigger />
 

@@ -1,5 +1,5 @@
 'use client'
-import { Home, InboxIcon, LogOut, LucideDollarSign, Settings } from "lucide-react"
+import { Contact2Icon, FolderArchive, Home, InboxIcon, LogOut, LucideDollarSign, Settings } from "lucide-react"
 
 import {
   Sidebar,
@@ -14,9 +14,9 @@ import {
 import axios from "axios"
 import { toast } from "@/hooks/use-toast"
 import useGlobalStore from "@/store/GlobalStore"
-function clearAllCookies() {
-  // clear response from the server for clearing cookies thats the possible way
-}
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+
+
 // Menu items.
 const items = [
   {
@@ -35,6 +35,17 @@ const items = [
     icon: LucideDollarSign,
   },
   {
+    title: "Talk To Your Repo",
+    url: "/talktorepo",
+    icon: Contact2Icon
+  },
+  {
+    title: "Folder Structure",
+    url: "/folderstructure",
+    icon: FolderArchive
+  }
+  ,
+  {
     title: "Settings",
     url: "#",
     icon: Settings,
@@ -43,35 +54,34 @@ const items = [
     title: "Logout",
     url: "#",
     icon: LogOut,
-    HandlerFunction:async ()=>{
-      clearAllCookies()
-      const response=await axios.get('/api/auth/logout')
-      if(response.status===200){
-        toast({description:"user logged out successfully",className:"bg-green-500 text-white"})
-      }else{
-        toast({description:"please try again",className:"bg-red-500 text-white"})
+    HandlerFunction: async () => {
+      const response = await axios.get('/api/auth/logout')
+      if (response.status === 200) {
+        toast({ description: "user logged out successfully", className: "bg-green-500 text-white" })
+      } else {
+        toast({ description: "please try again", className: "bg-red-500 text-white" })
 
       }
-      setTimeout(()=>{
-        window.location.href='/'
-      },1000)
+      setTimeout(() => {
+        window.location.href = '/'
+      }, 1000)
     }
   },
-  
+
 ]
 
 export function AppSidebar() {
-  const {user}=useGlobalStore()
+  const { user } = useGlobalStore()
   return (
     <Sidebar>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
+          <SidebarGroupLabel>GitTracker</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton onClick={item.title==='Logout'?item.HandlerFunction:()=>{}} asChild>
+                  <SidebarMenuButton onClick={item.title === 'Logout' ? item.HandlerFunction : () => { }} asChild>
                     <a href={item.url}>
                       <item.icon />
                       <span>{item.title}</span>
@@ -80,7 +90,13 @@ export function AppSidebar() {
                 </SidebarMenuItem>
               ))}
               {/* make this more interactive now only forgot password pending i guess */}
-              <p>{user?.email}</p>
+              <div className="flex w-full flex-col items-center justify-center">
+              <Avatar className="w-10 h-10 flex items-center justify-center" >
+                <AvatarImage src={user?.avatar_url} />
+                <AvatarFallback>{user?.email.split('').slice(0, 1)}</AvatarFallback>
+              </Avatar>
+              <p className="text-xs mt-4 font-bold">{user?.email}</p>
+              </div>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

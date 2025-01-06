@@ -46,17 +46,6 @@ export default function Page() {
         console.log(values)
         setLoading(true)
         try {
-            // const email=window.localStorage.getItem('email')
-            // const response = (
-            //     await axios.post('/api/auth/otpverify',
-            //         {otp:values.otp,email:email},
-            //     )
-            // )
-            // console.log(response.data)
-            // if (response.status === 200) {
-            //     toast({ description: "User created successfully", className: "bg-green-500 text-white font-bold" })
-            //     setTimeout(() => window.location.href = '/login',1000)
-            // }
             setLoading(false)
         } catch (error) {
             console.log(error)

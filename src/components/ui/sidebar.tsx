@@ -18,6 +18,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import useGlobalStore from "@/store/GlobalStore"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 const SIDEBAR_COOKIE_NAME = "sidebar:state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
@@ -264,8 +266,9 @@ const SidebarTrigger = React.forwardRef<
   React.ComponentProps<typeof Button>
 >(({ className, onClick, ...props }, ref) => {
   const { toggleSidebar } = useSidebar()
-
+  const {user}=useGlobalStore()
   return (
+    <div className="w-full flex items-center justify-between mt-1">
     <Button
       ref={ref}
       data-sidebar="trigger"
@@ -280,7 +283,16 @@ const SidebarTrigger = React.forwardRef<
     >
       <PanelLeft />
       <span className="sr-only">Toggle Sidebar</span>
+      
     </Button>
+    <div className="flex items-center justify-center" >
+    <Avatar className="w-6 h-6 mr-4" >
+  <AvatarImage src={user?.avatar_url} />
+  <AvatarFallback>{user?.email.split('').slice(0,1)}</AvatarFallback>
+</Avatar>
+      <p className="text-xs font-bold mr-4">{user?.email}</p>
+    </div>
+    </div>
   )
 })
 SidebarTrigger.displayName = "SidebarTrigger"
