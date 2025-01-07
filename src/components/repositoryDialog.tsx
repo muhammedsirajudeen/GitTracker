@@ -25,6 +25,7 @@ interface ExtendedRepo extends Repository{
 }
 import {produce} from "immer"
 import { Repository } from '@/models/Repository'
+import { SearchRepo } from '@/serveractions/SearchRepo'
 export default function RepositoryDialog({setRepositories}:{setRepositories: Dispatch<SetStateAction<ExtendedRepo[]>>}) {
     const [searchQuery, setSearchQuery] = useState('')
     const { toast } = useToast()
@@ -75,6 +76,16 @@ export default function RepositoryDialog({setRepositories}:{setRepositories: Dis
             }
         }
     }
+    async function searchHandler(){
+        setLoading(true)
+        const result=await SearchRepo(searchQuery)
+        console.log(result) 
+        if(result){
+            setRepository(result.items as ExtendedRepo[] ?? [])
+        }
+        setLoading(false)
+    }
+    
     return (
         <Dialog>
             <DialogTrigger asChild>
@@ -89,11 +100,22 @@ export default function RepositoryDialog({setRepositories}:{setRepositories: Dis
                 </DialogHeader>
                 <div className="flex flex-col items-center justify-center space-y-4 h-full">
                     <div className="relative w-full">
-                        <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                        <Search onClick={searchHandler} className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                         <Input
                             placeholder="Search repositories..."
                             value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
+                            onChange={async (e) =>{
+                                setSearchQuery(e.target.value) 
+                                if(e.target.value===""){
+                                    setLoading(true)
+                                    const result=await SearchRepo("")
+                                    if(result){
+                                        setRepository(result.items)
+                                    }
+                                    setLoading(false)
+
+                                }
+                            }}
                             className="pl-8"
                         />
                     </div>
