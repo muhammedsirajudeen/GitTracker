@@ -10,14 +10,15 @@ interface ExtendedUser extends User {
 
 export async function GET(request: Request) {
     try {
+        const searchParams=new URL(request.url).searchParams
+        const page=searchParams.get('page')??"0"
         const cookies = parse(request.headers.get('cookie') || '')
         const access_token = cookies['access_token'] ?? ""
         const user =await  verifyToken(access_token) as ExtendedUser
-        console.log(user)
         if (!user) {
             return NextResponse.json({ message: 'invalid token' }, { status: 401 })
         }
-        const repositories = await RepositoryServiceInstance.getRepoByUser(user.id)
+        const repositories = await RepositoryServiceInstance.getRepoByUser(user.id,parseInt(page))
         const response = NextResponse.json({ message: 'success', repositories: repositories })
         response.headers.set('Cache-Control', 'no-store')
         return response

@@ -4,7 +4,7 @@ import { jwtVerify } from 'jose';
 
 // Define your secret key and token expiration
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secure-secret'; // Use an environment variable in production
-const TOKEN_EXPIRATION = '5m'; // Adjust as needed (e.g., '1h', '7d', etc.)
+const TOKEN_EXPIRATION = '1d'; // Adjust as needed (e.g., '1h', '7d', etc.)
 
 /**
  * Generates a JWT token for a given payload.

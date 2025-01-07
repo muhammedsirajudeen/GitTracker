@@ -13,9 +13,30 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination"
+import axios from "axios"
 
 export default function Home() {
   const [repositories, setRepositories] = useState<ExtendedRepo[]>([])
+  const [page, setPage] = useState(0)
+  async function paginationPrevHandler(){
+    setPage(prev=>{
+      const nextpage=prev-1<0?0:prev-1
+      RepoBasedOnPage(nextpage)
+      return nextpage
+    })
+  }
+  function paginationNextHandler(){
+    setPage(prev=>{
+      const nextpage=prev+1
+      RepoBasedOnPage(nextpage)
+      return nextpage
+    })
+  }
+  async function RepoBasedOnPage(page:number){
+    const response=await axios.get(`/api/repouser?page=${page}`,{withCredentials:true})
+    console.log(response)
+    setRepositories(response.data.repositories)
+  }
   return (
     <div className="w-full py-4 px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center">
       <div className="max-w-7xl mx-auto">
@@ -38,16 +59,18 @@ export default function Home() {
         <Pagination>
           <PaginationContent>
             <PaginationItem>
-              <PaginationPrevious href="#" />
+              <PaginationPrevious onClick={paginationPrevHandler} href="#" />
             </PaginationItem>
             <PaginationItem>
-              <PaginationLink href="#">1</PaginationLink>
+              <PaginationLink href="#">{page}</PaginationLink>
+              <PaginationLink href="#">{page + 1}</PaginationLink>
+              <PaginationLink href="#">{page + 2}</PaginationLink>
             </PaginationItem>
             <PaginationItem>
               <PaginationEllipsis />
             </PaginationItem>
             <PaginationItem>
-              <PaginationNext href="#" />
+              <PaginationNext onClick={paginationNextHandler} href="#" />
             </PaginationItem>
           </PaginationContent>
         </Pagination>

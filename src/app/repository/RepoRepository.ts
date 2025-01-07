@@ -4,12 +4,13 @@ import mongoose, { Model } from "mongoose";
 export interface IRepoRepository {
     addRepo: (repo: Repository) => Promise<Repository | null>
     getRepoByFullName:(fullname:string,owner_id:string)=>Promise<boolean|null>
-    getRepoByUser:(userid:string)=>Promise<Repository[]>
+    getRepoByUser:(userid:string,page?:number)=>Promise<Repository[]>
     deleteRepo:(userid:string)=>Promise<boolean|null>
     
 }
 class RepoRepository implements IRepoRepository {
     _RepoModel: Model<IRepositoryModel>
+    Page_Limit=10
     constructor(RepoModel: Model<IRepositoryModel>) {
         this._RepoModel = RepoModel
     }
@@ -45,8 +46,8 @@ class RepoRepository implements IRepoRepository {
             return null
         }
     }
-    async getRepoByUser (userid: string) {
-        const repositories=await this._RepoModel.find({owner_id:new mongoose.Types.ObjectId(userid)})
+    async getRepoByUser (userid: string,page?:number) {
+        const repositories=await this._RepoModel.find({owner_id:new mongoose.Types.ObjectId(userid)}).limit(this.Page_Limit).skip((page || page===0)?this.Page_Limit*page:this.Page_Limit)
         return repositories
     };
     async deleteRepo (repoid: string) {

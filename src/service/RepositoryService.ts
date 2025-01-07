@@ -4,7 +4,7 @@ import { Repository } from "@/models/Repository";
 interface IRepository {
     addRepo: (repo: Repository) => Promise<Repository | null>
     getRepoByFullName: (fullname: string, owner_id: string) => Promise<boolean | null>
-    getRepoByUser: (userid: string) => Promise<Repository[]>
+    getRepoByUser: (userid: string,page?:number) => Promise<Repository[]>
     deleteRepo:(repoid:string)=>Promise<null|boolean>
 }
 class RepositoryService implements IRepository {
@@ -19,8 +19,8 @@ class RepositoryService implements IRepository {
     async getRepoByFullName(fullname: string, owner_id: string) {
         return this._Repository.getRepoByFullName(fullname, owner_id)
     };
-    async getRepoByUser(userid: string) {
-        const repositories = await this._Repository.getRepoByUser(userid)
+    async getRepoByUser(userid: string,page?:number) {
+        const repositories = await this._Repository.getRepoByUser(userid,page)
         return repositories
     };
     async deleteRepo (repoid: string){
