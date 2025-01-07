@@ -6,6 +6,7 @@ import UserServiceInstance from "@/service/UserService";
 import { generateToken, verifyToken } from "@/lib/jwtHelper";
 import { User } from "@/models/User";
 import { parse } from "cookie";
+import { RedisOtpHelper } from "@/lib/redisHelper";
 
 export interface UserWithId extends User {
   id: string;
@@ -73,6 +74,16 @@ export async function GET(request: NextRequest) {
     // Set cookies
     const responseWithCookie = NextResponse.redirect(new URL('/home', request.url));
     const token = generateToken(newUserBody);
+    const refresh_token=generateToken(newUserBody,'1d')
+    //adding refresh token to the cache
+    await RedisOtpHelper(user.email,refresh_token,'refresh')
+    responseWithCookie.cookies.set('refresh_token', refresh_token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 60 * 60,
+        path: '/',
+    });
+
     console.log(token);
     responseWithCookie.cookies.set('access_token', token, {
       httpOnly: true,

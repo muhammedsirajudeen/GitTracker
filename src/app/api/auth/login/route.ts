@@ -3,6 +3,7 @@ import { generateToken } from "@/lib/jwtHelper"
 import UserServiceInstance from "@/service/UserService"
 import { NextResponse } from "next/server"
 import { UserWithId } from "../github/route"
+import { RedisOtpHelper } from "@/lib/redisHelper"
 
 export async function POST(request: Request) {
     try {
@@ -28,6 +29,16 @@ export async function POST(request: Request) {
             maxAge: 60 * 60,
             path: '/',
         });
+        const refresh_token=generateToken({email:user.email,id:user.id},'1d')
+        //adding refresh token to the cache
+        await RedisOtpHelper(user.email,refresh_token,'refresh')
+        response.cookies.set('refresh_token', refresh_token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            maxAge: 60 * 60,
+            path: '/',
+        });
+
 
         return response;
     } catch (error) {

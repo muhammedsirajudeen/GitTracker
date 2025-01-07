@@ -28,7 +28,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  //here fetch the details of
+  
   return (
     <html lang="en">
       <body

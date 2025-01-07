@@ -6,6 +6,21 @@ import { useEffect } from "react"
 
 export default function UserComponent(){
     const {setUser}=useGlobalStore()
+    useEffect(() => {
+        const intervalId = setInterval(async () => {
+            //here setup the refresh setup
+          try {
+              const response=(
+              await axios.get('/api/auth/refresh',{withCredentials:true})
+            )
+            console.log(response)
+            
+          } catch (error) {
+            console.log(error)
+          }
+        }, 270000); 
+        return () => clearInterval(intervalId);
+      }, []); //
     useEffect(()=>{
         async function UserFetcher(){
             try {
