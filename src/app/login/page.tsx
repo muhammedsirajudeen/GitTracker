@@ -19,6 +19,7 @@ import axios, { AxiosError } from "axios";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 import PulseLoader from "react-spinners/ClipLoader";
+import { ForgotPassword } from "@/serveractions/ForgotPassword";
 
 const formSchema = z.object({
     email: z.string().min(2, {
@@ -67,14 +68,18 @@ export default function LoginForm() {
         }
 
     }
-    function forgotHandler(){
+    async function forgotHandler(){
         const email=form.getValues().email
         if(!email){
             toast({description:'Enter a email first',className:'bg-orange-500 text-white'})
+            return
         }
         window.localStorage.setItem('forgot-email',email)
         //send email here and send the magic link and also add it to the cache and verify it that way
-        window.location.href='/forgot'
+        toast({description:"Check your email",className:"bg-blue-500 text-white"})
+        const status=await ForgotPassword(email)
+        console.log(status)
+        setTimeout(()=>window.location.href='/forgot',1000)
     }
     return (
         <div className="flex items-center justify-center flex-col">

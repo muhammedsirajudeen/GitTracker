@@ -20,6 +20,8 @@ import axios, { AxiosError } from "axios";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 import PulseLoader from "react-spinners/ClipLoader";
+import { useRouter } from "next/router"
+import { redirect } from "next/navigation"
 
 const formSchema = z.object({
     password: z.string()
@@ -32,6 +34,11 @@ const formSchema = z.object({
 
 
 export default function Page() {
+    let code:null|string=null
+    if(typeof window!=="undefined"){
+        const url=new URL(window.location.href)
+        code=url.searchParams.get('code')
+    }
     const { toast } = useToast()
     const [loading,setLoading]=useState(false)
     const form = useForm<z.infer<typeof formSchema>>({
@@ -43,9 +50,28 @@ export default function Page() {
     })
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log(values)
         setLoading(true)
+        console.log(values)
+        if(values.password!==values.confirmpassword){
+            toast({description:'Both passwords must match',className:"bg-red-500 text-white"})
+            setLoading(false)
+            return
+        }
+        
         try {
+            const response=await axios.post('/api/auth/forgot',
+                {
+                    email:window.localStorage.getItem('forgot-email'),
+                    uuid:code,
+                    password:values.confirmpassword
+                }
+            )
+            if(response.status===200){
+                toast({description:'password changed successfully',className:'bg-green-500 text-white'})
+                // setTimeout(()=>{
+                //     window.location.href='/login'
+                // },1000)
+            }
             setLoading(false)
         } catch (error) {
             console.log(error)
@@ -57,9 +83,6 @@ export default function Page() {
                 toast({ description: "please try again", className: "bg-red-500 text-white font-bold" })
             }
         }
-
-
-
     }
 
     return (

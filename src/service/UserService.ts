@@ -5,6 +5,7 @@ interface IUserService {
     getUserByEmail: (email: string) => Promise<User | null>
     InsertUser: (user: User) => Promise<User|null>
     VerifyUser:(email:string)=>Promise<boolean>
+    changePassword:(userid:string,password:string)=>Promise<boolean>
 }
 class UserService implements IUserService {
     _UserRepo: IUserRepository
@@ -22,7 +23,11 @@ class UserService implements IUserService {
     async VerifyUser(email:string){
         const status=await this._UserRepo.VerifyUser(email)
         return status
-    }
+    };
+    async changePassword (userid: string, password: string) {
+        return this._UserRepo.changePassword(userid,password)
+    };
+
 }
 const UserServiceInstance = new UserService(UserRepostoryInstance)
 export default UserServiceInstance

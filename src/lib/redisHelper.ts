@@ -18,25 +18,38 @@ async function createRedisClient() {
   return client;
 }
 
-export async function RedisOtpHelper(email:string,otp:number){
-    const client=await createRedisClient()
-    try {
-        client.set(`otp-${email}`,otp)
-        console.log(`OTP ADDED TO CACHE ${otp}`)
-        return true
-    } catch (error) {
-        console.log(error)
-        return null
-    }
+export async function RedisOtpHelper(email: string, otp: number | string, type?: string) {
+  const client = await createRedisClient()
+  try {
+    //dont forget to set expiry here
+    client.set(`${type ? type : 'otp'}-${email}`, otp)
+    console.log(`OTP ADDED TO CACHE ${otp}`)
+    return true
+  } catch (error) {
+    console.log(error)
+    return null
+  }
 }
 
-export async function RedisOtpGetter(email:string){
-    const client=await createRedisClient()
-    try {
-        const otp=await client.get(`otp-${email}`)
-        return otp??null
-    } catch (error) {
-        console.log(error)
-        return null
-    }
+export async function RedisOtpGetter(email: string, type?: string) {
+  const client = await createRedisClient()
+  try {
+    const otp = await client.get(`${type ? type : 'otp'}-${email}`)
+    return otp ?? null
+  } catch (error) {
+    console.log(error)
+    return null
+  }
 }
+
+export async function RedisGenericRemover(email:string,type:string){
+  const client=await createRedisClient()
+  try {
+      await client.del(`${type}-${email}`)
+      return true
+  } catch (error) {
+    console.log(error)
+    return null
+  }
+}
+

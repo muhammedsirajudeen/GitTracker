@@ -1,3 +1,4 @@
+import { hashPassword } from "@/lib/bcryptHelper"
 import UserModel, { IUser, User } from "@/models/User"
 import { Model } from "mongoose"
 
@@ -5,6 +6,7 @@ export interface IUserRepository {
     getUserByEmail: (email: string) => Promise<User | null>
     InsertUser: (user: User) => Promise<User|null>
     VerifyUser: (user: string) => Promise<boolean>
+    changePassword:(userid:string,password:string)=>Promise<boolean>
 }
 
 
@@ -42,6 +44,21 @@ class UserRepository implements IUserRepository {
                 return true
             }
             return false
+        } catch (error) {
+            console.log(error)
+            return false
+        }
+    };
+    async changePassword (userid: string, password: string) {
+        try {
+            const user=await this._userModel.findById(userid)    
+            if(!user){
+                return false
+            }
+            user.password=await hashPassword(password)
+            await user.save()
+            return true
+
         } catch (error) {
             console.log(error)
             return false
