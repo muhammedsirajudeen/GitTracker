@@ -14,10 +14,12 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination"
 import axios from "axios"
+import { toast } from "@/hooks/use-toast"
 
 export default function Home() {
   const [repositories, setRepositories] = useState<ExtendedRepo[]>([])
   const [page, setPage] = useState(0)
+  const [search,setSearch]=useState("")
   async function paginationPrevHandler(){
     setPage(prev=>{
       const nextpage=prev-1<0?0:prev-1
@@ -37,16 +39,37 @@ export default function Home() {
     console.log(response)
     setRepositories(response.data.repositories)
   }
+  async function searchHandler(searchOptional?:string|null){
+    if(!search){
+      toast({description:'please enter a search term',className:"bg-orange-500 text-white"})
+      return
+    }
+    try {
+      const response=await axios.get(`/api/repouser?page=${page}&name=${searchOptional===null?search:searchOptional}`)
+      setRepositories(response.data.repositories)
+      
+    } catch (error) {
+      console.log(error)
+      toast({description:'please try again',className:"bg-red-500 text-white"})
+    }
+  }
   return (
     <div className="w-full py-4 px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <div className="relative w-full sm:w-auto">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+            <Search onClick={()=>searchHandler(null)}  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
             <Input
               type="search"
               placeholder="Search for repository"
               className="pl-10 pr-4 py-2 w-full sm:w-96 text-xs border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              onChange={(e)=>{
+                setSearch(e.target.value)
+                if(e.target.value===""){
+                  searchHandler("")
+                }
+              }}
+              value={search}
             />
           </div>
           <RepositoryDialog setRepositories={setRepositories} />

@@ -1,6 +1,6 @@
 
 import { Repository } from "@/models/Repository"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./ui/card"
 import { Badge } from "./ui/badge"
 import { Delete, Ellipsis, Eye, GitFork, Settings, Star, Trash2, User } from "lucide-react"
 import useSWR from 'swr';
@@ -122,7 +122,26 @@ export default function RepositoryListing({ repositories, setRepositories }: { r
                         </CardContent>
                     </Card>
                 ))
+                
+                
             }
+            {repositories.length===0&& !isLoading &&
+            (
+                <Card className="w-full max-w-md mx-auto">
+                <CardHeader className="text-center">
+                  <CardTitle className="text-2xl font-bold">No Repositories Found</CardTitle>
+                </CardHeader>
+                <CardContent className="text-center">
+                  <GitFork className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
+                  <p className="text-muted-foreground mb-4">
+                    It looks like there are no repositories associated with this account yet.
+                  </p>
+                </CardContent>
+                <CardFooter className="flex justify-center">
+                  <Button variant="outline">Refresh Repositories</Button>
+                </CardFooter>
+              </Card>            )
+        }
     <Dialog open={dialog}  >
       <DialogContent className="bg-black" >
         <DialogHeader>
