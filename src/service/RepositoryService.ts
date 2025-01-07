@@ -6,6 +6,7 @@ interface IRepository {
     getRepoByFullName: (fullname: string, owner_id: string) => Promise<boolean | null>
     getRepoByUser: (userid: string,name:string,page?:number,) => Promise<Repository[]>
     deleteRepo:(repoid:string)=>Promise<null|boolean>
+    getRepoById:(userid:string)=>Promise<Repository|null>
 }
 class RepositoryService implements IRepository {
     _Repository: IRepoRepository
@@ -25,6 +26,9 @@ class RepositoryService implements IRepository {
     };
     async deleteRepo (repoid: string){
         return this._Repository.deleteRepo(repoid)
+    };
+    async getRepoById (userid: string) {
+        return this._Repository.getRepoById(userid)
     };
 }
 

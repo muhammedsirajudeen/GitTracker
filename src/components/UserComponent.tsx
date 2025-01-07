@@ -10,10 +10,9 @@ export default function UserComponent(){
         const intervalId = setInterval(async () => {
             //here setup the refresh setup
           try {
-              const response=(
+              (
               await axios.get('/api/auth/refresh',{withCredentials:true})
             )
-            console.log(response)
             
           } catch (error) {
             console.log(error)
@@ -26,7 +25,6 @@ export default function UserComponent(){
             try {
                 const response=await axios.get('/api/auth/verify',{withCredentials:true})
                 if(response.status===200){
-                    console.log(response.data)
                     const user=response.data.user as UserWithId
                     setUser(user)
                 }                

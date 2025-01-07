@@ -6,6 +6,7 @@ export interface IRepoRepository {
     getRepoByFullName:(fullname:string,owner_id:string)=>Promise<boolean|null>
     getRepoByUser:(userid:string,name:string,page?:number)=>Promise<Repository[]>
     deleteRepo:(userid:string)=>Promise<boolean|null>
+    getRepoById:(id:string)=>Promise<Repository|null>
     
 }
 class RepoRepository implements IRepoRepository {
@@ -63,6 +64,10 @@ class RepoRepository implements IRepoRepository {
             console.log(error)
             return null
         }
+    };
+    async getRepoById (id: string) {
+        const repository=this._RepoModel.findById(id)
+        return repository
     };
 
 }

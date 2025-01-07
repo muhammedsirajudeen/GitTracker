@@ -1,5 +1,7 @@
-export default function RepoPage(){
+import RepoPage from "@/components/RepoPageComponent";
+
+export default function Page(){
     return(
-        <p>indi repo</p>
+        <RepoPage/>
     )
 }
