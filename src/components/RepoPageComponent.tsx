@@ -8,10 +8,13 @@ import { Badge } from "./ui/badge"
 import { Skeleton } from "./ui/skeleton"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Bug, CheckSquare, Award, MessageSquare, FolderTree } from 'lucide-react'
+import Issues from "./tabs/Issues"
+import { useState } from "react"
 
 export default function RepoPage() {
     const { id } = useParams()
     const { data, isLoading } = useSWR(`/api/repository/${id}`, fetcher);
+    const [tab, seTab] = useState('issues')
     const repo = data?.repository
     return (
         <>
@@ -19,6 +22,7 @@ export default function RepoPage() {
                 <Tabs defaultValue="issues" className="w-full">
                     <TabsList className="grid w-full grid-cols-2 lg:grid-cols-5 h-auto bg-black border border-gray-800">
                         <TabsTrigger
+                            onClick={() => seTab('issues')}
                             value="issues"
                             className="flex items-center justify-center py-2 px-4 text-gray-400 hover:text-white data-[state=active]:text-white data-[state=active]:bg-gray-800 rounded-sm transition-colors duration-200"
                         >
@@ -27,6 +31,7 @@ export default function RepoPage() {
                         </TabsTrigger>
                         <TabsTrigger
                             value="tasks"
+                            onClick={() => seTab('tasks')}
                             className="flex items-center justify-center py-2 px-4 text-gray-400 hover:text-white data-[state=active]:text-white data-[state=active]:bg-gray-800 rounded-sm transition-colors duration-200"
                         >
                             <CheckSquare className="w-4 h-4 mr-2" />
@@ -34,6 +39,7 @@ export default function RepoPage() {
                         </TabsTrigger>
                         <TabsTrigger
                             value="bounty"
+                            onClick={() => seTab('bounty')}
                             className="flex items-center justify-center py-2 px-4 text-gray-400 hover:text-white data-[state=active]:text-white data-[state=active]:bg-gray-800 rounded-sm transition-colors duration-200"
                         >
                             <Award className="w-4 h-4 mr-2" />
@@ -41,6 +47,7 @@ export default function RepoPage() {
                         </TabsTrigger>
                         <TabsTrigger
                             value="talk"
+                            onClick={() => seTab('talk')}
                             className="flex items-center justify-center py-2 px-4 text-gray-400 hover:text-white data-[state=active]:text-white data-[state=active]:bg-gray-800 rounded-sm transition-colors duration-200"
                         >
                             <MessageSquare className="w-4 h-4 mr-2" />
@@ -48,6 +55,7 @@ export default function RepoPage() {
                         </TabsTrigger>
                         <TabsTrigger
                             value="structure"
+                            onClick={() => seTab('structure')}
                             className="flex items-center justify-center py-2 px-4 text-gray-400 hover:text-white data-[state=active]:text-white data-[state=active]:bg-gray-800 rounded-sm transition-colors duration-200"
                         >
                             <FolderTree className="w-4 h-4 mr-2" />
@@ -96,6 +104,21 @@ export default function RepoPage() {
                             </CardContent>
                         </Card>
                     </div>
+            }
+            {
+                tab === 'issues' && <Issues />
+            }
+            {
+                tab === 'tasks' && <div>Tasks</div>
+            }
+            {
+                tab === 'bounty' && <div>Bounty</div>
+            }
+            {
+                tab === 'talk' && <div>Talk</div>
+            }
+            {
+                tab === 'structure' && <div>Structure</div>
             }
         </>
 

@@ -28,7 +28,11 @@ import {
 export interface ExtendedRepo extends Repository {
     _id: string
 }
-export const fetcher = (url: string) => fetch(url).then((res) => res.json());
+export const fetcher = (url: string) => fetch(url).then(async (res) => {
+    const data=await res.json()
+    data.status=res.status
+    return data
+});
 
 
 

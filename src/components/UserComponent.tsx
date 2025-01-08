@@ -17,7 +17,7 @@ export default function UserComponent(){
           } catch (error) {
             console.log(error)
           }
-        }, 270000); 
+        }, 100000); 
         return () => clearInterval(intervalId);
       }, []); //
     useEffect(()=>{
