@@ -21,6 +21,15 @@ interface IssueResponse {
     issues: GitHubIssue[]
 }
 
+import {
+    Pagination,
+    PaginationContent,
+    PaginationEllipsis,
+    PaginationItem,
+    PaginationLink,
+    PaginationNext,
+    PaginationPrevious,
+} from "@/components/ui/pagination"
 
 export default function Issues() {
     const [expandedIssue, setExpandedIssue] = useState<number | null>(null)
@@ -54,7 +63,7 @@ export default function Issues() {
                 )
             }
             {isLoading && (
-                
+
                 <div className="flex flex-col items-center justify-center mt-10 ">
                     {
                         new Array(10).fill(0).map((_, index) => (
@@ -67,7 +76,7 @@ export default function Issues() {
                             </div>
                         ))
                     }
-                    </div>            
+                </div>
             )}
             {
                 data?.status === HttpStatus.OK && (
@@ -135,6 +144,23 @@ export default function Issues() {
                     </div>
                 )
             }
+            <Pagination className="fixed bottom-0" >
+                <PaginationContent>
+                    <PaginationItem>
+                        <PaginationPrevious href="#" />
+                    </PaginationItem>
+                    <PaginationItem>
+                        <PaginationLink href="#">1</PaginationLink>
+                    </PaginationItem>
+                    <PaginationItem>
+                        <PaginationEllipsis />
+                    </PaginationItem>
+                    <PaginationItem>
+                        <PaginationNext href="#" />
+                    </PaginationItem>
+                </PaginationContent>
+            </Pagination>
+
         </>
     )
 }
