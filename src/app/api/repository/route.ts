@@ -25,7 +25,7 @@ export async function GET(request: Request) {
         if (!github_token) {
             return NextResponse.json({ message: 'github token missing' }, { status: 401 })
         }
-        const githubApiUrl = 'https://api.github.com/user/repos?visibility=all&per_page=100';
+        const githubApiUrl = 'https://api.github.com/user/repos?visibility=all&per_page=100&affiliation=owner';
         try {
             const response = await axios.get(githubApiUrl, {
                 headers: {
