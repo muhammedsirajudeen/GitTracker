@@ -22,6 +22,8 @@ import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 import PulseLoader from "react-spinners/ClipLoader";
 import { HttpStatus } from "@/lib/HttpStatus";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 
 const formSchema = z.object({
     email: z.string()
@@ -80,64 +82,89 @@ export default function SignupForm() {
     }
 
     return (
-        <div className="flex items-center justify-center flex-col">
+        <div className="flex items-center justify-center min-h-screen">
+        <Card className="w-full max-w-md">
+          <CardHeader className="space-y-1">
+            <CardTitle className="text-2xl font-bold text-center">SIGNUP</CardTitle>
+            <CardDescription className="text-center">
+              Create an account to get started
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 flex items-center justify-center flex-col mt-60">
-                    <h1 className="font-bold" >SIGNUP</h1>
-                    <FormField
-                        control={form.control}
-                        name="email"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Email</FormLabel>
-                                <FormControl>
-                                    <Input className="w-72" placeholder="Enter Your email" {...field} />
-                                </FormControl>
-                                <FormDescription>
-                                    Enter your email address.
-                                </FormDescription>
-                                <FormMessage />
-                            </FormItem>
-                        )}
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter your email" {...field} />
+                      </FormControl>
+                      <FormDescription>
+                        Enter your email address.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Password</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter your password" type="password" {...field} />
+                      </FormControl>
+                      <FormDescription>
+                        Please enter a strong password to continue.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button 
+                  disabled={loading} 
+                  className="w-full" 
+                  type="submit"
+                >
+                  {!loading ? (
+                    "Sign Up"
+                  ) : (
+                    <PulseLoader
+                      color={"black"}
+                      loading={loading}
+                      size={8}
+                      aria-label="Loading Spinner"
+                      data-testid="loader"
                     />
-                    <FormField
-                        control={form.control}
-                        name="password"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Password</FormLabel>
-                                <FormControl>
-                                    <Input className="w-72" placeholder="Enter your password" type="password" {...field} />
-                                </FormControl>
-                                <FormDescription>
-                                    Please enter a strong password to continue.
-                                </FormDescription>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <Button disabled={loading} style={{ borderRadius: "5px" }} className="rounded-md" type="submit">
-                        {!loading?
-                        <p>Submit</p>
-                        :
-                        <PulseLoader
-                        color={"black"}
-                        loading={loading}
-                        size={30}
-                        aria-label="Loading Spinner"
-                        data-testid="loader"
-                      />                        }
-
-                    </Button>
-                </form>
+                  )}
+                </Button>
+              </form>
             </Form>
-            <hr className="text-gray-600 w-96 mt-10" />
-            <p className="text-xs mt-4" >continue to <Link className="font-bold text-blue-700" href={"/login"} >login</Link></p>
-            <Button onClick={() => {
-                window.location.href = `https://github.com/login/oauth/authorize?client_id=Ov23li0zclDZ7XsACEGa&redirect_uri=http://localhost:3000/api/auth/github&scope=repo`
-            }} style={{ borderRadius: "5px" }} className="mt-4 bg-black text-white" >Continue With Github
-                <Image width={30} height={30} src="/github.png" alt="github login" />
+          </CardContent>
+          <CardFooter className="flex flex-col items-center space-y-4">
+            <div className="text-sm text-gray-600">
+              Already have an account?{" "}
+              <Link href="/login" className="font-medium text-primary hover:underline">
+                Login
+              </Link>
+            </div>
+            <Separator className="my-4" />
+            <Button
+              onClick={() => {
+                window.location.href = `https://github.com/login/oauth/authorize?client_id=Ov23li0zclDZ7XsACEGa&redirect_uri=http://localhost:3000/api/auth/github&scope=repo`;
+              }}
+              variant="outline"
+              className="w-full"
+            >
+              <Image width={20} height={20} src="/github.png" alt="GitHub logo" className="mr-2" />
+              Continue with GitHub
             </Button>
-        </div>
+          </CardFooter>
+        </Card>
+      </div>
     )
 }

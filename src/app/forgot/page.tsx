@@ -20,8 +20,8 @@ import axios, { AxiosError } from "axios";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 import PulseLoader from "react-spinners/ClipLoader";
-import { useRouter } from "next/router"
-import { redirect } from "next/navigation"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Separator } from "@/components/ui/separator"
 
 const formSchema = z.object({
     password: z.string()
@@ -86,59 +86,79 @@ export default function Page() {
     }
 
     return (
-        <div className="flex items-center justify-center flex-col">
+        <div className="flex items-center justify-center min-h-screen">
+        <Card className="w-full max-w-md">
+          <CardHeader className="space-y-1">
+            <CardTitle className="text-2xl font-bold text-center">CHANGE YOUR PASSWORD</CardTitle>
+            <CardDescription className="text-center">
+              Enter your new password below
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 flex items-center justify-center flex-col mt-60">
-                    <h1 className="font-bold" >CHANGE YOUR PASSWORD</h1>
-                    <FormField
-                        control={form.control}
-                        name="password"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Password</FormLabel>
-                                <FormControl>
-                                    <Input type="password" className="w-72" placeholder="Enter your Password" {...field} />
-                                </FormControl>
-                                <FormDescription>
-                                    Enter your new password.
-                                </FormDescription>
-                                <FormMessage />
-                            </FormItem>
-                        )}
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>New Password</FormLabel>
+                      <FormControl>
+                        <Input type="password" placeholder="Enter your new password" {...field} />
+                      </FormControl>
+                      <FormDescription>
+                        Enter your new password.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="confirmpassword"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Confirm Password</FormLabel>
+                      <FormControl>
+                        <Input type="password" placeholder="Confirm your new password" {...field} />
+                      </FormControl>
+                      <FormDescription>
+                        Confirm your new password.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button 
+                  disabled={loading} 
+                  className="w-full" 
+                  type="submit"
+                >
+                  {!loading ? (
+                    "Change Password"
+                  ) : (
+                    <PulseLoader
+                      color={"white"}
+                      loading={loading}
+                      size={8}
+                      aria-label="Loading Spinner"
+                      data-testid="loader"
                     />
-                    <FormField
-                        control={form.control}
-                        name="confirmpassword"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Confirm Password</FormLabel>
-                                <FormControl>
-                                    <Input type="password" className="w-72" placeholder="Confirm your password" {...field} />
-                                </FormControl>
-                                <FormDescription>
-                                    Confirm your password.
-                                </FormDescription>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <Button disabled={loading} style={{ borderRadius: "5px" }} className="rounded-md" type="submit">
-                        {!loading?
-                        <p>Submit</p>
-                        :
-                        <PulseLoader
-                        color={"black"}
-                        loading={loading}
-                        size={30}
-                        aria-label="Loading Spinner"
-                        data-testid="loader"
-                      />                        }
-
-                    </Button>
-                </form>
+                  )}
+                </Button>
+              </form>
             </Form>
-            <hr className="text-gray-600 w-96 mt-10" />
-            <p className="text-xs mt-4" >continue to <Link className="font-bold text-blue-700" href={"/login"} >login</Link></p>
-        </div>
+          </CardContent>
+          <CardFooter className="flex flex-col items-center">
+            <Separator className="my-4" />
+            <p className="text-sm text-gray-600">
+              Return to{" "}
+              <Link href="/login" className="font-medium text-primary hover:underline">
+                Login
+              </Link>
+            </p>
+          </CardFooter>
+        </Card>
+      </div>
     )
 }

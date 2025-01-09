@@ -19,6 +19,8 @@ import axios, { AxiosError } from "axios"
 import { useToast } from "@/hooks/use-toast"
 import { useState, useEffect } from "react"
 import { ClipLoader } from "react-spinners"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Separator } from "@/components/ui/separator"
 
 const formSchema = z.object({
     otp: z.string()
@@ -114,60 +116,84 @@ export default function SignupForm() {
     }
 
     return (
-        <div className="flex items-center justify-center flex-col">
+        <div className="flex items-center justify-center min-h-screen ">
+        <Card className="w-full max-w-md">
+          <CardHeader className="space-y-1">
+            <CardTitle className="text-2xl font-bold text-center">Verify OTP</CardTitle>
+            <CardDescription className="text-center">
+              Enter the OTP sent to your device
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 flex items-center justify-center flex-col mt-60">
-                    <h1 className="font-bold">VERIFY</h1>
-                    <FormField
-                        control={form.control}
-                        name="otp"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>OTP</FormLabel>
-                                <FormControl>
-                                    <Input type="number" className="w-72" placeholder="Enter Your OTP" {...field} />
-                                </FormControl>
-                                <FormDescription>
-                                    Enter your OTP.
-                                </FormDescription>
-                                <FormMessage />
-                            </FormItem>
-                        )}
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="otp"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>OTP</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="number" 
+                          placeholder="Enter Your OTP" 
+                          className="text-center text-lg tracking-widest" 
+                          {...field} 
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Enter the 6-digit code sent to your device.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button 
+                  disabled={loading} 
+                  className="w-full" 
+                  type="submit"
+                >
+                  {!loading ? (
+                    "Verify OTP"
+                  ) : (
+                    <ClipLoader
+                      color={"black"}
+                      loading={loading}
+                      size={24}
+                      aria-label="Loading Spinner"
+                      data-testid="loader"
                     />
-                    <Button disabled={loading} style={{ borderRadius: "5px" }} className="rounded-md" type="submit">
-                        {!loading ? (
-                            <p>Submit</p>
-                        ) : (
-                            <ClipLoader
-                                color={"black"}
-                                loading={loading}
-                                size={30}
-                                aria-label="Loading Spinner"
-                                data-testid="loader"
-                            />
-                        )}
-                    </Button>
-                    <div className="flex items-center space-x-2">
-                        <p className="text-sm">
-                            {timer > 0 ? `Resend OTP in ${timer}s` : "Didn't receive OTP?"}
-                        </p>
-                        <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={resendOTP}
-                            disabled={!canResend || loading}
-                        >
-                            Resend
-                        </Button>
-                    </div>
-                </form>
+                  )}
+                </Button>
+              </form>
             </Form>
-            <hr className="text-gray-600 w-96 mt-10" />
-            <p className="text-xs mt-4">
-                Continue to <Link className="font-bold text-blue-700" href="/login">login</Link>
+            <div className="mt-4 text-center">
+              <p className="text-sm text-gray-600">
+                {timer > 0 ? `Resend OTP in ${timer}s` : "Didn't receive OTP?"}
+              </p>
+              <Button
+                type="button"
+                variant="link"
+                size="sm"
+                onClick={resendOTP}
+                disabled={!canResend || loading}
+                className="mt-1"
+              >
+                Resend OTP
+              </Button>
+            </div>
+          </CardContent>
+          <CardFooter className="flex flex-col items-center">
+            <Separator className="my-4" />
+            <p className="text-sm text-gray-600">
+              Return to{" "}
+              <Link href="/login" className="font-medium text-primary hover:underline">
+                Login
+              </Link>
             </p>
-        </div>
+          </CardFooter>
+        </Card>
+      </div>
     )
 }
 

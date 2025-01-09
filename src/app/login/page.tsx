@@ -2,7 +2,6 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import Image from 'next/image';
 
 import { Button } from "@/components/ui/button"
 import {
@@ -21,6 +20,9 @@ import { useState } from "react";
 import PulseLoader from "react-spinners/ClipLoader";
 import { ForgotPassword } from "@/serveractions/ForgotPassword";
 import { loginFormSchema } from "@/lib/formSchema";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { Github, User } from "lucide-react";
 
 
 export default function LoginForm() {
@@ -75,63 +77,96 @@ export default function LoginForm() {
         setTimeout(()=>window.location.href='/forgot',1000)
     }
     return (
-        <div className="flex items-center justify-center flex-col">
+        <div className="flex items-center justify-center min-h-screen">
+        <Card className="w-full max-w-md">
+          <CardHeader className="space-y-1">
+            <CardTitle className="text-2xl font-bold text-center">Login</CardTitle>
+            <CardDescription className="text-center">
+              Enter your credentials to access your account
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 flex items-center justify-center flex-col mt-64">
-                    <FormField
-                        control={form.control}
-                        name="email"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Email</FormLabel>
-                                <FormControl>
-                                    <Input className="w-72" placeholder="Enter Your email" {...field} />
-                                </FormControl>
-                                <FormDescription>
-                                    This is your public display name.
-                                </FormDescription>
-                                <FormMessage />
-                            </FormItem>
-                        )}
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter your email" {...field} />
+                      </FormControl>
+                      <FormDescription>
+                        This is your account email address.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Password</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter your password" type="password" {...field} />
+                      </FormControl>
+                      <FormDescription>
+                        Enter your account password.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <div className="flex justify-end">
+                  <Button
+                    type="button"
+                    variant="link"
+                    size="sm"
+                    onClick={forgotHandler}
+                    className="text-sm text-gray-600"
+                  >
+                    Forgot password?
+                  </Button>
+                </div>
+                <Button 
+                  disabled={loading} 
+                  className="w-full" 
+                  type="submit"
+                >
+                  {!loading ? (
+                    <><User/><p>Login</p></>
+                  ) : (
+                    <PulseLoader
+                      color={"black"}
+                      loading={loading}
+                      size={8}
+                      aria-label="Loading Spinner"
+                      data-testid="loader"
                     />
-                    <FormField
-                        control={form.control}
-                        name="password"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Password</FormLabel>
-                                <FormControl>
-                                    <Input className="w-72" placeholder="Enter your password" type="password" {...field} />
-                                </FormControl>
-                                <FormDescription>
-                                    Please enter a strong password to continue.
-                                </FormDescription>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <button type="button" className="bg-black w-full flex justify-end text-end text-xs text-gray-300" onClick={forgotHandler}>forgot password</button>
-                    <Button disabled={loading} style={{ borderRadius: "5px" }} className="rounded-md" type="submit">
-                        {!loading ?
-                            <p>Submit</p>
-                            :
-                            <PulseLoader
-                                color={"black"}
-                                loading={loading}
-                                size={30}
-                                aria-label="Loading Spinner"
-                                data-testid="loader"
-                            />}
-
-                    </Button>
-                </form>
+                  )}
+                </Button>
+              </form>
             </Form>
-            <hr className="text-gray-600 w-96 mt-10" />
-            <Button onClick={() => {
+          </CardContent>
+          <CardFooter className="flex flex-col items-center">
+            <Separator className="my-4" />
+            <Button
+              onClick={() => {
                 window.location.href = `https://github.com/login/oauth/authorize?client_id=Ov23li0zclDZ7XsACEGa&redirect_uri=http://localhost:3000/api/auth/github&scope=repo`;
-            }} style={{ borderRadius: "5px" }} className="mt-10 bg-black text-white" >Continue With Github
-                <Image width={30} height={30} src="/github.png" alt="github login" />
+              }}
+              variant="outline"
+              className="w-full"
+            >
+              {/* <Image width={20} height={20} src="/github.png" alt="GitHub logo" className="mr-2" /> */}
+              <Github/>
+              Continue with GitHub
             </Button>
-        </div>
+          </CardFooter>
+        </Card>
+      </div>
+  
     )
 }
