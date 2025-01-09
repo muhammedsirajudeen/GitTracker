@@ -7,6 +7,7 @@ interface Bounty {
     description: string;
     title: string;
     repositoryId: Schema.Types.ObjectId;
+    bountyAmount: number; // Added bountyAmount field
 }
 
 interface IBounty extends Document, Bounty {}
@@ -38,6 +39,10 @@ const BountySchema = new Schema<IBounty>({
         type: Schema.Types.ObjectId,
         ref: 'Repository',
         required: true
+    },
+    bountyAmount: {
+        type: Number,
+        required: true // Added bountyAmount field
     }
 }, {
     timestamps: true

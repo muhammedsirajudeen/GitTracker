@@ -23,6 +23,9 @@ import {
     FormMessage,
 } from "@/components/ui/form"
 import { bountyFormSchema } from '@/lib/formSchema';
+import axios, { AxiosError } from 'axios';
+import { HttpStatus } from '@/lib/HttpStatus';
+import { toast } from '@/hooks/use-toast';
 
 
 
@@ -43,6 +46,26 @@ const BountyForm: React.FC = () => {
 
     const onSubmit = (data: BountyFormValues) => {
         console.log(data);
+
+        const submitBounty = async () => {
+            try {
+                const response = await axios.post('/api/bounty/id', data, { withCredentials: true });
+                console.log('Bounty submitted successfully:', response.data);
+            } catch (error) {
+                const axiosError = error as AxiosError
+                if (axiosError.status === HttpStatus.BAD_REQUEST) {
+                    toast({ description: "Invalid data submitted", className: "bg-red-500 text-white" })
+                } else if (axiosError.status === HttpStatus.INTERNAL_SERVER_ERROR) {
+                    toast({ description: "Internal server error", className: "bg-red-500 text-white" })
+                } else if (axiosError.status === HttpStatus.CONFLICT) {
+                    toast({ description: "Bounty already exists", className: "bg-red-500 text-white" })
+                } else {
+                    toast({ description: "Error submitting bounty", className: "bg-red-500 text-white" })
+                }
+            }
+        };
+
+        submitBounty();
     };
 
     return (
@@ -131,7 +154,7 @@ const BountyForm: React.FC = () => {
                                 <FormItem>
                                     <FormLabel>Assignees</FormLabel>
                                     <FormControl>
-                                        <Input 
+                                        <Input
                                             placeholder="Comma-separated list of assignee IDs"
                                             {...field}
                                             onChange={(e) => field.onChange(e.target.value.split(',').map(id => id.trim()))}
@@ -140,6 +163,19 @@ const BountyForm: React.FC = () => {
                                     <FormDescription>
                                         Enter assignee IDs separated by commas
                                     </FormDescription>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="bountyAmount"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Bounty Amount</FormLabel>
+                                    <FormControl>
+                                        <Input type="number" placeholder="Enter bounty amount" {...field} />
+                                    </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
