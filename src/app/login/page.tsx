@@ -20,28 +20,21 @@ import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 import PulseLoader from "react-spinners/ClipLoader";
 import { ForgotPassword } from "@/serveractions/ForgotPassword";
+import { loginFormSchema } from "@/lib/formSchema";
 
-const formSchema = z.object({
-    email: z.string().min(2, {
-        message: "Username must be at least 2 characters.",
-    }),
-    password: z.string().min(2, {
-        message: "Username must be at least 2 characters.",
-    }),
-})
 
 export default function LoginForm() {
     const { toast } = useToast()
     const [loading, setLoading] = useState(false)
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+    const form = useForm<z.infer<typeof loginFormSchema>>({
+        resolver: zodResolver(loginFormSchema),
         defaultValues: {
             email: "",
             password: ""
         },
     })
 
-    async function onSubmit(values: z.infer<typeof formSchema>) {
+    async function onSubmit(values: z.infer<typeof loginFormSchema>) {
         setLoading(true)
         console.log(values)
         try {

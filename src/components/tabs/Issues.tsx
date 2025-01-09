@@ -5,7 +5,7 @@ import { fetcher } from "../RepositoryListing"
 import { HttpStatus } from "@/lib/HttpStatus"
 import LinkGithub from "../custom/LinkGithub"
 import { useParams } from "next/navigation"
-import { FolderX, Heart, Link, MessageSquare, SearchX, ThumbsDown, ThumbsUp, Trash, X } from "lucide-react"
+import { FolderX, Heart, Link, MessageSquare, SearchX, ThumbsDown, ThumbsUp, X } from "lucide-react"
 import { Button } from "../ui/button"
 import { GitHubIssue } from "@/lib/types"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../ui/card"
@@ -53,7 +53,7 @@ export default function Issues() {
 
             {!isLoading && <Button onClick={() => setOpen(true)} >Add Issue</Button>}
             {
-                !isLoading && issues.length === 0 && (
+                !isLoading && issues.length === 0 && data?.status!==HttpStatus.UNPROCESSABLE_ENTITY && (
                     <div className="flex flex-col items-center justify-center mt-20 ">
                         <div className="bg-gray-100 dark:bg-gray-800 rounded-full p-6 mb-6">
                             <SearchX className="w-16 h-16 text-gray-400 dark:text-gray-500" />

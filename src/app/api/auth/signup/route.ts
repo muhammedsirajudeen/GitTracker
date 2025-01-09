@@ -1,5 +1,6 @@
 import { hashPassword } from "@/lib/bcryptHelper"
 import { sendEmail } from "@/lib/emailHelper"
+import { HttpStatus, HttpStatusMessage } from "@/lib/HttpStatus"
 import { RedisOtpHelper } from "@/lib/redisHelper"
 import { User } from "@/models/User"
 import UserServiceInstance from "@/service/UserService"
@@ -14,7 +15,7 @@ export async function POST(request: Request) {
         const signupRequest=await request.json() as User
         const findUser=await UserServiceInstance.getUserByEmail(signupRequest.email)
         if(findUser){
-            return NextResponse.json({message:'user with email exists'},{status:409})
+            return NextResponse.json({message:HttpStatusMessage[HttpStatus.CONFLICT]},{status:HttpStatus.CONFLICT})
         }else{
             const hashedPassword=await hashPassword(signupRequest.password)
             signupRequest.password=hashedPassword
@@ -24,15 +25,15 @@ export async function POST(request: Request) {
                 await sendEmail(signupRequest.email,'USER VERIFICATION',`your otp is ${otp}`)
                 const status=await RedisOtpHelper(signupRequest.email,otp)
                 if(!status){
-                    return NextResponse.json({message:'please try again'},{status:500})
+                    return NextResponse.json({message:HttpStatusMessage[HttpStatus.INTERNAL_SERVER_ERROR]},{status:HttpStatus.INTERNAL_SERVER_ERROR})
                 }
-                return NextResponse.json({ message: 'success' },{status:201}) 
+                return NextResponse.json({ message: HttpStatusMessage[HttpStatus.CREATED] }, { status: HttpStatus.CREATED })
             }else{
-                return NextResponse.json({ message: 'please try again' },{status:500})
+                return NextResponse.json({ message: HttpStatusMessage[HttpStatus.INTERNAL_SERVER_ERROR] }, { status: HttpStatus.INTERNAL_SERVER_ERROR })
             }
         }        
     } catch (error) {
         console.log(error)
-        return NextResponse.json({message:'Internal Server Error Occured'},{status:500})
+        return NextResponse.json({ message: HttpStatusMessage[HttpStatus.INTERNAL_SERVER_ERROR] }, { status: HttpStatus.INTERNAL_SERVER_ERROR })
     }
 }   

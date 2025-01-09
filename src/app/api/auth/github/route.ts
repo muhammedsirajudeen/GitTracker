@@ -7,6 +7,7 @@ import { generateToken, verifyToken } from "@/lib/jwtHelper";
 import { User } from "@/models/User";
 import { parse } from "cookie";
 import { RedisOtpHelper } from "@/lib/redisHelper";
+import { HttpStatus, HttpStatusMessage } from "@/lib/HttpStatus";
 
 export interface UserWithId extends User {
   id: string;
@@ -60,7 +61,7 @@ export async function GET(request: NextRequest) {
       const newUser = await UserServiceInstance.InsertUser({ email: email, password: password, verified: true, avatar_url: userResponse.data.avatar_url }) as UserWithId;
       newUserBody.id=newUser.id
       if (!newUser) {
-        return NextResponse.json({ message: 'internal server error' }, { status: 500 });
+        return NextResponse.json({ message: HttpStatusMessage[HttpStatus.INTERNAL_SERVER_ERROR] }, { status: HttpStatus.INTERNAL_SERVER_ERROR });
       }
     }
     newUserBody.id=user.id
@@ -105,6 +106,6 @@ export async function GET(request: NextRequest) {
     // const responseWithCookie = NextResponse.redirect(new URL('/home', request.url));
     // return responseWithCookie;
     console.log(error)
-    return NextResponse.json({message:'internal server error'},{status:500})
+    return NextResponse.json({message:HttpStatusMessage[HttpStatus.INTERNAL_SERVER_ERROR]},{status:HttpStatus.INTERNAL_SERVER_ERROR})
   }
 }

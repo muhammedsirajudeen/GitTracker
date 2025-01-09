@@ -1,4 +1,5 @@
 // app/route.ts
+import { HttpStatus, HttpStatusMessage } from '@/lib/HttpStatus';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 
@@ -12,9 +13,9 @@ export async function GET() {
       cookieStore.delete(cookie.name);
     });
     // Perform any additional logic here
-    return NextResponse.json({message:'success'},{status:200});
+    return NextResponse.json({message:HttpStatusMessage[HttpStatus.OK]},{status:HttpStatus.OK});
   } catch (error) {
     console.log(error)
-    return NextResponse.json({message:'error occured'})
+    return NextResponse.json({message: HttpStatusMessage[HttpStatus.INTERNAL_SERVER_ERROR]}, {status: HttpStatus.INTERNAL_SERVER_ERROR});
 }
 }

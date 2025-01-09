@@ -21,6 +21,7 @@ import axios, { AxiosError } from "axios";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 import PulseLoader from "react-spinners/ClipLoader";
+import { HttpStatus } from "@/lib/HttpStatus";
 
 const formSchema = z.object({
     email: z.string()
@@ -57,7 +58,7 @@ export default function SignupForm() {
                 )
             )
             console.log(response)
-            if (response.status === 201) {
+            if (response.status === HttpStatus.CREATED) {
                 toast({ description: "User created successfully", className: "bg-green-500 text-white font-bold" })
                 window.localStorage.setItem('email',values.email)
                 setTimeout(() => window.location.href = '/verify')
@@ -67,7 +68,7 @@ export default function SignupForm() {
             console.log(error)
             setLoading(false)
             const axiosError = error as AxiosError
-            if (axiosError.status === 409) {
+            if (axiosError.status === HttpStatus.CONFLICT) {
                 toast({ description: "user already exists", className: "bg-red-500 text-white font-bold" })
             } else {
                 toast({ description: "please try again", className: "bg-red-500 text-white font-bold" })

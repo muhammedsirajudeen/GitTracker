@@ -1,3 +1,4 @@
+import { HttpStatus, HttpStatusMessage } from "@/lib/HttpStatus"
 import { verifyToken } from "@/lib/jwtHelper"
 import UserServiceInstance from "@/service/UserService"
 import { parse } from "cookie"
@@ -9,13 +10,13 @@ export  async function GET(request:Request){
         const access_token=cookies['access_token']
         const decodedUser=await verifyToken(access_token ?? "")
         if(!decodedUser){
-            return NextResponse.json({message:'unauthorized'},{status:401})
+            return NextResponse.json({message:HttpStatusMessage[HttpStatus.UNAUTHORIZED]},{status:HttpStatus.UNAUTHORIZED})
         }
         //exclude password from here
         const user=await UserServiceInstance.getUserByEmail(decodedUser?.email)
-        return NextResponse.json({message:'success',user},{status:200})
+        return NextResponse.json({message:HttpStatusMessage[HttpStatus.OK],user},{status:HttpStatus.OK})
     } catch (error) {
         console.log(error)
-        return NextResponse.json({message:'internal server error occured'},{status:500})
+        return NextResponse.json({message:HttpStatusMessage[HttpStatus.INTERNAL_SERVER_ERROR]},{status:HttpStatus.INTERNAL_SERVER_ERROR})
     }
 }

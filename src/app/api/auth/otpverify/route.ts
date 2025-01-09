@@ -1,7 +1,8 @@
 import { RedisOtpGetter } from "@/lib/redisHelper"
 import UserServiceInstance from "@/service/UserService"
 import { NextRequest, NextResponse } from "next/server"
-//refactor everything
+import { HttpStatusMessage, HttpStatus } from "@/lib/HttpStatus"
+
 export async function POST(request: NextRequest) {
     try {
         const OtpRequest = await request.json()
@@ -9,16 +10,16 @@ export async function POST(request: NextRequest) {
         console.log(otp)
         //verifying otp essentially over
         if (otp === OtpRequest.otp) {
-            const status=await UserServiceInstance.VerifyUser(OtpRequest.email)
-            if(!status){
-                return NextResponse.json({message:"please try again"},{status:500})
+            const status = await UserServiceInstance.VerifyUser(OtpRequest.email)
+            if (!status) {
+                return NextResponse.json({ message: HttpStatusMessage[HttpStatus.INTERNAL_SERVER_ERROR] }, { status: HttpStatus.INTERNAL_SERVER_ERROR})
             }
-            return NextResponse.json({ message: "success" }, { status: 200 })
+            return NextResponse.json({ message: HttpStatusMessage[HttpStatus.OK] }, { status: HttpStatus.OK })
         } else {
-            return NextResponse.json({ message: "please try again" }, { status: 401 })
+            return NextResponse.json({ message: HttpStatusMessage[HttpStatus.UNAUTHORIZED] }, { status: HttpStatus.UNAUTHORIZED })
         }
     } catch (error) {
         console.log(error)
-        return NextResponse.json({ message: 'internal server error' }, { status: 500 })
+        return NextResponse.json({ message: HttpStatusMessage[HttpStatus.INTERNAL_SERVER_ERROR] }, { status: HttpStatus.INTERNAL_SERVER_ERROR })
     }
 }
