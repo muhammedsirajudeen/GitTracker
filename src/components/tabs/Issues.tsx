@@ -14,13 +14,6 @@ import { Avatar } from "@radix-ui/react-avatar"
 import { AvatarFallback, AvatarImage } from "../ui/avatar"
 import { useEffect, useState } from "react"
 import { Skeleton } from "../ui/skeleton"
-
-interface IssueResponse {
-    status: number
-    message: string
-    issues: GitHubIssue[]
-}
-
 import {
     Pagination,
     PaginationContent,
@@ -32,6 +25,13 @@ import {
 } from "@/components/ui/pagination"
 import IssueForm from "../form/IssueForm"
 import DeleteIssue from "../delete/DeleteIssue"
+
+interface IssueResponse {
+    status: number
+    message: string
+    issues: GitHubIssue[]
+}
+
 
 
 export default function Issues() {
@@ -50,15 +50,15 @@ export default function Issues() {
         setIssues(data?.issues ?? [])
     }, [data?.issues])
 
-    function prevHandler(){
-        setPage(prev=>{
-            const nextpage=prev-1<0?0:prev-1
+    function prevHandler() {
+        setPage(prev => {
+            const nextpage = prev - 1 < 0 ? 0 : prev - 1
             return nextpage
         })
     }
-    function nextHandler(){
-        setPage(prev=>{
-            const nextpage=prev+1
+    function nextHandler() {
+        setPage(prev => {
+            const nextpage = prev + 1
             return nextpage
         })
     }
@@ -192,16 +192,12 @@ export default function Issues() {
                     </div>
                 )
             }
-            {/* delete issue dialog here */}
             <DeleteIssue setIssues={setIssues} issueNumber={issuenumber} open={deleteopen} setOpen={setDeleteopen} />
             <Pagination className="fixed bottom-0" >
                 <PaginationContent>
                     <PaginationItem>
-                        <PaginationPrevious onClick={prevHandler}  />
+                        <PaginationPrevious onClick={prevHandler} />
                     </PaginationItem>
-                    {/* <PaginationItem>
-                        <PaginationLink href="#">1</PaginationLink>
-                    </PaginationItem> */}
                     <PaginationItem>
                         <PaginationLink onClick={() => setPage(page + 1)}>{page + 1}</PaginationLink>
                     </PaginationItem>

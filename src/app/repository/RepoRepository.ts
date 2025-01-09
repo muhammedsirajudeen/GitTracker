@@ -7,7 +7,6 @@ export interface IRepoRepository {
     getRepoByUser:(userid:string,name:string,page?:number)=>Promise<Repository[]>
     deleteRepo:(userid:string)=>Promise<boolean|null>
     getRepoById:(id:string)=>Promise<Repository|null>
-    
 }
 class RepoRepository implements IRepoRepository {
     _RepoModel: Model<IRepositoryModel>

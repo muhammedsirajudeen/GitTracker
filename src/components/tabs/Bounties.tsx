@@ -9,9 +9,10 @@ import { Button } from '../ui/button';
 const Bounties: React.FC = () => {
     const {id}=useParams()
     const {data,isLoading}=useSWR(`/api/bounty/${id}`, fetcher)
+    console.log(data,isLoading)
     const [open,setOpen]=useState(false)
     return (
-        <div className='w-full flex flex-col items-center justify-center mt-10'>
+        <div className='w-full flex flex-col items-center justify-center  '>
             <Button onClick={()=>{
             setOpen(true)
             }} >Add Bounty</Button>
