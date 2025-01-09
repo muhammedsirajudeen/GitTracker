@@ -19,9 +19,9 @@ export async function GET(){
 
 export async function POST(request:Request){
     try {
-        const {issueId, ownerId, repositoryId, assignees = [], description, title} = await request.json() as BountyForm
+        const {issueId, ownerId, repositoryId, description, title, bountyAmount} = await request.json() as BountyForm
         try {
-            bountyFormSchema.parse({issueId, ownerId, repositoryId, assignees, description, title})            
+            bountyFormSchema.parse({issueId, ownerId, repositoryId, description, title, bountyAmount})            
         } catch (error) {
             console.log(error)
             return NextResponse.json({message:HttpStatusMessage[HttpStatus.BAD_REQUEST]}, {status:HttpStatus.BAD_REQUEST})

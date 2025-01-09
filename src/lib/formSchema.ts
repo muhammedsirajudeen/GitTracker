@@ -24,9 +24,6 @@ export const bountyFormSchema = z.object({
     }).min(24, {
         message: "Repository ID must be at least 24 characters.",
     }),
-    assignees: z.array(z.string().min(24, {
-        message: "Each assignee ID must be at least 24 characters.",
-    })).optional(),
     description: z.string().nonempty({
         message: "Description cannot be empty.",
     }).min(10, {
@@ -37,7 +34,7 @@ export const bountyFormSchema = z.object({
     }).min(5, {
         message: "Title must be at least 5 characters.",
     }),
-    bountyAmount: z.number().positive({
+    bountyAmount: z.string().nonempty({
         message: "Bounty amount must be a positive number.",
     }),
 });

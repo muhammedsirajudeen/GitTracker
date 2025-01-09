@@ -65,7 +65,7 @@ export interface GitHubIssue {
     issueId: string;
     ownerId: string;
     repositoryId: string;
-    assignees?: string[];
     description: string;
     title: string;
+    bountyAmount:string;
 }
