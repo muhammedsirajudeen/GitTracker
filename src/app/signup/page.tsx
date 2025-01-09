@@ -3,7 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import Image from 'next/image';
 
 import { Button } from "@/components/ui/button"
 import {
@@ -24,6 +23,7 @@ import PulseLoader from "react-spinners/ClipLoader";
 import { HttpStatus } from "@/lib/HttpStatus";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { Github } from "lucide-react";
 
 const formSchema = z.object({
     email: z.string()
@@ -160,7 +160,7 @@ export default function SignupForm() {
               variant="outline"
               className="w-full"
             >
-              <Image width={20} height={20} src="/github.png" alt="GitHub logo" className="mr-2" />
+              <Github/>
               Continue with GitHub
             </Button>
           </CardFooter>

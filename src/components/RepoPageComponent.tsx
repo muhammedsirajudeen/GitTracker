@@ -10,6 +10,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Bug, CheckSquare, Award, MessageSquare, FolderTree } from 'lucide-react'
 import Issues from "./tabs/Issues"
 import { useState } from "react"
+import Bounties from "./tabs/Bounties"
 
 export default function RepoPage() {
     const { id } = useParams()
@@ -112,7 +113,7 @@ export default function RepoPage() {
                 tab === 'tasks' && <div>Tasks</div>
             }
             {
-                tab === 'bounty' && <div>Bounty</div>
+                tab === 'bounty' && <Bounties/>
             }
             {
                 tab === 'talk' && <div>Talk</div>

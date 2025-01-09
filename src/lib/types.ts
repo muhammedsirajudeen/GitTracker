@@ -60,3 +60,12 @@ export interface GitHubIssue {
     events_url: string;
     timeline_url: string;
   }
+
+  export interface BountyForm {
+    issueId: string;
+    ownerId: string;
+    repositoryId: string;
+    assignees?: string[];
+    description: string;
+    title: string;
+}
