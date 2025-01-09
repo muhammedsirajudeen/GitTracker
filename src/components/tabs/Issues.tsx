@@ -42,18 +42,32 @@ export default function Issues() {
     const [open, setOpen] = useState<boolean>(false)
     const [deleteopen, setDeleteopen] = useState<boolean>(false)
     const [issuenumber, setIssuenumber] = useState<number>(0)
+    const [page, setPage] = useState<number>(0)
     const toggleExpand = (issueId: number) => {
         setExpandedIssue(expandedIssue === issueId ? null : issueId)
     }
     useEffect(() => {
         setIssues(data?.issues ?? [])
     }, [data?.issues])
+
+    function prevHandler(){
+        setPage(prev=>{
+            const nextpage=prev-1<0?0:prev-1
+            return nextpage
+        })
+    }
+    function nextHandler(){
+        setPage(prev=>{
+            const nextpage=prev+1
+            return nextpage
+        })
+    }
     return (
         <div className="flex flex-col items-center justify-center w-full">
 
             {!isLoading && <Button onClick={() => setOpen(true)} >Add Issue</Button>}
             {
-                !isLoading && issues.length === 0 && data?.status!==HttpStatus.UNPROCESSABLE_ENTITY && (
+                !isLoading && issues.length === 0 && data?.status !== HttpStatus.UNPROCESSABLE_ENTITY && (
                     <div className="flex flex-col items-center justify-center mt-20 ">
                         <div className="bg-gray-100 dark:bg-gray-800 rounded-full p-6 mb-6">
                             <SearchX className="w-16 h-16 text-gray-400 dark:text-gray-500" />
@@ -183,16 +197,25 @@ export default function Issues() {
             <Pagination className="fixed bottom-0" >
                 <PaginationContent>
                     <PaginationItem>
-                        <PaginationPrevious href="#" />
+                        <PaginationPrevious onClick={prevHandler}  />
+                    </PaginationItem>
+                    {/* <PaginationItem>
+                        <PaginationLink href="#">1</PaginationLink>
+                    </PaginationItem> */}
+                    <PaginationItem>
+                        <PaginationLink onClick={() => setPage(page + 1)}>{page + 1}</PaginationLink>
                     </PaginationItem>
                     <PaginationItem>
-                        <PaginationLink href="#">1</PaginationLink>
+                        <PaginationLink onClick={() => setPage(page + 2)}>{page + 2}</PaginationLink>
+                    </PaginationItem>
+                    <PaginationItem>
+                        <PaginationLink onClick={() => setPage(page + 3)}>{page + 3}</PaginationLink>
                     </PaginationItem>
                     <PaginationItem>
                         <PaginationEllipsis />
                     </PaginationItem>
                     <PaginationItem>
-                        <PaginationNext href="#" />
+                        <PaginationNext onClick={nextHandler} />
                     </PaginationItem>
                 </PaginationContent>
             </Pagination>
