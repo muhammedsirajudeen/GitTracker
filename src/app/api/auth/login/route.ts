@@ -7,9 +7,13 @@ import { RedisOtpHelper } from "@/lib/redisHelper"
 import { HttpStatus, HttpStatusMessage } from "@/lib/HttpStatus"
 import { loginFormSchema } from "@/lib/formSchema"
 
+interface LoginRequest {
+    email: string
+    password: string
+}
 export async function POST(request: Request) {
     try {
-        const loginRequest = await request.json()
+        const loginRequest = await request.json() as LoginRequest
         const {email,password}=loginRequest
         try {
             loginFormSchema.parse({email,password})
