@@ -74,7 +74,7 @@ export default function LoginForm() {
         toast({description:"Check your email",className:"bg-blue-500 text-white"})
         const status=await ForgotPassword(email)
         console.log(status)
-        setTimeout(()=>window.location.href='/forgot',1000)
+        // setTimeout(()=>window.location.href='/forgot',1000)
     }
     return (
         <div className="flex items-center justify-center min-h-screen">

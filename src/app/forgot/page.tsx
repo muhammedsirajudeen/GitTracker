@@ -68,9 +68,9 @@ export default function Page() {
             )
             if(response.status===200){
                 toast({description:'password changed successfully',className:'bg-green-500 text-white'})
-                // setTimeout(()=>{
-                //     window.location.href='/login'
-                // },1000)
+                setTimeout(()=>{
+                    window.location.href='/login'
+                },1000)
             }
             setLoading(false)
         } catch (error) {
@@ -138,7 +138,7 @@ export default function Page() {
                     "Change Password"
                   ) : (
                     <PulseLoader
-                      color={"white"}
+                      color={"black"}
                       loading={loading}
                       size={8}
                       aria-label="Loading Spinner"
