@@ -65,6 +65,9 @@ export default function RepoPage() {
                     </TabsList>
                 </Tabs>
             </div>
+            <div id="searchbar-portal" className="flex w-full items-center justify-center">
+
+            </div>
             {
                 isLoading ?
                     <div className="w-full flex items-center justify-center mt-10">

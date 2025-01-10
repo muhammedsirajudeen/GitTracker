@@ -25,7 +25,8 @@ import {
 } from "@/components/ui/pagination"
 import IssueForm from "../form/IssueForm"
 import DeleteIssue from "../delete/DeleteIssue"
-import { set } from "react-hook-form"
+import { createPortal } from "react-dom"
+import IssueSearch from "../search/IssueSearch"
 
 interface IssueResponse {
     status: number
@@ -100,7 +101,11 @@ export default function Issues() {
     }
     return (
         <div className="flex flex-col items-center justify-center w-full">
-
+            {/* good place to create portal */}
+            {
+                document.getElementById('searchbar-portal') &&
+                createPortal(<IssueSearch/>,document.getElementById('searchbar-portal') as Element)
+            }
             {!isLoading && <Button onClick={() => {
                 setOpen(true)
                 setIssue(undefined)
