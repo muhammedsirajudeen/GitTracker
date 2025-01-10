@@ -39,10 +39,11 @@ interface IssueResponse {
 export default function Issues() {
     const [expandedIssue, setExpandedIssue] = useState<number | null>(null)
     const { id } = useParams()
+    const [server,setServer]=useState<boolean>(true)
     const { data, isLoading }: { data: IssueResponse, isLoading: boolean } | undefined = useSWR(`/api/issues/${id}`, fetcher)
-    const [loading,setLoading]=useState<boolean>(false)
+    const [loading, setLoading] = useState<boolean>(false)
     const [issues, setIssues] = useState<GitHubIssue[]>([])
-    const [issue,setIssue]=useState<GitHubIssue>()
+    const [issue, setIssue] = useState<GitHubIssue>()
     const [open, setOpen] = useState<boolean>(false)
     const [deleteopen, setDeleteopen] = useState<boolean>(false)
     const [issuenumber, setIssuenumber] = useState<number>(0)
@@ -53,6 +54,7 @@ export default function Issues() {
     }
     useEffect(() => {
         setIssues(data?.issues ?? [])
+        setServer(false)
     }, [data?.issues])
 
     function prevHandler() {
@@ -63,10 +65,10 @@ export default function Issues() {
             //     setLoading(false)
             //     return nextpage
             // }
-            async function asyncWrapper(){
-                const response=await fetcher(`/api/issues/${id}?page=${nextpage}`)
+            async function asyncWrapper() {
+                const response = await fetcher(`/api/issues/${id}?page=${nextpage}`)
                 console.log(response)
-                if(response.status===HttpStatus.OK){
+                if (response.status === HttpStatus.OK) {
                     setIssues(response.issues)
                     setLoading(false)
                 }
@@ -80,38 +82,38 @@ export default function Issues() {
         setLoading(true)
         setPage(prev => {
             const nextpage = prev + 1
-            async function asyncWrapper(){
-                const response=await fetcher(`/api/issues/${id}?page=${nextpage}`)
-                if(response.status===HttpStatus.OK){
-                    setIssues(()=>{
+            async function asyncWrapper() {
+                const response = await fetcher(`/api/issues/${id}?page=${nextpage}`)
+                if (response.status === HttpStatus.OK) {
+                    setIssues(() => {
                         setLoading(false)
-                        return response.issues})
-                    
+                        return response.issues
+                    })
+
                 }
             }
             asyncWrapper()
             return nextpage
         })
     }
-    function issueHandler(issue:GitHubIssue){
+    function issueHandler(issue: GitHubIssue) {
         setMethod('PUT')
         setIssue(issue)
         setOpen(true)
-        
+
     }
     return (
         <div className="flex flex-col items-center justify-center w-full">
-            {/* good place to create portal */}
             {
-                document.getElementById('searchbar-portal') &&
-                createPortal(<IssueSearch/>,document.getElementById('searchbar-portal') as Element)
+                typeof window !== 'undefined' && document.getElementById('searchbar-portal') && !server &&
+                createPortal(<IssueSearch setIssues={setIssues} />, document.getElementById('searchbar-portal') as Element)
             }
             {!isLoading && <Button onClick={() => {
                 setOpen(true)
                 setIssue(undefined)
             }} >Add Issue</Button>}
             {
-                !isLoading  && !loading &&  issues.length === 0 && data?.status !== HttpStatus.UNPROCESSABLE_ENTITY && (
+                !isLoading && !loading && issues.length === 0 && data?.status !== HttpStatus.UNPROCESSABLE_ENTITY && (
                     <div className="flex flex-col items-center justify-center mt-20 ">
                         <div className="bg-gray-100 dark:bg-gray-800 rounded-full p-6 mb-6">
                             <SearchX className="w-16 h-16 text-gray-400 dark:text-gray-500" />
@@ -190,7 +192,7 @@ export default function Issues() {
                                         </Avatar>
                                         <span className="font-medium">{issue.user.login}</span>
                                     </div>
-                                    <p className={`text-sm ${expandedIssue === issue.id ? '' : 'line-clamp-2'}`}>
+                                    <p className={`text-sm mt-2 ${expandedIssue === issue.id ? '' : 'line-clamp-2'}`}>
                                         {issue.body}
                                     </p>
                                     {issue.body && issue.body.length > 100 && (
@@ -230,8 +232,8 @@ export default function Issues() {
                                     }} variant="outline" size="sm" className="ml-auto rounded-full h-10 w-10">
                                         <X className="w-2 h-2" />
                                     </Button>
-                                    <Button onClick={()=>issueHandler(issue)} variant="outline" size="sm"  className="ml-4 rounded-full h-10 w-10" >
-                                        <Edit  />
+                                    <Button onClick={() => issueHandler(issue)} variant="outline" size="sm" className="ml-4 rounded-full h-10 w-10" >
+                                        <Edit />
                                     </Button>
                                 </CardFooter>
                             </Card>
