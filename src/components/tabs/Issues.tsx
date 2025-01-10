@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/pagination"
 import IssueForm from "../form/IssueForm"
 import DeleteIssue from "../delete/DeleteIssue"
+import { set } from "react-hook-form"
 
 interface IssueResponse {
     status: number
@@ -38,13 +39,14 @@ export default function Issues() {
     const [expandedIssue, setExpandedIssue] = useState<number | null>(null)
     const { id } = useParams()
     const { data, isLoading }: { data: IssueResponse, isLoading: boolean } | undefined = useSWR(`/api/issues/${id}`, fetcher)
+    const [loading,setLoading]=useState<boolean>(false)
     const [issues, setIssues] = useState<GitHubIssue[]>([])
     const [issue,setIssue]=useState<GitHubIssue>()
     const [open, setOpen] = useState<boolean>(false)
     const [deleteopen, setDeleteopen] = useState<boolean>(false)
     const [issuenumber, setIssuenumber] = useState<number>(0)
     const [method, setMethod] = useState<string>("POST")
-    const [page, setPage] = useState<number>(0)
+    const [page, setPage] = useState<number>(1)
     const toggleExpand = (issueId: number) => {
         setExpandedIssue(expandedIssue === issueId ? null : issueId)
     }
@@ -53,14 +55,40 @@ export default function Issues() {
     }, [data?.issues])
 
     function prevHandler() {
+        setLoading(true)
         setPage(prev => {
-            const nextpage = prev - 1 < 0 ? 0 : prev - 1
+            const nextpage = prev - 1 < 1 ? 1 : prev - 1
+            // if(nextpage===1){
+            //     setLoading(false)
+            //     return nextpage
+            // }
+            async function asyncWrapper(){
+                const response=await fetcher(`/api/issues/${id}?page=${nextpage}`)
+                console.log(response)
+                if(response.status===HttpStatus.OK){
+                    setIssues(response.issues)
+                    setLoading(false)
+                }
+
+            }
+            asyncWrapper()
             return nextpage
         })
     }
     function nextHandler() {
+        setLoading(true)
         setPage(prev => {
             const nextpage = prev + 1
+            async function asyncWrapper(){
+                const response=await fetcher(`/api/issues/${id}?page=${nextpage}`)
+                if(response.status===HttpStatus.OK){
+                    setIssues(()=>{
+                        setLoading(false)
+                        return response.issues})
+                    
+                }
+            }
+            asyncWrapper()
             return nextpage
         })
     }
@@ -78,7 +106,7 @@ export default function Issues() {
                 setIssue(undefined)
             }} >Add Issue</Button>}
             {
-                !isLoading && issues.length === 0 && data?.status !== HttpStatus.UNPROCESSABLE_ENTITY && (
+                !isLoading  && !loading &&  issues.length === 0 && data?.status !== HttpStatus.UNPROCESSABLE_ENTITY && (
                     <div className="flex flex-col items-center justify-center mt-20 ">
                         <div className="bg-gray-100 dark:bg-gray-800 rounded-full p-6 mb-6">
                             <SearchX className="w-16 h-16 text-gray-400 dark:text-gray-500" />
@@ -113,16 +141,16 @@ export default function Issues() {
                     </div>
                 )
             }
-            {isLoading && (
+            {(isLoading || loading) && (
 
-                <div className="flex flex-col items-center justify-center mt-10 ">
+                <div className="flex flex-col items-center justify-center mt-10 w-full px-4">
                     {
                         new Array(10).fill(0).map((_, index) => (
-                            <div key={index} className="flex items-center space-x-4 mt-20">
+                            <div key={index} className="flex items-center space-x-4 mt-10 w-full max-w-4xl">
                                 <Skeleton className="h-10 w-10 rounded-full" />
-                                <div className="space-y-2">
-                                    <Skeleton className="h-6 w-[700px]" />
-                                    <Skeleton className="h-6 w-[700px]" />
+                                <div className="space-y-2 flex-1">
+                                    <Skeleton className="h-6 w-full" />
+                                    <Skeleton className="h-6 w-full" />
                                 </div>
                             </div>
                         ))

@@ -12,7 +12,6 @@ export async function GET(request:Request,{params}:{params:{id:string}}){
         const {id}=params
         const searchParams=new URL(request.url).searchParams
         const page=searchParams.get('page')??"1"
-
         const cookie=cookies()
         const access_token=cookie.get('access_token')
         const github_token=cookie.get('github_token')
