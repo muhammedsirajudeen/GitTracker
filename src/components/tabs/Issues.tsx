@@ -5,7 +5,7 @@ import { fetcher } from "../RepositoryListing"
 import { HttpStatus } from "@/lib/HttpStatus"
 import LinkGithub from "../custom/LinkGithub"
 import { useParams } from "next/navigation"
-import { FolderX, Heart, Link, MessageSquare, SearchX, ThumbsDown, ThumbsUp, X } from "lucide-react"
+import { Edit, FolderX, Heart, Link, MessageSquare, SearchX, ThumbsDown, ThumbsUp, X } from "lucide-react"
 import { Button } from "../ui/button"
 import { GitHubIssue } from "@/lib/types"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../ui/card"
@@ -39,9 +39,11 @@ export default function Issues() {
     const { id } = useParams()
     const { data, isLoading }: { data: IssueResponse, isLoading: boolean } | undefined = useSWR(`/api/issues/${id}`, fetcher)
     const [issues, setIssues] = useState<GitHubIssue[]>([])
+    const [issue,setIssue]=useState<GitHubIssue>()
     const [open, setOpen] = useState<boolean>(false)
     const [deleteopen, setDeleteopen] = useState<boolean>(false)
     const [issuenumber, setIssuenumber] = useState<number>(0)
+    const [method, setMethod] = useState<string>("POST")
     const [page, setPage] = useState<number>(0)
     const toggleExpand = (issueId: number) => {
         setExpandedIssue(expandedIssue === issueId ? null : issueId)
@@ -62,10 +64,19 @@ export default function Issues() {
             return nextpage
         })
     }
+    function issueHandler(issue:GitHubIssue){
+        setMethod('PUT')
+        setIssue(issue)
+        setOpen(true)
+        
+    }
     return (
         <div className="flex flex-col items-center justify-center w-full">
 
-            {!isLoading && <Button onClick={() => setOpen(true)} >Add Issue</Button>}
+            {!isLoading && <Button onClick={() => {
+                setOpen(true)
+                setIssue(undefined)
+            }} >Add Issue</Button>}
             {
                 !isLoading && issues.length === 0 && data?.status !== HttpStatus.UNPROCESSABLE_ENTITY && (
                     <div className="flex flex-col items-center justify-center mt-20 ">
@@ -81,7 +92,7 @@ export default function Issues() {
                     </div>
                 )
             }
-            <IssueForm open={open} setOpen={setOpen} setIssues={setIssues} />
+            <IssueForm open={open} setOpen={setOpen} setIssues={setIssues} issue={issue} method={method} />
             {data?.status === HttpStatus.UNPROCESSABLE_ENTITY && (
                 <LinkGithub />
             )
@@ -185,6 +196,9 @@ export default function Issues() {
 
                                     }} variant="outline" size="sm" className="ml-auto rounded-full h-10 w-10">
                                         <X className="w-2 h-2" />
+                                    </Button>
+                                    <Button onClick={()=>issueHandler(issue)} variant="outline" size="sm"  className="ml-4 rounded-full h-10 w-10" >
+                                        <Edit  />
                                     </Button>
                                 </CardFooter>
                             </Card>

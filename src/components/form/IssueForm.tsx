@@ -1,7 +1,7 @@
 "use client"
 
 import { Dialog } from '@radix-ui/react-dialog'
-import React, { Dispatch, SetStateAction, useState } from 'react'
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../ui/dialog'
 import { Button } from '../ui/button'
 import { useForm } from 'react-hook-form'
@@ -31,9 +31,11 @@ interface IssueFormProps {
     setIssues: Dispatch<SetStateAction<GitHubIssue[]>>,
     open: boolean,
     setOpen: Dispatch<SetStateAction<boolean>>
+    issue?: GitHubIssue
+    method?:string
 }
 
-const IssueForm: React.FC<IssueFormProps> = ({ setIssues, open, setOpen }) => {
+const IssueForm: React.FC<IssueFormProps> = ({ setIssues, open, setOpen, issue , method }) => {
     const form = useForm<IssueFormValues>({
         resolver: zodResolver(issueSchema),
         defaultValues: {
@@ -41,10 +43,39 @@ const IssueForm: React.FC<IssueFormProps> = ({ setIssues, open, setOpen }) => {
             description: '',
         },
     })
+    useEffect(() => {
+        form.setValue('title', issue?.title ?? '')
+        form.setValue('description',issue?.body ?? '')
+    },[form, issue?.body, issue?.title])
     const [loading, setLoading] = useState<boolean>(false)
     const { id } = useParams()
     const onSubmit = async (data: IssueFormValues) => {
         setLoading(true)
+        
+        if(method === 'PUT'){
+            try {
+                const response = await axios.put(`/api/issues/${id}`, {...data,issueNumber:issue?.number}, { withCredentials: true })
+                console.log('Issue submitted successfully:', response.data)
+                const issueResponse = response.data.issue as GitHubIssue
+                if (response.status === HttpStatus.OK) {
+                    setIssues(produce((draft: GitHubIssue[]) => {
+                        draft.forEach((issue, index) => {
+                            if(issue.number === issueResponse.number){
+                                draft[index] = issueResponse
+                            }
+                        })
+                    }))
+                    toast({ description: "Issue Updated successfully", className: "bg-green-500 text-white" })
+                    setOpen(false)
+                }
+    
+            } catch (error) {
+                console.error('Error Updating issue:', error)
+                toast({ description: "Error Updating issue", className: "bg-red-500 text-white" })
+            }
+            setLoading(false)
+            return
+        }
         try {
             const response = await axios.post(`/api/issues/${id}`, data, { withCredentials: true })
             console.log('Issue submitted successfully:', response.data)
@@ -64,7 +95,9 @@ const IssueForm: React.FC<IssueFormProps> = ({ setIssues, open, setOpen }) => {
     }
 
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog open={open} onOpenChange={(status)=>{
+            setOpen(status)
+        }}>
             <DialogContent className="sm:max-w-[425px] bg-black">
                 <DialogHeader>
                     <DialogTitle>Add Issue to Your Repo</DialogTitle>
