@@ -1,5 +1,5 @@
 'use client'
-import { Contact2Icon, FolderArchive, Home, InboxIcon, LogOut, LucideDollarSign, Settings } from "lucide-react"
+import { Contact2Icon, FolderArchive, Home, InboxIcon, LogOut, LucideDollarSign, Settings, User } from "lucide-react"
 
 import {
   Sidebar,
@@ -49,6 +49,11 @@ const items = [
     title: "Settings",
     url: "#",
     icon: Settings,
+  },
+  {
+    title:"Account",
+    url:"/account",
+    icon:User
   },
   {
     title: "Logout",
