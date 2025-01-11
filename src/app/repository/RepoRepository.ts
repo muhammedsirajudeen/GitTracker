@@ -7,6 +7,7 @@ export interface IRepoRepository {
     getRepoByUser:(userid:string,name:string,page?:number)=>Promise<Repository[]>
     deleteRepo:(userid:string)=>Promise<boolean|null>
     getRepoById:(id:string)=>Promise<Repository|null>
+    increaseClosedIssuesCount:(id:string)=>Promise<boolean|null>
 }
 class RepoRepository implements IRepoRepository {
     _RepoModel: Model<IRepositoryModel>
@@ -67,6 +68,21 @@ class RepoRepository implements IRepoRepository {
     async getRepoById (id: string) {
         const repository=this._RepoModel.findById(id)
         return repository
+    };
+    async increaseClosedIssuesCount(id: string) {
+        try {
+            console.log(id)
+            const repository=await this._RepoModel.findById(id)
+            if(repository){
+                if(!repository.closed_issues_count) repository.closed_issues_count = 0
+                repository.closed_issues_count = repository.closed_issues_count + 1
+                await repository.save()
+            }
+            return true
+        } catch (error) {
+            console.log(error)
+            return null
+        }
     };
 
 }

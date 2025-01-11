@@ -10,6 +10,7 @@ export interface Repository {
     forks_count: number;
     watchers_count: number;
     owner_id:mongoose.Types.ObjectId
+    closed_issues_count?: number;
 }
 
 // Extend the interface for Mongoose's Document
@@ -26,6 +27,8 @@ const RepositorySchema: Schema = new Schema({
     stargazers_count: { type: Number, required: true, default: 0 },
     forks_count: { type: Number, required: true, default: 0 },
     watchers_count: { type: Number, required: true, default: 0 },
+    closed_issues_count: { type: Number, required: false, default: 0 },
+    
 });
 
 // Singleton model implementation

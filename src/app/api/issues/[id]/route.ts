@@ -1,5 +1,6 @@
 import { HttpStatus, HttpStatusMessage } from "@/lib/HttpStatus"
 import { verifyToken } from "@/lib/jwtHelper"
+import { mintNFT } from "@/lib/mintHelper"
 import RepositoryServiceInstance from "@/service/RepositoryService"
 import axios from "axios"
 import { Issue } from "next/dist/build/swc"
@@ -149,8 +150,12 @@ export async function PATCH(request: Request, { params }: { params: { id: string
             Authorization: `token ${github_token.value}`,
             Accept: "application/vnd.github.v3+json",
         };
-
+        //create a way to keep track of the amount of issues closed in this repository either by adding a field to the repository model or by creating a new model
         await axios.patch(url, { "state": "closed" }, { headers });
+        await RepositoryServiceInstance.increaseClosedIssuesCount(id);
+        //right now mint here
+        const nftAddress=await mintNFT("uqoHrityZY2tzfWVpKFgoPtabN5ffaugpsP6x75EfBo")
+        console.log(nftAddress)
         return NextResponse.json({ message: HttpStatusMessage[HttpStatus.OK] }, { status: HttpStatus.OK });
     } catch (error) {
         console.log(error);
