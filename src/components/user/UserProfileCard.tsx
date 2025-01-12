@@ -26,7 +26,7 @@ export default function UserProfileCard({ user }: { user: UserType | null }) {
         }
     }
     return (
-        <Card className="w-full max-w-sm mx-auto mt-20">
+        <Card className="w-full max-w-sm mx-auto mt-0">
             <CardHeader className="flex flex-col items-center">
                 <Avatar className="w-24 h-24">
                     <AvatarImage src={user?.avatar_url} alt={user?.email} />

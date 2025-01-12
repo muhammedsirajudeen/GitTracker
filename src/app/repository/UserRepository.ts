@@ -7,6 +7,7 @@ export interface IUserRepository {
     InsertUser: (user: User) => Promise<User|null>
     VerifyUser: (user: string) => Promise<boolean>
     changePassword:(userid:string,password:string)=>Promise<boolean>
+    getUserById:(userid:string)=>Promise<User|null>
 }
 
 
@@ -62,6 +63,14 @@ class UserRepository implements IUserRepository {
         } catch (error) {
             console.log(error)
             return false
+        }
+    };
+    async getUserById (userid: string){
+        try {
+            return this._userModel.findById(userid)
+        } catch (error) {
+            console.log(error)
+            return null
         }
     };
 }

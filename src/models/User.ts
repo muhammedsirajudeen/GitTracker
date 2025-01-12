@@ -3,8 +3,9 @@ import mongoose, { Schema, Document, Model } from 'mongoose';
 export interface User {
   email: string;
   password: string;
-  verified:boolean;
-  avatar_url?:string
+  verified: boolean;
+  avatar_url: string;
+  wallet_status: boolean;
 }
 
 export interface IUser extends User, Document {}
@@ -24,15 +25,20 @@ const userSchema: Schema<IUser> = new mongoose.Schema(
       required: [true, 'Password is required'],
       minlength: [8, 'Password must be at least 8 characters long'],
     },
-    verified:{
-      type:Boolean,
-      required:false,
-      default:false
+    verified: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
-    avatar_url:{
-      type:String,
-      required:false
-    }
+    avatar_url: {
+      type: String,
+      required: false,
+    },
+    wallet_status: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
   { timestamps: true }
 );

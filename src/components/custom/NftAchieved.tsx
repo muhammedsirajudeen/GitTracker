@@ -64,7 +64,9 @@ export default function NftAchieved({ open, setOpen, nft }: NftAchievedProps) {
                                 </div>
                             ))}
                         </div>
-                        <Button onClick={()=>window.location.href="/account"} >view</Button>
+                        <div className="flex items-center justify-center w-full mt-4">
+                            <Button onClick={()=>window.location.href="/account"}  variant={"outline"}>view</Button>
+                        </div>
                     </motion.div>
                 )}
             </DialogContent>

@@ -22,10 +22,10 @@ export default function Achievements() {
   const { data, isLoading }: { data: NftResponse | undefined, isLoading: boolean } = useSWR(`/api/account/nft/${publicKey}`, fetcher);
   const [searchTerm, setSearchTerm] = React.useState('');
 
-  const filteredNfts = data?.nfts.filter(nft => 
+  const filteredNfts = data?.nfts?.filter(nft => 
     nft.symbol.toLowerCase().includes(searchTerm.toLowerCase()) ||
     nft.mintaddress.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  ) ?? [];
 
   return (
     <Card className="w-full">
@@ -36,7 +36,7 @@ export default function Achievements() {
       <CardContent>
         {isLoading ? (
           <NftCollectionSkeleton />
-        ) : data?.nfts.length ? (
+        ) : data?.nfts?.length ? (
           <>
             <CollectionStats nfts={data.nfts} />
             <div className="flex gap-4 mb-6">

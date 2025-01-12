@@ -6,6 +6,7 @@ interface IUserService {
     InsertUser: (user: User) => Promise<User|null>
     VerifyUser:(email:string)=>Promise<boolean>
     changePassword:(userid:string,password:string)=>Promise<boolean>
+    getUserById:(userid:string)=>Promise<User|null>
 }
 class UserService implements IUserService {
     _UserRepo: IUserRepository
@@ -26,6 +27,10 @@ class UserService implements IUserService {
     };
     async changePassword (userid: string, password: string) {
         return this._UserRepo.changePassword(userid,password)
+    };
+    async getUserById (userid: string) {
+        console.log('from inside ',userid)
+        return this._UserRepo.getUserById(userid)
     };
 
 }

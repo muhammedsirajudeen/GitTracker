@@ -28,26 +28,21 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  
+
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <UserComponent/>
+        <UserComponent />
         <SidebarProvider defaultOpen={false}>
-          
           <AppSidebar />
-          
           <main className="w-full bg-black text-white" >
             <SidebarTrigger />
-
             {children}
-
           </main>
         </SidebarProvider>
         <Toaster />
-
       </body>
     </html>
   );
