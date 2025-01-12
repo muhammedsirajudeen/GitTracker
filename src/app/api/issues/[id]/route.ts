@@ -156,7 +156,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
         //right now mint here
         const nftAddress=await mintNFT("uqoHrityZY2tzfWVpKFgoPtabN5ffaugpsP6x75EfBo")
         console.log(nftAddress)
-        return NextResponse.json({ message: HttpStatusMessage[HttpStatus.OK] }, { status: HttpStatus.OK });
+        return NextResponse.json({ message: HttpStatusMessage[HttpStatus.OK],nft:nftAddress }, { status: HttpStatus.OK });
     } catch (error) {
         console.log(error);
         return NextResponse.json({ message: HttpStatusMessage[HttpStatus.INTERNAL_SERVER_ERROR] }, { status: HttpStatus.INTERNAL_SERVER_ERROR });

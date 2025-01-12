@@ -27,6 +27,7 @@ import IssueForm from "../form/IssueForm"
 import DeleteIssue from "../delete/DeleteIssue"
 import { createPortal } from "react-dom"
 import IssueSearch from "../search/IssueSearch"
+import NftAchieved from "../custom/NftAchieved"
 
 interface IssueResponse {
     status: number
@@ -49,6 +50,8 @@ export default function Issues() {
     const [issuenumber, setIssuenumber] = useState<number>(0)
     const [method, setMethod] = useState<string>("POST")
     const [page, setPage] = useState<number>(1)
+    const [achievementdialog,setAchievementdialog]=useState(false)
+    const [nft,setNft]=useState("")
     const toggleExpand = (issueId: number) => {
         setExpandedIssue(expandedIssue === issueId ? null : issueId)
     }
@@ -241,7 +244,9 @@ export default function Issues() {
                     </div>
                 )
             }
-            <DeleteIssue setIssues={setIssues} issueNumber={issuenumber} open={deleteopen} setOpen={setDeleteopen} />
+            <DeleteIssue setNft={setNft} setIssues={setIssues} issueNumber={issuenumber} open={deleteopen} setOpen={setDeleteopen} setAchievementdialog={setAchievementdialog} />
+            {/* open this component */}
+            <NftAchieved nft={nft} open={achievementdialog} setOpen={setAchievementdialog} />
             <Pagination className="fixed bottom-0" >
                 <PaginationContent>
                     <PaginationItem>

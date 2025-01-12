@@ -20,9 +20,11 @@ interface CloseIssueProps {
     setOpen: (open: boolean) => void;
     issueNumber: number;
     setIssues:Dispatch<SetStateAction<GitHubIssue[]>>
+    setAchievementdialog:Dispatch<SetStateAction<boolean>>
+    setNft:Dispatch<SetStateAction<string>>
 }
 
-const CloseIssue: React.FC<CloseIssueProps> = ({ open, setOpen, issueNumber, setIssues }) => {
+const CloseIssue: React.FC<CloseIssueProps> = ({ open, setOpen, issueNumber, setIssues, setAchievementdialog, setNft }) => {
     const { id } = useParams()
     const [loading, setLoading] = useState<boolean>(false)
     async function deleteHandler() {
@@ -37,7 +39,10 @@ const CloseIssue: React.FC<CloseIssueProps> = ({ open, setOpen, issueNumber, set
             console.log('Issue closed successfully:', response.data);
             toast({ description: "Issue closed successfully", className: "bg-green-500 text-white" })
             setOpen(false);
+            setNft(response.data.nft??"")
+            setAchievementdialog(true)
             setIssues((prevIssues) =>prevIssues.filter(issue=>issue.number!==issueNumber) )
+        
         } catch (error) {
             console.error('There was a problem with the axios operation:', error);
         }

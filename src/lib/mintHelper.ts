@@ -67,7 +67,7 @@ export async function mintNFT(userAddress:string):Promise<string>{
             creators: [{ address: payer.publicKey, share: 100 }],
         });
         console.log(`NFT Minted Successfully: ${nft.address.toBase58()}`);
-        return nft.address.toBase58();
+        return metadataUri;
     } catch (error) {
         console.log(error)
         return ""
