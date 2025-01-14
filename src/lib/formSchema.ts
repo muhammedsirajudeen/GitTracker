@@ -14,16 +14,7 @@ export const bountyFormSchema = z.object({
     issueId: z.string().nonempty({
         message: "Issue ID cannot be empty.",
     }),
-    ownerId: z.string().nonempty({
-        message: "Owner ID cannot be empty.",
-    }).min(24, {
-        message: "Owner ID must be at least 24 characters.",
-    }),
-    repositoryId: z.string().nonempty({
-        message: "Repository ID cannot be empty.",
-    }).min(24, {
-        message: "Repository ID must be at least 24 characters.",
-    }),
+
     description: z.string().nonempty({
         message: "Description cannot be empty.",
     }).min(10, {

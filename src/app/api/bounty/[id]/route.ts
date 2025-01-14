@@ -1,14 +1,21 @@
 import { bountyFormSchema } from "@/lib/formSchema";
 import { HttpStatus, HttpStatusMessage } from "@/lib/HttpStatus"
+import { GetUserGivenAccessToken } from "@/lib/tokenHelper";
 import { BountyForm } from "@/lib/types";
+import BountyServiceInstance from "@/service/BountyService";
+import mongoose from "mongoose";
+import { cookies } from "next/headers";
 import { NextResponse } from "next/server"
+import { UserWithId } from "../../auth/github/route";
 
 
 
 
-export async function GET(){
+export async function GET(request:Request,{params}:{params:{id:string}}){
     try {
-        return NextResponse.json({message:HttpStatusMessage[HttpStatus.OK]}, {status:HttpStatus.OK})
+        const {id}=params
+        const bounties=await BountyServiceInstance.getBounties(id)
+        return NextResponse.json({message:HttpStatusMessage[HttpStatus.OK],bounties:bounties??[]}, {status:HttpStatus.OK})
     } catch (error) {
         console.log(error)
         return NextResponse.json({message:HttpStatusMessage[HttpStatus.INTERNAL_SERVER_ERROR]}, {status:HttpStatus.INTERNAL_SERVER_ERROR})
@@ -19,15 +26,21 @@ export async function GET(){
 
 export async function POST(request:Request){
     try {
-        const {issueId, ownerId, repositoryId, description, title, bountyAmount} = await request.json() as BountyForm
+        const user=await GetUserGivenAccessToken(cookies()) as UserWithId
+        console.log(user)
+        const {issueId, description, title, bountyAmount,repositoryId} = await request.json() as BountyForm
         try {
-            bountyFormSchema.parse({issueId, ownerId, repositoryId, description, title, bountyAmount})            
+            bountyFormSchema.parse({issueId, description, title, bountyAmount})            
         } catch (error) {
             console.log(error)
             return NextResponse.json({message:HttpStatusMessage[HttpStatus.BAD_REQUEST]}, {status:HttpStatus.BAD_REQUEST})
         }
-
-        return NextResponse.json({message:HttpStatusMessage[HttpStatus.OK]}, {status:HttpStatus.OK})
+        //owner id things like that
+        const newBounty=await BountyServiceInstance.addBounty({issueId,description,title,repositoryId:new mongoose.Types.ObjectId(repositoryId),ownerId:new mongoose.Types.ObjectId(user.id),bountyAmount:parseInt(bountyAmount),assignees:[]})
+        if(!newBounty){
+            return NextResponse.json({message:HttpStatusMessage[HttpStatus.CONFLICT]}, {status:HttpStatus.CONFLICT})
+        }
+        return NextResponse.json({message:HttpStatusMessage[HttpStatus.OK],bounty:newBounty}, {status:HttpStatus.OK})
     } catch (error) {
         console.log(error)
         return NextResponse.json({message:HttpStatusMessage[HttpStatus.INTERNAL_SERVER_ERROR]}, {status:HttpStatus.INTERNAL_SERVER_ERROR})

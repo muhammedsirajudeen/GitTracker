@@ -43,5 +43,6 @@ class RepositoryService implements IRepository {
     }
 }
 
+
 const RepositoryServiceInstance = new RepositoryService(RepoRepositoryInstance)
 export default RepositoryServiceInstance

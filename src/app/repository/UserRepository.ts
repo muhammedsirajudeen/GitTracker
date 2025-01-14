@@ -67,7 +67,7 @@ class UserRepository implements IUserRepository {
     };
     async getUserById (userid: string){
         try {
-            return this._userModel.findById(userid)
+            return this._userModel.findById(userid).select('-password')
         } catch (error) {
             console.log(error)
             return null

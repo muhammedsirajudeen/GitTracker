@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { Dispatch, SetStateAction, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -25,35 +25,54 @@ import axios, { AxiosError } from 'axios';
 import { HttpStatus } from '@/lib/HttpStatus';
 import { toast } from '@/hooks/use-toast';
 import { ClipLoader } from 'react-spinners';
+import { useParams } from 'next/navigation';
+import useSWR from 'swr';
+import { fetcher } from '../RepositoryListing';
+import { GitHubIssue } from '@/lib/types';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { ScrollArea } from '../ui/scroll-area';
+import { Badge } from '../ui/badge';
+import { BountyWithId } from '../tabs/Bounties';
 
 
 
 type BountyFormValues = z.infer<typeof bountyFormSchema>;
 
-const BountyForm: React.FC<{ open: boolean; setOpen: React.Dispatch<React.SetStateAction<boolean>> }> = ({ open, setOpen }) => {
+interface IssueResponse {
+    status: number
+    issues: GitHubIssue[]
+}
+
+const BountyForm: React.FC<{
+    open: boolean; setOpen: React.Dispatch<React.SetStateAction<boolean>>, setBounties: Dispatch<SetStateAction<BountyWithId[]>>
+}> = ({ open, setOpen, setBounties }) => {
     const form = useForm<BountyFormValues>({
         resolver: zodResolver(bountyFormSchema),
         defaultValues: {
             issueId: '',
-            ownerId: '',
-            repositoryId: '',
             description: '',
-            title: ''
+            title: '',
+            bountyAmount: ''
         }
     });
-    const [loading,setLoading]=useState<boolean>(false)
+    const { id } = useParams()
+    const { data }: { data?: IssueResponse, isLoading: boolean } = useSWR(`/api/issues/${id}`, fetcher)
+    const [loading, setLoading] = useState<boolean>(false)
     const onSubmit = (data: BountyFormValues) => {
         console.log(data);
 
         const submitBounty = async () => {
             setLoading(true)
             try {
-                const response = await axios.post('/api/bounty/id', data, { withCredentials: true });
+                const response = await axios.post(`/api/bounty/${id}`, { ...data, repositoryId: id }, { withCredentials: true });
                 console.log('Bounty submitted successfully:', response.data);
                 toast({ description: "Bounty submitted successfully", className: "bg-green-500 text-white" })
+                setBounties((prev)=>[...prev,response.data.bounty])
                 form.reset()
+                // keep it open temporarily
                 setOpen(false)
             } catch (error) {
+                console.log(error);
                 const axiosError = error as AxiosError
                 if (axiosError.status === HttpStatus.BAD_REQUEST) {
                     toast({ description: "Invalid data submitted", className: "bg-red-500 text-white" })
@@ -112,37 +131,33 @@ const BountyForm: React.FC<{ open: boolean; setOpen: React.Dispatch<React.SetSta
                             control={form.control}
                             name="issueId"
                             render={({ field }) => (
-                                <FormItem>
+                                <FormItem className="space-y-2">
                                     <FormLabel>Issue ID</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="ownerId"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Owner ID</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="repositoryId"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Repository ID</FormLabel>
-                                    <FormControl>
-                                        <Input {...field} />
-                                    </FormControl>
+                                    <Select
+                                        onValueChange={(value) => form.setValue("issueId", value)}
+                                        defaultValue={field.value}
+                                    >
+                                        <FormControl>
+                                            <SelectTrigger className="w-full">
+                                                <SelectValue placeholder="Select an Issue" />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            <ScrollArea className="h-[300px]">
+                                                {data?.issues?.map((issue) => (
+                                                    <SelectItem key={issue.id} value={issue.id.toString()} className="py-2 px-3">
+                                                        <div className="flex items-center space-x-2">
+                                                            <span className="font-medium">#{issue.number}</span>
+                                                            <span className="truncate flex-1">{issue.title}</span>
+                                                            <Badge variant={issue.state === "open" ? "default" : "secondary"}>
+                                                                {issue.state}
+                                                            </Badge>
+                                                        </div>
+                                                    </SelectItem>
+                                                ))}
+                                            </ScrollArea>
+                                        </SelectContent>
+                                    </Select>
                                     <FormMessage />
                                 </FormItem>
                             )}

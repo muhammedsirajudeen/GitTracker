@@ -1,8 +1,7 @@
 import { User } from '@/models/User';
 import jwt from 'jsonwebtoken';
 import { jwtVerify } from 'jose';
-import { UserWithId } from '@/app/api/auth/github/route';
-import UserServiceInstance from '@/service/UserService';
+
 
 // Define your secret key and token expiration
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secure-secret'; // Use an environment variable in production
@@ -32,14 +31,7 @@ export async function verifyToken(token: string): Promise<User | null> {
     return null
   }
 }
-export async function GetUserGivenAccessToken(access_token:string){
-    const decodedUser=await verifyToken(access_token) as UserWithId
-    if(!decodedUser){
-        throw new Error('user not verified')
-    }
-    const user=await UserServiceInstance.getUserById(decodedUser.id)
-    return user
-}
+
 
 // Example usage
 

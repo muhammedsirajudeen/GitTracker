@@ -1,16 +1,16 @@
-import { Schema, model, Document } from 'mongoose';
+import mongoose, { Schema, model, Document } from 'mongoose';
 
-interface Bounty {
+export interface Bounty {
     issueId: string;
-    ownerId: Schema.Types.ObjectId;
-    assignees: Schema.Types.ObjectId[];
+    ownerId: mongoose.Types.ObjectId;
+    assignees: mongoose.Types.ObjectId[];
     description: string;
     title: string;
-    repositoryId: Schema.Types.ObjectId;
+    repositoryId: mongoose.Types.ObjectId;
     bountyAmount: number; // Added bountyAmount field
 }
 
-interface IBounty extends Document, Bounty {}
+export interface IBounty extends Document, Bounty {}
 
 const BountySchema = new Schema<IBounty>({
     issueId: {
@@ -18,7 +18,7 @@ const BountySchema = new Schema<IBounty>({
         required: true
     },
     ownerId: {
-        type: Schema.Types.ObjectId,
+        type: mongoose.Schema.ObjectId,
         ref: 'User',
         required: true
     },
@@ -48,6 +48,6 @@ const BountySchema = new Schema<IBounty>({
     timestamps: true
 });
 
-const Bounty = model<IBounty>('Bounty', BountySchema);
+const Bounty = mongoose.models.Bounty || model<IBounty>('Bounty', BountySchema);
 
 export default Bounty;
