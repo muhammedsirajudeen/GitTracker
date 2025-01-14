@@ -5,7 +5,7 @@ interface IBountyService{
     addBounty: (bounty: Bounty) => Promise<Bounty | null>;
     getBounties: (repositoryId:string) => Promise<Bounty[] | null>;
     deleteBountyById: (bountyId:string) => Promise<boolean>
-    
+    getAllBounties: () => Promise<Bounty[] | null>;
 
 }
 
@@ -34,6 +34,9 @@ class BountyService implements IBountyService{
             return false    //bounty has already been assigned
         }
         return this._BountyRepository.deleteBountyById(bountyId)
+    }
+    async getAllBounties(){
+        return this._BountyRepository.getAllBounties()
     }
 
 }

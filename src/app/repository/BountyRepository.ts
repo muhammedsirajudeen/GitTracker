@@ -7,6 +7,7 @@ export interface IBountyRepository {
     getBountyByIssueId: (issueId:string) => Promise<boolean>
     deleteBountyById: (id:string) => Promise<boolean>
     getBountyById:(id:string) => Promise<Bounty|null>
+    getAllBounties:()=>Promise<Bounty[]|null>
 }
 
 class BountyRepository implements IBountyRepository {
@@ -47,6 +48,10 @@ class BountyRepository implements IBountyRepository {
     async getBountyById(id:string): Promise<Bounty|null> {
         const bounty=await this._BountyModel.findById(id)
         return bounty
+    }
+    async getAllBounties(): Promise<Bounty[]|null> {
+        const bounties=await this._BountyModel.find().populate('repositoryId') as Bounty[]
+        return bounties
     }
 
 }

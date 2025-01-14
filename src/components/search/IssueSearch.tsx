@@ -26,6 +26,7 @@ export const searchFormSchema = z.object({
 
 type SearchFormValues = z.infer<typeof searchFormSchema>
 
+//convert this to a generic search component that can be used everywhere
 export default function IssueSearch({setIssues}:{setIssues:Dispatch<SetStateAction<GitHubIssue[]>>}) {
     const [isSearching, setIsSearching] = useState(false)
     const render=useRef(0)
