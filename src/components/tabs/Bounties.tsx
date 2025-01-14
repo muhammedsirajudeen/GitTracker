@@ -11,8 +11,9 @@ import {motion} from 'framer-motion'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 import { Badge } from '../ui/badge';
-import { ChevronRight, DollarSign, FileQuestion, Users } from 'lucide-react';
-import { Avatar, AvatarFallback } from '../ui/avatar';
+import { ChevronRight, DollarSign, FileQuestion, Users, XCircleIcon } from 'lucide-react';
+import DeleteBounty from '../delete/DeleteBounty';
+
 export interface BountyWithId extends Bounty{
     _id:string
 }
@@ -26,13 +27,16 @@ const Bounties: React.FC = () => {
     const { id } = useParams()
     const { data, isLoading }:{data?:BountyResponse,isLoading:boolean} = useSWR(`/api/bounty/${id}`, fetcher)
     const [bounties,setBounties]=useState<BountyWithId[]>([])
+    const [bounty,setBounty]=useState<BountyWithId>()
     useEffect(() => {
         if(data){
             setBounties(data.bounties)
         }
     }, [data])
     const [open, setOpen] = useState(false)
+    const [bountydialog,setBountyDialog]=useState(false)
     const [expandedBounty, setExpandedBounty] = useState<string | null>(null)
+    //would have to move this into a confirm box
 
     return (
         <div className='w-full flex flex-col items-center justify-center  '>
@@ -120,6 +124,11 @@ const Bounties: React.FC = () => {
                                           {expandedBounty === bounty._id ? 'Collapse' : 'View Assignees'}
                                           <ChevronRight className="w-4 h-4 ml-1" />
                                         </Button>
+                                        <XCircleIcon onClick={()=>{
+                                            setBountyDialog(true)
+                                            setBounty(bounty)
+
+                                        }} />
                                       </CardFooter>
                                     </Card>
                                   </motion.div>       
@@ -128,6 +137,7 @@ const Bounties: React.FC = () => {
                             }
                         </div>
                     }
+                    <DeleteBounty bounty={bounty} open={bountydialog} setOpen={setBountyDialog} setBounties={setBounties}/>
                     {
                         !isLoading && bounties.length===0 &&
                         (

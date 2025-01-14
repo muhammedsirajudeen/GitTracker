@@ -47,3 +47,17 @@ export async function POST(request:Request){
     }
 }
 
+export async function DELETE(request:Request,{params}:{params:{id:string}}){
+    try {
+        const {id}=params
+        const deleteBountyById = await BountyServiceInstance.deleteBountyById(id)
+        //handle all cases but for now handle conflict
+        if(!deleteBountyById){
+            return NextResponse.json({message:HttpStatusMessage[HttpStatus.CONFLICT]}, {status:HttpStatus.CONFLICT})
+        }
+        return NextResponse.json({message:HttpStatusMessage[HttpStatus.OK]}, {status:HttpStatus.OK})
+    } catch (error) {
+        console.log(error)
+        return NextResponse.json({message:HttpStatusMessage[HttpStatus.INTERNAL_SERVER_ERROR]},{status:HttpStatus.INTERNAL_SERVER_ERROR})
+    }
+}
