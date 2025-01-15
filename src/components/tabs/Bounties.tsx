@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import BountyForm from '../form/BountyForm';
 import useSWR from 'swr';
 import { fetcher } from '../RepositoryListing';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { Button } from '../ui/button';
 import { Skeleton } from '../ui/skeleton';
 import { Bounty } from '@/models/Bounty';
@@ -33,11 +33,19 @@ const Bounties: React.FC = () => {
             setBounties(data.bounties)
         }
     }, [data])
+    /*
+      Todo:
+      Get all bounties from the BountyApplication collection and if the bounty id and it matches the stuff here 
+      then show the applied instead of apply and also disable the apply button
+    */
     const [open, setOpen] = useState(false)
     const [bountydialog,setBountyDialog]=useState(false)
+    const router = useRouter()
     const [expandedBounty, setExpandedBounty] = useState<string | null>(null)
-    //would have to move this into a confirm box
-
+    //convert all window.location.href to router
+    function applicantPageHandler(id:string){
+      router.push(`/bounties/applications/${id}`)
+    }
     return (
         <div className='w-full flex flex-col items-center justify-center  '>
             <Button onClick={() => {
@@ -101,7 +109,7 @@ const Bounties: React.FC = () => {
                                       </CardContent>
                                       <CardFooter className="flex items-center justify-between pt-4">
                                         <div className="flex items-center space-x-2">
-                                          <Users className="w-4 h-4 text-muted-foreground" />
+                                          <Users className="w-4 h-4 text-muted-foreground" onClick={()=>applicantPageHandler(bounty._id)} />
                                           <div className="flex -space-x-2">
                                             {/* {bounty.assignees.slice(0, 3).map((assignee, index) => (
                                               <Avatar key={index} className="w-6 h-6 border-2 border-background">

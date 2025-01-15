@@ -24,6 +24,7 @@ class BountyRepository implements IBountyRepository {
             return null
         }
     };
+    //pass the owner id here too
     async getBounties(repositoryId:string): Promise<Bounty[] | null> {
        const bounties=await this._BountyModel.find({repositoryId:new mongoose.Types.ObjectId(repositoryId)}) as Bounty[]
        return bounties
@@ -50,7 +51,9 @@ class BountyRepository implements IBountyRepository {
         return bounty
     }
     async getAllBounties(): Promise<Bounty[]|null> {
-        const bounties=await this._BountyModel.find().populate('repositoryId') as Bounty[]
+        const bounties = await this._BountyModel.find()
+        .populate({ path: 'repositoryId' })
+        .populate({ path: 'ownerId', select: 'email avatar_url' }) as Bounty[];
         return bounties
     }
 
