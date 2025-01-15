@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 interface IBountyApplicationService{
     addBountyApplication: (application:BountyApplication)=>Promise<BountyApplication|null>
     getApplicationByBountyIdAndApplicant:(bountyId:string,applicantId:string)=>Promise<BountyApplication|null>
+    getBountyApplicationByUser:(userid:string,bountyid:string)=>Promise<BountyApplication[]|null>
 }
 
 class BountyApplicationService implements IBountyApplicationService {
@@ -22,6 +23,9 @@ class BountyApplicationService implements IBountyApplicationService {
     }
     async getApplicationByBountyIdAndApplicant(bountyId:string,applicantId:string){
         return this._bountyApplicationRepository.getApplicationByIdandApplicant(new mongoose.Types.ObjectId(bountyId),new mongoose.Types.ObjectId(applicantId))
+    }
+    async getBountyApplicationByUser(userid:string,bountyid:string){
+        return this._bountyApplicationRepository.getBountyApplicationByUser(new mongoose.Types.ObjectId(userid),new mongoose.Types.ObjectId(bountyid))
     }
 }
 

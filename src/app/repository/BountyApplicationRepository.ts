@@ -4,6 +4,7 @@ import mongoose, { Model } from "mongoose";
 export interface IBountyApplicationRepository{
     addBountyApplication: (BountyApplication: BountyApplication) => Promise<BountyApplication|null>
     getApplicationByIdandApplicant:(bountyId:mongoose.Types.ObjectId,applicantId:mongoose.Types.ObjectId) => Promise<BountyApplication|null>
+    getBountyApplicationByUser:(userId:mongoose.Types.ObjectId,bountyId:mongoose.Types.ObjectId) => Promise<BountyApplication[]|null>
 }
 
 class BountyApplicationRepository implements IBountyApplicationRepository {
@@ -16,6 +17,9 @@ class BountyApplicationRepository implements IBountyApplicationRepository {
     }
     async getApplicationByIdandApplicant(bountyId:mongoose.Types.ObjectId,applicantId:mongoose.Types.ObjectId){
         return this._BountyApplicationModel.findOne({bountyId,applicantId})
+    }
+    async getBountyApplicationByUser(userId:mongoose.Types.ObjectId,bountyId:mongoose.Types.ObjectId){
+        return this._BountyApplicationModel.find({applicantId:userId,bountyId}).populate(['applicantId','bountyId']);
     }
 
 }

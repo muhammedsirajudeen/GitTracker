@@ -23,10 +23,11 @@ interface ApplyDialogProps {
 export default function ApplyDialog({ open, setOpen, bounty }: ApplyDialogProps) {
     async function applyHandler(){
         try {
-            const response=await axios.post('/api/bounty/application',{bountyId:bounty?._id},{withCredentials:true});
+            const response=await axios.post(`/api/application/${bounty?._id}`,{},{withCredentials:true});
             console.log(response.data)
+            toast({ description: "Application submitted successfully", className: "bg-green-500 text-white" })
         } catch (error) {
-            console.log(error)
+            // console.log(error)
             const axiosError=error as AxiosError
             if(axiosError.status === HttpStatus.BAD_REQUEST){
                 toast({ description:HttpStatusMessage[HttpStatus.BAD_REQUEST], className: "bg-red-500 text-white" })
