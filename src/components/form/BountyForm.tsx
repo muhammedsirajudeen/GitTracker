@@ -32,7 +32,7 @@ import { GitHubIssue } from '@/lib/types';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { ScrollArea } from '../ui/scroll-area';
 import { Badge } from '../ui/badge';
-import { BountyWithId, BountyWithUser } from '../tabs/Bounties';
+import { BountyWithUser } from '../tabs/Bounties';
 
 
 

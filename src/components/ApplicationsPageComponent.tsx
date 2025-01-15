@@ -16,9 +16,10 @@ import { HttpStatus, HttpStatusMessage } from "@/lib/HttpStatus"
 import { toast } from "@/hooks/use-toast"
 import { UserWithId } from "@/app/api/auth/github/route"
 import { BountyWithId } from "./tabs/Bounties"
+import AssignDialog from "./dialog/AssignDialog"
 
 
-interface BountyApplicationWithId extends Omit<BountyApplication, "applicantId" | "bountyId"> {
+export interface BountyApplicationWithId extends Omit<BountyApplication, "applicantId" | "bountyId"> {
   _id: string
   applicantId: UserWithId
   bountyId: BountyWithId
@@ -35,11 +36,12 @@ export default function ApplicationsComponent() {
     `/api/application/${id}`,
     fetcher
   )
+  const [open,setOpen]=useState<boolean>(false)
   const [bountyApplications, setBountyApplications] = useState<BountyApplicationWithId[]>([])
-
+  const [bountyApplication,setBountyApplication] = useState<BountyApplicationWithId>()
   useEffect(() => {
     setBountyApplications(data?.bountyApplications ?? [])
-  }, [data?.bountyApplications])
+  }, [data?.bountyApplications, setBountyApplications])
 
   if (isLoading) {
     return (
@@ -72,24 +74,15 @@ export default function ApplicationsComponent() {
   }
   async function assignHandler(bountyApplication:BountyApplicationWithId){
     //here send an api call add a confirm dialog and just send and finish this
-    try {
-        const response=await axios.put(`/api/bounty/${bountyApplication.bountyId._id}`,{},{withCredentials:true}) 
-        console.log(response)
-        toast({ description: "Bounty assigned successfully", className: "bg-green-500 text-white" })
-    } catch (error) {
-        console.log(error)
-        const axiosError=error as AxiosError
-        if(axiosError.status===HttpStatus.INTERNAL_SERVER_ERROR){
-            toast({ description:HttpStatusMessage[HttpStatus.INTERNAL_SERVER_ERROR], className: "bg-red-500 text-white" })
-        }else{
-            toast({ description:"please try again", className: "bg-red-500 text-white" })
-        }
-    }
+    setBountyApplication(bountyApplication)
+    setOpen(true)
+
   }
 
   return (
     //dont forget to add pagination here and things like that
     <div className="w-screen flex items-center justify-center mt-4">
+        <AssignDialog open={open} setOpen={setOpen} />
       {bountyApplications.map((bountyApplication) => (
         <Card key={bountyApplication._id} className="w-3/4" >
           <CardHeader>

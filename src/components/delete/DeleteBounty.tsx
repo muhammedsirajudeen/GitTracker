@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog"
 
 import { toast } from '@/hooks/use-toast'
-import { BountyWithId, BountyWithUser } from '../tabs/Bounties'
+import { BountyWithUser } from '../tabs/Bounties'
 import axios, { AxiosError } from 'axios'
 import { HttpStatus } from '@/lib/HttpStatus'
 
