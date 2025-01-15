@@ -61,3 +61,21 @@ export async function DELETE(request:Request,{params}:{params:{id:string}}){
         return NextResponse.json({message:HttpStatusMessage[HttpStatus.INTERNAL_SERVER_ERROR]},{status:HttpStatus.INTERNAL_SERVER_ERROR})
     }
 }
+//to update the assignee part
+export async function PUT(request:Request, {params}:{params:{id:string}}){
+    try {
+        const user=await GetUserGivenAccessToken(cookies()) as UserWithId
+        if(!user){
+            return NextResponse.json({message:HttpStatusMessage[HttpStatus.UNAUTHORIZED]},{status:HttpStatus.UNAUTHORIZED})
+        }
+        const {id}=params
+        const assignmentStatus=BountyServiceInstance.addAssignee(user.id,id)
+        if(!assignmentStatus){
+            return NextResponse.json({message:HttpStatusMessage[HttpStatus.BAD_REQUEST]},{status:HttpStatus.BAD_REQUEST})
+        }
+        return NextResponse.json({message:HttpStatusMessage[HttpStatus.OK]},{status:HttpStatus.OK})
+    } catch (error) {
+        console.log(error)
+        return NextResponse.json({message:HttpStatusMessage[HttpStatus.INTERNAL_SERVER_ERROR]},{status:HttpStatus.INTERNAL_SERVER_ERROR})
+    }
+}

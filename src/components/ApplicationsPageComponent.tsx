@@ -11,11 +11,17 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Skeleton } from "@/components/ui/skeleton"
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
 import { Button } from "./ui/button"
+import axios, { AxiosError } from "axios"
+import { HttpStatus, HttpStatusMessage } from "@/lib/HttpStatus"
+import { toast } from "@/hooks/use-toast"
+import { UserWithId } from "@/app/api/auth/github/route"
+import { BountyWithId } from "./tabs/Bounties"
+
 
 interface BountyApplicationWithId extends Omit<BountyApplication, "applicantId" | "bountyId"> {
   _id: string
-  applicantId: User
-  bountyId: Bounty
+  applicantId: UserWithId
+  bountyId: BountyWithId
 }
 
 interface BountyApplicationResponse {
@@ -64,6 +70,22 @@ export default function ApplicationsComponent() {
       </Card>
     )
   }
+  async function assignHandler(bountyApplication:BountyApplicationWithId){
+    //here send an api call add a confirm dialog and just send and finish this
+    try {
+        const response=await axios.put(`/api/bounty/${bountyApplication.bountyId._id}`,{},{withCredentials:true}) 
+        console.log(response)
+        toast({ description: "Bounty assigned successfully", className: "bg-green-500 text-white" })
+    } catch (error) {
+        console.log(error)
+        const axiosError=error as AxiosError
+        if(axiosError.status===HttpStatus.INTERNAL_SERVER_ERROR){
+            toast({ description:HttpStatusMessage[HttpStatus.INTERNAL_SERVER_ERROR], className: "bg-red-500 text-white" })
+        }else{
+            toast({ description:"please try again", className: "bg-red-500 text-white" })
+        }
+    }
+  }
 
   return (
     //dont forget to add pagination here and things like that
@@ -90,7 +112,7 @@ export default function ApplicationsComponent() {
             
           </CardContent>
           <CardFooter>
-            <Button variant={"outline"} >Assign</Button>
+            <Button onClick={()=>assignHandler(bountyApplication)} variant={"outline"} >Assign</Button>
           </CardFooter>
         </Card>
       ))}

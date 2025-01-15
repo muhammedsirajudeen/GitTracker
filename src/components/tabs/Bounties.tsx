@@ -13,12 +13,18 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/
 import { Badge } from '../ui/badge';
 import { ChevronRight, DollarSign, FileQuestion, Users, XCircleIcon } from 'lucide-react';
 import DeleteBounty from '../delete/DeleteBounty';
+import { UserWithId } from '@/app/api/auth/github/route';
+import { Avatar, AvatarFallback } from '../ui/avatar';
+import { AvatarImage } from '@radix-ui/react-avatar';
 
 export interface BountyWithId extends Bounty{
     _id:string
 }
+export interface BountyWithUser extends Omit<BountyWithId,"assignees">{
+  assignees:UserWithId[]
+}
 interface BountyResponse{
-    bounties: BountyWithId[]
+    bounties: BountyWithUser[]
     status:number
 }
 
@@ -26,8 +32,9 @@ interface BountyResponse{
 const Bounties: React.FC = () => {
     const { id } = useParams()
     const { data, isLoading }:{data?:BountyResponse,isLoading:boolean} = useSWR(`/api/bounty/${id}`, fetcher)
-    const [bounties,setBounties]=useState<BountyWithId[]>([])
-    const [bounty,setBounty]=useState<BountyWithId>()
+    const [bounties,setBounties]=useState<BountyWithUser[]>([])
+    const [bounty,setBounty]=useState<BountyWithUser>()
+    console.log(data)
     useEffect(() => {
         if(data){
             setBounties(data.bounties)
@@ -116,9 +123,9 @@ const Bounties: React.FC = () => {
                                                 <AvatarFallback>{assignee.charAt(0).toUpperCase()}</AvatarFallback>
                                               </Avatar>
                                             ))} */}
-                                            {bounty.assignees.length > 3 && (
+                                            {bounty.assignees.length > 0 && (
                                               <div className="flex items-center justify-center w-6 h-6 rounded-full bg-muted text-xs font-medium">
-                                                +{bounty.assignees.length - 3}
+                                                +{bounty.assignees.length}
                                               </div>
                                             )}
                                           </div>
@@ -129,7 +136,21 @@ const Bounties: React.FC = () => {
                                           className="flex items-center"
                                           onClick={() => setExpandedBounty(expandedBounty === bounty._id ? null : bounty._id)}
                                         >
-                                          {expandedBounty === bounty._id ? 'Collapse' : 'View Assignees'}
+                                          {expandedBounty === bounty._id ? 
+                                          <div className='flex items-center justify-center' >
+                                            {bounty.assignees.map((assignee,index)=>{
+                                              return(
+                                                <Card key={index} className='flex items-center justify-center' >
+                                                  <Avatar className="w-6 h-6 border-2 border-background">
+                                                    <AvatarImage src={assignee.avatar_url}/>
+                                                    <AvatarFallback>{assignee.email.charAt(0).toUpperCase()}</AvatarFallback>
+                                                  </Avatar>
+                                                  <span>{assignee.email}</span>
+                                                </Card>
+                                              )
+                                            })}
+                                          </div>
+                                          : 'View Assignees'}
                                           <ChevronRight className="w-4 h-4 ml-1" />
                                         </Button>
                                         <XCircleIcon onClick={()=>{

@@ -46,3 +46,4 @@ export async function POST(request:Request,{params}:{params:{id:string}}){
         return NextResponse.json({message:HttpStatusMessage[HttpStatus.INTERNAL_SERVER_ERROR]},{status:HttpStatus.INTERNAL_SERVER_ERROR})
     }
 }
+

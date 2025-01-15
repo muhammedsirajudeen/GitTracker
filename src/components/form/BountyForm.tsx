@@ -32,7 +32,7 @@ import { GitHubIssue } from '@/lib/types';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { ScrollArea } from '../ui/scroll-area';
 import { Badge } from '../ui/badge';
-import { BountyWithId } from '../tabs/Bounties';
+import { BountyWithId, BountyWithUser } from '../tabs/Bounties';
 
 
 
@@ -44,7 +44,7 @@ interface IssueResponse {
 }
 
 const BountyForm: React.FC<{
-    open: boolean; setOpen: React.Dispatch<React.SetStateAction<boolean>>, setBounties: Dispatch<SetStateAction<BountyWithId[]>>
+    open: boolean; setOpen: React.Dispatch<React.SetStateAction<boolean>>, setBounties: Dispatch<SetStateAction<BountyWithUser[]>>
 }> = ({ open, setOpen, setBounties }) => {
     const form = useForm<BountyFormValues>({
         resolver: zodResolver(bountyFormSchema),

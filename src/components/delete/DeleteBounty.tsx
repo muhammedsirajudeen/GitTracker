@@ -12,13 +12,13 @@ import {
 } from "@/components/ui/dialog"
 
 import { toast } from '@/hooks/use-toast'
-import { BountyWithId } from '../tabs/Bounties'
+import { BountyWithId, BountyWithUser } from '../tabs/Bounties'
 import axios, { AxiosError } from 'axios'
 import { HttpStatus } from '@/lib/HttpStatus'
 
 interface DeleteBountyProps {
-    bounty: BountyWithId | undefined
-    setBounties: Dispatch<SetStateAction<BountyWithId[]>>
+    bounty: BountyWithUser | undefined
+    setBounties: Dispatch<SetStateAction<BountyWithUser[]>>
     open:boolean
     setOpen:Dispatch<SetStateAction<boolean>>
 }
