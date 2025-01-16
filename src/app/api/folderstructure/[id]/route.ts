@@ -22,14 +22,15 @@ export async function GET(request: Request,{params}:{params:{id:string}}) {
             return NextResponse.json({ message: HttpStatusMessage[HttpStatus.NOT_FOUND] }, { status: HttpStatus.NOT_FOUND })
         }
         const repoName=repository.full_name
+        //fetching the dir structure from the backend
         const response=await axios.post(`${process.env.BACKEND_URL}/dir/structure`,
             {
                 githubRepo:repoName,
                 githubToken:githubToken.value
             }
         )
-        console.log(response.data)
-        return NextResponse.json({ message: HttpStatusMessage[HttpStatus.OK] }, { status: HttpStatus.OK })
+        const paths=response.data.paths ?? []
+        return NextResponse.json({ message: HttpStatusMessage[HttpStatus.OK],paths:paths }, { status: HttpStatus.OK })
     } catch (error) {
         console.log(error)
         return NextResponse.json({ message: HttpStatusMessage[HttpStatus.INTERNAL_SERVER_ERROR] }, { status: HttpStatus.INTERNAL_SERVER_ERROR })
