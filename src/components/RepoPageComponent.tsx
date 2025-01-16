@@ -11,6 +11,7 @@ import { Bug, CheckSquare, Award, MessageSquare, FolderTree } from 'lucide-react
 import Issues from "./tabs/Issues"
 import { useState } from "react"
 import Bounties from "./tabs/Bounties"
+import FolderStructure from "./tabs/FolderStructure"
 
 export default function RepoPage() {
     const { id } = useParams()
@@ -122,7 +123,7 @@ export default function RepoPage() {
                 tab === 'talk' && <div>Talk</div>
             }
             {
-                tab === 'structure' && <div>Structure</div>
+                tab === 'structure' && <FolderStructure/>
             }
         </>
 
