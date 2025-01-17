@@ -1,6 +1,7 @@
 import { hashPassword } from "@/lib/bcryptHelper"
 import UserModel, { IUser, User } from "@/models/User"
 import { Model } from "mongoose"
+import BaseRepository from "./BaseRepository"
 
 export interface IUserRepository {
     getUserByEmail: (email: string) => Promise<User | null>
@@ -11,9 +12,10 @@ export interface IUserRepository {
 }
 
 
-class UserRepository implements IUserRepository {
+class UserRepository extends BaseRepository implements IUserRepository {
     _userModel: Model<IUser>
     constructor(userModel: Model<IUser>) {
+        super()
         this._userModel = userModel
     }
     async getUserByEmail(email: string) {
@@ -67,6 +69,7 @@ class UserRepository implements IUserRepository {
     };
     async getUserById (userid: string){
         try {
+            console.log('getUserById')
             return this._userModel.findById(userid).select('-password')
         } catch (error) {
             console.log(error)

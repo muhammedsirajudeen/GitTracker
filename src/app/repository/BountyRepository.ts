@@ -1,5 +1,6 @@
 import BountyModel, { Bounty, IBounty } from "@/models/Bounty"
 import mongoose, { Model } from "mongoose"
+import BaseRepository from "./BaseRepository";
 
 export interface IBountyRepository {
     addBounty: (bounty:Bounty) => Promise<Bounty | null>;
@@ -11,9 +12,10 @@ export interface IBountyRepository {
     addAssignee:(userid:string,bountyid:string)=>Promise<boolean>
 }
 
-class BountyRepository implements IBountyRepository {
+class BountyRepository extends BaseRepository implements IBountyRepository {
     _BountyModel: Model<IBounty>
     constructor(BountyModel: Model<IBounty>) {
+        super()
         this._BountyModel = BountyModel
     }
     async addBounty(bounty: Bounty): Promise<Bounty | null> {

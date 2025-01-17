@@ -6,7 +6,7 @@ import { createClient } from 'redis';
  */
 async function createRedisClient() {
   const client = createClient({
-    url: 'redis://localhost:6379', // Update with your Redis server URL if needed
+    url: 'redis://redis:6379', // Update with your Redis server URL if needed
   });
 
   client.on('error', (err) => {
@@ -14,6 +14,7 @@ async function createRedisClient() {
   });
 
   await client.connect();
+  
   console.log('Connected to Redis');
   return client;
 }

@@ -1,5 +1,6 @@
 import RepositoryModel, { IRepositoryModel, Repository } from "@/models/Repository";
 import mongoose, { Model } from "mongoose";
+import BaseRepository from "./BaseRepository";
 
 export interface IRepoRepository {
     addRepo: (repo: Repository) => Promise<Repository | null>
@@ -9,10 +10,11 @@ export interface IRepoRepository {
     getRepoById:(id:string)=>Promise<Repository|null>
     increaseClosedIssuesCount:(id:string)=>Promise<boolean|null>
 }
-class RepoRepository implements IRepoRepository {
+class RepoRepository extends BaseRepository  implements IRepoRepository {
     _RepoModel: Model<IRepositoryModel>
     Page_Limit=10
     constructor(RepoModel: Model<IRepositoryModel>) {
+        super()
         this._RepoModel = RepoModel
     }
     async addRepo(repo: Repository) {
@@ -48,7 +50,7 @@ class RepoRepository implements IRepoRepository {
         }
     }
     async getRepoByUser (userid: string,name:string,page?:number) {
-        console.log(page,name)
+        this._logger.info("Error from inside repo")
         const repositories=await this._RepoModel.find({owner_id:new mongoose.Types.ObjectId(userid),name:new RegExp(name)}).limit(this.Page_Limit).skip((page || page===0)?this.Page_Limit*page:this.Page_Limit)
         return repositories
     };

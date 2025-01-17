@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@elastic/elasticsearch": "^8.17.0",
     "@hookform/resolvers": "^3.9.1",
     "@metaplex-foundation/js": "^0.20.1",
     "@radix-ui/react-avatar": "^1.1.2",
@@ -52,6 +53,8 @@
     "swr": "^2.3.0",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
+    "winston": "^3.17.0",
+    "winston-elasticsearch": "^0.19.0",
     "zod": "^3.24.1",
     "zustand": "^5.0.2"
   },
