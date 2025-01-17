@@ -16,7 +16,7 @@ export default class BaseRepository {
         const esTransportOpts: ElasticsearchTransportOptions = {
             level: 'info',  // Log level (info, debug, warn, error, etc.)
             client: this._loggerClient,  // Elasticsearch client instance
-            index: 'logstash-hey',  // Elasticsearch index where logs will be stored
+            index: 'logstash-nextjs',  // Elasticsearch index where logs will be stored
             transformer: (logData) => {
               return {
                 message: logData.message,
@@ -30,7 +30,7 @@ export default class BaseRepository {
             level: 'info',
             transports: [
               new winston.transports.Console(),  // Log to console (optional)
-              new winstonElasticsearch.ElasticsearchTransport(esTransportOpts),  // Log to Elasticsearch
+              // new winstonElasticsearch.ElasticsearchTransport(esTransportOpts),  // Log to Elasticsearch
             ],
           });
     }
