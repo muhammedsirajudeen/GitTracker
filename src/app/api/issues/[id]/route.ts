@@ -153,7 +153,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
         //create a way to keep track of the amount of issues closed in this repository either by adding a field to the repository model or by creating a new model
         await axios.patch(url, { "state": "closed" }, { headers });
         await RepositoryServiceInstance.increaseClosedIssuesCount(id);
-        //right now mint here
+        //right now mint here later pass the wallet address 
         const nftAddress=await mintNFT("uqoHrityZY2tzfWVpKFgoPtabN5ffaugpsP6x75EfBo")
         console.log(nftAddress)
         return NextResponse.json({ message: HttpStatusMessage[HttpStatus.OK],nft:nftAddress }, { status: HttpStatus.OK });
