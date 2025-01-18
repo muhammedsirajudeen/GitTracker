@@ -6,6 +6,7 @@ interface IBountyApplicationService{
     addBountyApplication: (application:BountyApplication)=>Promise<BountyApplication|null>
     getApplicationByBountyIdAndApplicant:(bountyId:string,applicantId:string)=>Promise<BountyApplication|null>
     getBountyApplicationByUser:(userid:string,bountyid:string)=>Promise<BountyApplication[]|null>
+    getBountyApplicationByApplicant:(userid:string)=>Promise<string[]|null>
 }
 
 class BountyApplicationService implements IBountyApplicationService {
@@ -26,6 +27,9 @@ class BountyApplicationService implements IBountyApplicationService {
     }
     async getBountyApplicationByUser(userid:string,bountyid:string){
         return this._bountyApplicationRepository.getBountyApplicationByUser(new mongoose.Types.ObjectId(userid),new mongoose.Types.ObjectId(bountyid))
+    }
+    async getBountyApplicationByApplicant(userid:string){
+        return this._bountyApplicationRepository.getBountyApplicationByApplicant(userid)
     }
 }
 

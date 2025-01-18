@@ -69,7 +69,13 @@ export async function PUT(request:Request, {params}:{params:{id:string}}){
             return NextResponse.json({message:HttpStatusMessage[HttpStatus.UNAUTHORIZED]},{status:HttpStatus.UNAUTHORIZED})
         }
         const {id}=params
-        const assignmentStatus=BountyServiceInstance.addAssignee(user.id,id)
+        const {userId}=await request.json()
+        if(!userId){
+            return NextResponse.json({message:HttpStatusMessage[HttpStatus.BAD_REQUEST]},{status:HttpStatus.BAD_REQUEST})
+        }
+        console.log(userId)
+        const assignmentStatus=await BountyServiceInstance.addAssignee(userId,id)
+        console.log(assignmentStatus)
         if(!assignmentStatus){
             return NextResponse.json({message:HttpStatusMessage[HttpStatus.BAD_REQUEST]},{status:HttpStatus.BAD_REQUEST})
         }

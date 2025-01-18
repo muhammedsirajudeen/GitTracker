@@ -1,33 +1,45 @@
 'use client'
-
 import useSWR from "swr"
 import { fetcher } from "./RepositoryListing"
 import { useParams } from "next/navigation"
 import { BountyApplication } from "@/models/BountyApplication"
 import { useEffect, useState } from "react"
-import { User } from "@/models/User"
-import { Bounty } from "@/models/Bounty"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
 import { Button } from "./ui/button"
-import axios, { AxiosError } from "axios"
-import { HttpStatus, HttpStatusMessage } from "@/lib/HttpStatus"
-import { toast } from "@/hooks/use-toast"
 import { UserWithId } from "@/app/api/auth/github/route"
 import { BountyWithId } from "./tabs/Bounties"
 import AssignDialog from "./dialog/AssignDialog"
+import { Edit, Search } from "lucide-react"
+import { Input } from "./ui/input"
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
+import useGlobalStore from "@/store/GlobalStore"
+import { User } from "@/models/User"
 
-
+interface CustomBounty extends Omit<BountyWithId,"assignees">{
+  assignees:string[]
+}
 export interface BountyApplicationWithId extends Omit<BountyApplication, "applicantId" | "bountyId"> {
   _id: string
   applicantId: UserWithId
-  bountyId: BountyWithId
+  bountyId: CustomBounty
 }
 
 interface BountyApplicationResponse {
   status: number
   bountyApplications: BountyApplicationWithId[]
+}
+interface UserWith_Id extends User{
+  _id:string
 }
 
 export default function ApplicationsComponent() {
@@ -36,9 +48,18 @@ export default function ApplicationsComponent() {
     `/api/application/${id}`,
     fetcher
   )
-  const [open,setOpen]=useState<boolean>(false)
+  //semlly code
+  const {user}=useGlobalStore()
+  const [userid,setUserId]=useState("")
+  useEffect(()=>{
+    if(user){
+      console.log(user)
+      setUserId((user as UserWith_Id)._id)
+    }
+  },[user])
+  const [open, setOpen] = useState<boolean>(false)
   const [bountyApplications, setBountyApplications] = useState<BountyApplicationWithId[]>([])
-  const [bountyApplication,setBountyApplication] = useState<BountyApplicationWithId>()
+  const [bountyApplication, setBountyApplication] = useState<BountyApplicationWithId>()
   useEffect(() => {
     setBountyApplications(data?.bountyApplications ?? [])
   }, [data?.bountyApplications, setBountyApplications])
@@ -72,17 +93,24 @@ export default function ApplicationsComponent() {
       </Card>
     )
   }
-  async function assignHandler(bountyApplication:BountyApplicationWithId){
+  async function assignHandler(bountyApplication: BountyApplicationWithId) {
     //here send an api call add a confirm dialog and just send and finish this
     setBountyApplication(bountyApplication)
     setOpen(true)
 
   }
+  function editHandler(bountyApplication:BountyApplicationWithId){
+    alert(bountyApplication.bountyId.title)
+  }
 
   return (
     //dont forget to add pagination here and things like that
-    <div className="w-screen flex items-center justify-center mt-4">
-        <AssignDialog open={open} setOpen={setOpen} />
+    <div className="w-screen flex flex-col items-center justify-center mt-4">
+      <div className="flex items-center justify-center m-4">
+        <Input className="w-72" placeholder="enter the search query" />
+        <Search color="grey" className="ml-2" />
+      </div>
+      <AssignDialog bountyApplication={bountyApplication} open={open} setOpen={setOpen} />
       {bountyApplications.map((bountyApplication) => (
         <Card key={bountyApplication._id} className="w-3/4" >
           <CardHeader>
@@ -90,10 +118,10 @@ export default function ApplicationsComponent() {
           </CardHeader>
           <CardContent>
             <div className="flex items-center space-x-4 mb-4">
-                <Avatar>
-                    <AvatarImage src={bountyApplication.applicantId.avatar_url}/>
-                    <AvatarFallback>{bountyApplication.applicantId.email.slice(0,2).toUpperCase()}</AvatarFallback>
-                </Avatar>
+              <Avatar>
+                <AvatarImage src={bountyApplication.applicantId.avatar_url} />
+                <AvatarFallback>{bountyApplication.applicantId.email.slice(0, 2).toUpperCase()}</AvatarFallback>
+              </Avatar>
               <div>
                 <p className="font-medium">{bountyApplication.applicantId.email}</p>
               </div>
@@ -102,13 +130,37 @@ export default function ApplicationsComponent() {
               <p className="font-semibold">Bounty Amount: ${bountyApplication.bountyId.bountyAmount}</p>
               <p className="text-sm">{bountyApplication.bountyId.description}</p>
             </div>
-            
+
           </CardContent>
           <CardFooter>
-            <Button onClick={()=>assignHandler(bountyApplication)} variant={"outline"} >Assign</Button>
+            <Button disabled={bountyApplication.bountyId.assignees.includes(userid)} onClick={() => assignHandler(bountyApplication)} variant={"outline"} >
+              {
+                bountyApplication.bountyId.assignees.length>0?"Assigned":"Assign"
+              }              
+              </Button>
+              <Button onClick={()=>editHandler(bountyApplication)} >
+                <Edit/>
+              </Button>
           </CardFooter>
         </Card>
       ))}
+      <Pagination className="fixed bottom-2" >
+        <PaginationContent>
+          <PaginationItem>
+            <PaginationPrevious href="#" />
+          </PaginationItem>
+          <PaginationItem>
+            <PaginationLink href="#">1</PaginationLink>
+          </PaginationItem>
+          <PaginationItem>
+            <PaginationEllipsis />
+          </PaginationItem>
+          <PaginationItem>
+            <PaginationNext href="#" />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
+
     </div>
   )
 }

@@ -6,6 +6,7 @@ export interface IBountyApplicationRepository{
     addBountyApplication: (BountyApplication: BountyApplication) => Promise<BountyApplication|null>
     getApplicationByIdandApplicant:(bountyId:mongoose.Types.ObjectId,applicantId:mongoose.Types.ObjectId) => Promise<BountyApplication|null>
     getBountyApplicationByUser:(userId:mongoose.Types.ObjectId,bountyId:mongoose.Types.ObjectId) => Promise<BountyApplication[]|null>
+    getBountyApplicationByApplicant:(userId:string)=>Promise<string[]|null>
 }
 
 class BountyApplicationRepository extends BaseRepository implements IBountyApplicationRepository  {
@@ -21,7 +22,23 @@ class BountyApplicationRepository extends BaseRepository implements IBountyAppli
         return this._BountyApplicationModel.findOne({bountyId,applicantId})
     }
     async getBountyApplicationByUser(userId:mongoose.Types.ObjectId,bountyId:mongoose.Types.ObjectId){
-        return this._BountyApplicationModel.find({applicantId:userId,bountyId}).populate(['applicantId','bountyId']);
+        console.log(userId,bountyId)
+        return this._BountyApplicationModel.find({bountyId}).populate(['applicantId','bountyId']);
+    }
+    async getBountyApplicationByApplicant(userId:string){
+        try {
+            const appliedBounties:string[]=[]
+            const applications=await this._BountyApplicationModel.find({applicantId:new mongoose.Types.ObjectId(userId)}).lean() as unknown as BountyApplication[]
+            applications.forEach(application=>{
+                appliedBounties.push(application.bountyId as unknown as string)
+            })
+
+            return appliedBounties
+        } catch (error) {
+            const ErrorObject=error as Error
+            this._logger.error(ErrorObject.message)
+            return null
+        }
     }
 
 }

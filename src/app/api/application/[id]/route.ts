@@ -9,13 +9,13 @@ import { UserWithId } from "../../auth/github/route";
 export async function GET(request:Request,{params}:{params:{id:string}}){
     try {
         const {id}=params
-        console.log("from get",id)
         const user=await GetUserGivenAccessToken(cookies()) as UserWithId;
         if(!user){
             return NextResponse.json({message:HttpStatusMessage[HttpStatus.UNAUTHORIZED]},{status:HttpStatus.UNAUTHORIZED})
         }
         // const bountyApplications=await BountyApplicationServiceInstance.getBountyApplicationsForUser(user.id)
         const bountyApplications=await BountyApplicationServiceInstance.getBountyApplicationByUser(user.id,id)
+        console.log(bountyApplications)
         return NextResponse.json({message:HttpStatusMessage[HttpStatus.OK],bountyApplications:bountyApplications??[]}, {status:HttpStatus.OK})
     } catch (error) {
         console.error(error)

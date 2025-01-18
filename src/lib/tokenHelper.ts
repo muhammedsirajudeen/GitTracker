@@ -14,5 +14,8 @@ export async function GetUserGivenAccessToken(cookie:ReadonlyRequestCookies){
         
     }
     const user=await UserServiceInstance.getUserById(decodedUser.id)
+    if(!user?.verified){
+        return null
+    }
     return user
 }

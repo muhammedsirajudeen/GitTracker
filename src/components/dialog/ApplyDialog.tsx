@@ -18,13 +18,17 @@ interface ApplyDialogProps {
     open: boolean;
     setOpen: Dispatch<SetStateAction<boolean>>;
     bounty: PopulatedBounty | undefined;
+    setApplications:Dispatch<SetStateAction<string[]>>
 }
 
-export default function ApplyDialog({ open, setOpen, bounty }: ApplyDialogProps) {
+export default function ApplyDialog({ open, setOpen, bounty, setApplications }: ApplyDialogProps) {
     async function applyHandler(){
         try {
             const response=await axios.post(`/api/application/${bounty?._id}`,{},{withCredentials:true});
             console.log(response.data)
+            if(bounty?._id){
+                setApplications((prev)=>[...prev,bounty?._id])
+            }
             toast({ description: "Application submitted successfully", className: "bg-green-500 text-white" })
         } catch (error) {
             // console.log(error)

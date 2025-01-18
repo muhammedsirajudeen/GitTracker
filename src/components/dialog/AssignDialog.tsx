@@ -23,9 +23,9 @@ interface AssignDialogProps {
 
 export default function AssignDialog({ open, setOpen, bountyApplication }: AssignDialogProps) {
     async function assignHandler() {
-        console.log('hey')
         try {
-            const response = await axios.put(`/api/bounty/${bountyApplication?.bountyId._id}`, {}, { withCredentials: true })
+            //@ts-ignore
+            const response = await axios.put(`/api/bounty/${bountyApplication?.bountyId._id}`, {userId:bountyApplication?.applicantId._id}, { withCredentials: true })
             console.log(response)
             toast({ description: "Bounty assigned successfully", className: "bg-green-500 text-white" })
             setOpen(false)
