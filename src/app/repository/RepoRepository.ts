@@ -50,7 +50,7 @@ class RepoRepository extends BaseRepository  implements IRepoRepository {
         }
     }
     async getRepoByUser (userid: string,name:string,page?:number) {
-        this._logger.info("Error from inside repo")
+        this._logger.info(`fetching repo of user ${userid}`)
         const repositories=await this._RepoModel.find({owner_id:new mongoose.Types.ObjectId(userid),name:new RegExp(name)}).limit(this.Page_Limit).skip((page || page===0)?this.Page_Limit*page:this.Page_Limit)
         return repositories
     };

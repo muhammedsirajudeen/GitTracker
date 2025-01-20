@@ -7,7 +7,6 @@ export interface User {
   avatar_url: string;
   wallet_status: boolean;
 }
-
 export interface IUser extends User, Document {}
 
 const userSchema: Schema<IUser> = new mongoose.Schema(

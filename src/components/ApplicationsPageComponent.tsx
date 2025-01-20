@@ -24,9 +24,10 @@ import {
 } from "@/components/ui/pagination"
 import useGlobalStore from "@/store/GlobalStore"
 import { User } from "@/models/User"
+import { BlockChainProvider } from "./wallet/BlockChainProvider"
 
-interface CustomBounty extends Omit<BountyWithId,"assignees">{
-  assignees:string[]
+interface CustomBounty extends Omit<BountyWithId, "assignees"> {
+  assignees: string[]
 }
 export interface BountyApplicationWithId extends Omit<BountyApplication, "applicantId" | "bountyId"> {
   _id: string
@@ -38,8 +39,8 @@ interface BountyApplicationResponse {
   status: number
   bountyApplications: BountyApplicationWithId[]
 }
-interface UserWith_Id extends User{
-  _id:string
+interface UserWith_Id extends User {
+  _id: string
 }
 
 export default function ApplicationsComponent() {
@@ -49,14 +50,14 @@ export default function ApplicationsComponent() {
     fetcher
   )
   //semlly code
-  const {user}=useGlobalStore()
-  const [userid,setUserId]=useState("")
-  useEffect(()=>{
-    if(user){
+  const { user } = useGlobalStore()
+  const [userid, setUserId] = useState("")
+  useEffect(() => {
+    if (user) {
       console.log(user)
       setUserId((user as UserWith_Id)._id)
     }
-  },[user])
+  }, [user])
   const [open, setOpen] = useState<boolean>(false)
   const [bountyApplications, setBountyApplications] = useState<BountyApplicationWithId[]>([])
   const [bountyApplication, setBountyApplication] = useState<BountyApplicationWithId>()
@@ -99,69 +100,71 @@ export default function ApplicationsComponent() {
     setOpen(true)
 
   }
-  function editHandler(bountyApplication:BountyApplicationWithId){
+  function editHandler(bountyApplication: BountyApplicationWithId) {
     alert(bountyApplication.bountyId.title)
   }
 
   return (
     //dont forget to add pagination here and things like that
-    <div className="w-screen flex flex-col items-center justify-center mt-4">
-      <div className="flex items-center justify-center m-4">
-        <Input className="w-72" placeholder="enter the search query" />
-        <Search color="grey" className="ml-2" />
-      </div>
-      <AssignDialog bountyApplication={bountyApplication} open={open} setOpen={setOpen} />
-      {bountyApplications.map((bountyApplication) => (
-        <Card key={bountyApplication._id} className="w-3/4" >
-          <CardHeader>
-            <CardTitle className="text-lg">Application ID: {bountyApplication._id}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center space-x-4 mb-4">
-              <Avatar>
-                <AvatarImage src={bountyApplication.applicantId.avatar_url} />
-                <AvatarFallback>{bountyApplication.applicantId.email.slice(0, 2).toUpperCase()}</AvatarFallback>
-              </Avatar>
-              <div>
-                <p className="font-medium">{bountyApplication.applicantId.email}</p>
+    <BlockChainProvider>
+      <div className="w-screen flex flex-col items-center justify-center mt-4">
+        <div className="flex items-center justify-center m-4">
+          <Input className="w-72" placeholder="enter the search query" />
+          <Search color="grey" className="ml-2" />
+        </div>
+        <AssignDialog bountyApplication={bountyApplication} open={open} setOpen={setOpen} />
+        {bountyApplications.map((bountyApplication) => (
+          <Card key={bountyApplication._id} className="w-3/4" >
+            <CardHeader>
+              <CardTitle className="text-lg">Application ID: {bountyApplication._id}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center space-x-4 mb-4">
+                <Avatar>
+                  <AvatarImage src={bountyApplication.applicantId.avatar_url} />
+                  <AvatarFallback>{bountyApplication.applicantId.email.slice(0, 2).toUpperCase()}</AvatarFallback>
+                </Avatar>
+                <div>
+                  <p className="font-medium">{bountyApplication.applicantId.email}</p>
+                </div>
               </div>
-            </div>
-            <div className="space-y-2">
-              <p className="font-semibold">Bounty Amount: ${bountyApplication.bountyId.bountyAmount}</p>
-              <p className="text-sm">{bountyApplication.bountyId.description}</p>
-            </div>
+              <div className="space-y-2">
+                <p className="font-semibold">Bounty Amount: ${bountyApplication.bountyId.bountyAmount}</p>
+                <p className="text-sm">{bountyApplication.bountyId.description}</p>
+              </div>
 
-          </CardContent>
-          <CardFooter>
-            <Button disabled={bountyApplication.bountyId.assignees.includes(userid)} onClick={() => assignHandler(bountyApplication)} variant={"outline"} >
-              {
-                bountyApplication.bountyId.assignees.length>0?"Assigned":"Assign"
-              }              
+            </CardContent>
+            <CardFooter>
+              <Button disabled={bountyApplication.bountyId.assignees.includes(userid)} onClick={() => assignHandler(bountyApplication)} variant={"outline"} >
+                {
+                  bountyApplication.bountyId.assignees.length > 0 ? "Assigned" : "Assign"
+                }
               </Button>
-              <Button onClick={()=>editHandler(bountyApplication)} >
-                <Edit/>
+              <Button onClick={() => editHandler(bountyApplication)} >
+                <Edit />
               </Button>
-          </CardFooter>
-        </Card>
-      ))}
-      <Pagination className="fixed bottom-2" >
-        <PaginationContent>
-          <PaginationItem>
-            <PaginationPrevious href="#" />
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationLink href="#">1</PaginationLink>
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationEllipsis />
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationNext href="#" />
-          </PaginationItem>
-        </PaginationContent>
-      </Pagination>
+            </CardFooter>
+          </Card>
+        ))}
+        <Pagination className="fixed bottom-2" >
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious href="#" />
+            </PaginationItem>
+            <PaginationItem>
+              <PaginationLink href="#">1</PaginationLink>
+            </PaginationItem>
+            <PaginationItem>
+              <PaginationEllipsis />
+            </PaginationItem>
+            <PaginationItem>
+              <PaginationNext href="#" />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
 
-    </div>
+      </div>
+    </BlockChainProvider>
   )
 }
 

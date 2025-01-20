@@ -6,7 +6,7 @@ import winstonElasticsearch from 'winston-elasticsearch';
 
 
 
-export default class BaseRepository {
+export default class BaseRepository{
     _loggerClient: Client
     _logger:winston.Logger
     constructor() {

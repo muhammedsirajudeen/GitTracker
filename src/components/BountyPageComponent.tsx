@@ -58,7 +58,6 @@ export default function BountyPageComponent() {
     },[applicationdata?.applications]) 
     const [bounty, setBounty] = useState<PopulatedBounty>()
     const [expandedBounty, setExpandedBounty] = useState<string | null>(null)
-
     if (error) {
         return (
             <Alert variant="destructive">
@@ -90,20 +89,22 @@ export default function BountyPageComponent() {
 
     if (!data || data.bounties.length === 0) {
         return (
-            <Card className="w-full max-w-md mx-auto mt-20">
-            <CardContent className="pt-6 pb-4 text-center">
-              <Inbox className="mx-auto h-12 w-12 text-muted-foreground" />
-              <h3 className="mt-4 text-lg font-semibold">No bounties available</h3>
-              <p className="mt-2 text-sm text-muted-foreground">
-                There are currently no bounties to display. Why not create one and kickstart the community?
-              </p>
-            </CardContent>
-            <CardFooter>
-              <Button  className="w-full">
-                Create a New Bounty
-              </Button>
-            </CardFooter>
-          </Card>
+            <div className='flex items-center justify-center w-full flex-col'>
+                <Card className="w-full max-w-md mx-auto mt-4">
+                <CardContent className="pt-6 pb-4 text-center">
+                <Inbox className="mx-auto h-12 w-12 text-muted-foreground" />
+                <h3 className="mt-4 text-lg font-semibold">No bounties available</h3>
+                <p className="mt-2 text-sm text-muted-foreground">
+                    There are currently no bounties to display. Why not create one and kickstart the community?
+                </p>
+                </CardContent>
+                <CardFooter>
+                <Button  className="w-full">
+                    Create a New Bounty
+                </Button>
+                </CardFooter>
+            </Card>
+            </div>
         )
     }
     function applyHandler(bounty: PopulatedBounty) {
@@ -134,10 +135,6 @@ export default function BountyPageComponent() {
                                 <p className='text-xs font-semibold' >{bounty.repositoryId.name}</p>
                             </Badge>
                         </div>
-                        {/* {bounty.ownerId.email}
-                        
-                        {bounty.repositoryId.full_name}
-                        {bounty.repositoryId.name} */}
                         <CardTitle className="text-lg font-semibold truncate">{bounty.title}</CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -167,6 +164,7 @@ export default function BountyPageComponent() {
                 </Card>
             ))}
             <ApplyDialog setApplications={setApplications} bounty={bounty} open={open} setOpen={setOpen} />
+            {/* dialog for accepting bounties */}
             <Pagination className='fixed bottom-2' >
                 <PaginationContent>
                     <PaginationItem>

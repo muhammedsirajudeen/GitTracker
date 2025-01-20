@@ -6,11 +6,13 @@ import { UserWithId } from "../github/route"
 import { RedisOtpHelper } from "@/lib/redisHelper"
 import { HttpStatus, HttpStatusMessage } from "@/lib/HttpStatus"
 import { loginFormSchema } from "@/lib/formSchema"
+import Logger from "@/lib/LoggerHelper"
 
 interface LoginRequest {
     email: string
     password: string
 }
+
 export async function POST(request: Request) {
     try {
         const loginRequest = await request.json() as LoginRequest
@@ -51,10 +53,12 @@ export async function POST(request: Request) {
             maxAge: 60 * 60,
             path: '/',
         });
-
+        Logger._logger.info('User logged in successfully')
         return response;
     } catch (error) {
         console.log(error)
+        const errorLogin=error as Error
+        Logger._logger.error(errorLogin.message)
         return NextResponse.json({ message: HttpStatusMessage[HttpStatus.INTERNAL_SERVER_ERROR] }, { status: HttpStatus.INTERNAL_SERVER_ERROR })
     }
 }
