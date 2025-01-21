@@ -8,6 +8,10 @@ import { WifiIcon, WifiOffIcon } from 'lucide-react'
 import { Connection } from '@solana/web3.js';
 import { Skeleton } from "../ui/skeleton"
 import useGlobalStore from "@/store/GlobalStore"
+import updateUser from "@/serveractions/updateUser"
+import { UserWithId } from "@/app/api/auth/github/route"
+import { UserWith_Id } from "../ApplicationsPageComponent"
+
 
 
 export default function WalletStatus() {
@@ -15,7 +19,7 @@ export default function WalletStatus() {
     const [isAnimating, setIsAnimating] = useState(false)
     const [balance, setBalance] = useState<number | null>(null);
     const [isLoading, setIsLoading] = useState(true);
-    const { endpoint } = useGlobalStore()
+    const { endpoint,user } = useGlobalStore()
     useEffect(() => {
         const getBalance = async () => {
             if (publicKey && endpoint) {
@@ -32,8 +36,21 @@ export default function WalletStatus() {
     useEffect(() => {
         setIsAnimating(true)
         const timer = setTimeout(() => setIsAnimating(false), 500)
+        //write a server action to update the user's address and wallet status
+        async function walletUpdater(){
+            if(user){
+                try {
+                    const userid=(user as UserWith_Id)._id
+                    await updateUser(userid,{wallet_status:connected,wallet_address:publicKey?.toString()??null})
+                } catch (error) {
+                    console.log(error)
+                    //i think frontend log aggregate cheyan we have to write custom like handler
+                }
+            }
+        }
+        walletUpdater()
         return () => clearTimeout(timer)
-    }, [connected])
+    }, [connected, publicKey, user])
     const formatBalance = (bal: number) => {
         return bal.toFixed(4)
     }

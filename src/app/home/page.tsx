@@ -1,5 +1,6 @@
 import Home from "@/components/HomeComponent"
 import { verifyToken } from "@/lib/jwtHelper"
+import { GetUserGivenAccessToken } from "@/lib/tokenHelper"
 import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 
@@ -20,7 +21,8 @@ export async function TokenVerification(){
 }
 //give route guards here
 export default async function Page(){
-  const token=await TokenVerification()
+  const token=await GetUserGivenAccessToken(cookies())
+  console.log(token)
   if(!token){
     redirect('/')
   }

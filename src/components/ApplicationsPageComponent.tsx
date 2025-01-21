@@ -39,7 +39,7 @@ interface BountyApplicationResponse {
   status: number
   bountyApplications: BountyApplicationWithId[]
 }
-interface UserWith_Id extends User {
+export interface UserWith_Id extends User {
   _id: string
 }
 

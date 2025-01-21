@@ -9,6 +9,7 @@ export interface IUserRepository {
     VerifyUser: (user: string) => Promise<boolean>
     changePassword:(userid:string,password:string)=>Promise<boolean>
     getUserById:(userid:string)=>Promise<User|null>
+    updateUserByWallet:(userid:string,User:Partial<User>)=>Promise<boolean>
 }
 
 
@@ -76,6 +77,16 @@ class UserRepository extends BaseRepository implements IUserRepository {
             return null
         }
     };
+    async updateUserByWallet(userid:string,User:Partial<User>){
+        try {
+            await this._userModel.updateOne({_id:userid},User);
+            return true
+        } catch (error) {
+            const repoError:Error=error as Error
+            this._logger.error(repoError.message)
+            return false
+        }
+    }
 }
 
 const UserRepostoryInstance = new UserRepository(UserModel)

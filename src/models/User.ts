@@ -6,6 +6,7 @@ export interface User {
   verified: boolean;
   avatar_url: string;
   wallet_status: boolean;
+  wallet_address:string | null;
 }
 export interface IUser extends User, Document {}
 
@@ -38,6 +39,11 @@ const userSchema: Schema<IUser> = new mongoose.Schema(
       required: false,
       default: false,
     },
+    wallet_address:{
+      type:String,
+      required:false,
+      default:null
+    }
   },
   { timestamps: true }
 );

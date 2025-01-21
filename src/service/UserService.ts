@@ -7,6 +7,7 @@ interface IUserService {
     VerifyUser:(email:string)=>Promise<boolean>
     changePassword:(userid:string,password:string)=>Promise<boolean>
     getUserById:(userid:string)=>Promise<User|null>
+    updateUserById:(userid:string,User:Partial<User>)=>Promise<boolean>
 }
 class UserService implements IUserService {
     _UserRepo: IUserRepository
@@ -32,6 +33,10 @@ class UserService implements IUserService {
         console.log('from inside ',userid)
         return this._UserRepo.getUserById(userid)
     };
+    async updateUserById(userid:string,User:Partial<User>){
+        return this._UserRepo.updateUserByWallet(userid,User)
+    }
+    
 
 }
 const UserServiceInstance = new UserService(UserRepostoryInstance)
