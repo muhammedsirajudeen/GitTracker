@@ -21,13 +21,13 @@ export async function TokenVerification(){
 }
 //give route guards here
 export default async function Page(){
-  const token=await GetUserGivenAccessToken(cookies())
-  console.log(token)
-  if(!token){
+  const user=await GetUserGivenAccessToken(cookies())
+  
+  if(!user){
     redirect('/')
   }
   return(
-    <Home/>
+    <Home wallet_status={user.wallet_status} />
   )
 }
 

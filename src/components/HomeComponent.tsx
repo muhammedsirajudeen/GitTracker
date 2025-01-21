@@ -15,8 +15,13 @@ import {
 } from "@/components/ui/pagination"
 import axios from "axios"
 import { toast } from "@/hooks/use-toast"
+import WalletConnectWarning from "./dialog/WalletConnectWarning"
 
-export default function Home() {
+interface HomeProps{
+  wallet_status:boolean
+}
+
+export default function Home({wallet_status}:HomeProps) {
   const [repositories, setRepositories] = useState<ExtendedRepo[]>([])
   const [page, setPage] = useState(0)
   const [search, setSearch] = useState("")
@@ -55,6 +60,7 @@ export default function Home() {
   }
   return (
     <div className="w-full py-4 px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center">
+      <WalletConnectWarning open={!wallet_status} />
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <div className="relative w-full sm:w-auto">
