@@ -13,7 +13,7 @@ import axios, { AxiosError } from "axios";
 import { toast } from "@/hooks/use-toast";
 import { HttpStatus, HttpStatusMessage } from "@/lib/HttpStatus";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { Connection, PublicKey, SystemProgram, Transaction, TransactionInstruction, TransactionSignature } from "@solana/web3.js";
+import { Connection, PublicKey, Transaction, TransactionInstruction, TransactionSignature } from "@solana/web3.js";
 import { ClipLoader } from "react-spinners";
 
 
@@ -35,25 +35,24 @@ export default function AssignDialog({ open, setOpen, bountyApplication }: Assig
             return
         }
         try {
-
             //find a way to rollback
             const connection = new Connection('http://localhost:8899', 'confirmed');
-            const escrow_account=new PublicKey("5TiC68nb5fMqUwXimQK8R7MVnWxRTvtNAyDoJNpZgHh3")
-
-            const programId = new PublicKey('BExWfM5E1SX7RVfuZqHsLpRS9Q9dE4izTw5qkjguKMwX');
+            const escrow_account = new PublicKey("5TiC68nb5fMqUwXimQK8R7MVnWxRTvtNAyDoJNpZgHh3")
+            const programId = new PublicKey('81SNZ1xqmjif96oyYPDYyvHsdMLy8o36WcqTSgySU28i');
             const transaction = new Transaction();
             // most of this stuff is deprecated try to use the latest stuff
-            const jsonString=JSON.stringify({payee_address:bountyApplication?.applicantId.wallet_address,amount:bountyApplication?.bountyId.bountyAmount})            
+            const jsonString = JSON.stringify({ payee_address: bountyApplication?.applicantId.wallet_address, amount: bountyApplication?.bountyId.bountyAmount })
             const instruction = new TransactionInstruction({
                 programId: programId,
-                keys: [{ pubkey: publicKey, isSigner: true, isWritable: true },{pubkey:escrow_account,isSigner:false,isWritable:true}
-                    ,{
-                        pubkey:PublicKey.default,
-                        isSigner: false,
-                        isWritable: false,
-                    }
+                keys: [{ pubkey: publicKey, isSigner: true, isWritable: true },
+                { pubkey: escrow_account, isSigner: false, isWritable: true }
+                    , {
+                    pubkey: PublicKey.default,
+                    isSigner: false,
+                    isWritable: false,
+                }
                 ],
-                data: Buffer.from(jsonString,"utf-8"), // Include any required data for the smart contract function
+                data: Buffer.from(jsonString, "utf-8"), // Include any required data for the smart contract function
             });
             transaction.add(instruction);
             const { blockhash } = await connection.getLatestBlockhash();
@@ -66,7 +65,7 @@ export default function AssignDialog({ open, setOpen, bountyApplication }: Assig
                 return
             }
             const signedTransaction = await signTransaction(transaction);
-            
+
             const signature: TransactionSignature = await sendTransaction(signedTransaction, connection);
             const confirmation = await connection.confirmTransaction(signature, 'confirmed');
             if (confirmation.value.err) {
@@ -100,6 +99,7 @@ export default function AssignDialog({ open, setOpen, bountyApplication }: Assig
                     <DialogTitle>Do you want to assign the bounty to this person?</DialogTitle>
                     <DialogDescription>
                         Do you really want to assign the bounty to this person its irreversible once the bounty is acknowledged?
+                        The bounty amount would be transferred to our escrow account once you acknowledge this.
                     </DialogDescription>
                 </DialogHeader>
                 <DialogFooter className="flex justify-end space-x-2">
@@ -108,7 +108,8 @@ export default function AssignDialog({ open, setOpen, bountyApplication }: Assig
                     </Button>
                     <Button disabled={loading} variant="outline" onClick={assignHandler}>
                         {
-                            loading ?
+                            loading
+                                ?
                                 <ClipLoader loading={loading} size={20} color="whtte" />
                                 :
                                 <p>Assign</p>

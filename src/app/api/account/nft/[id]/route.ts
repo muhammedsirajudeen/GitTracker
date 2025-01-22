@@ -23,14 +23,6 @@ export async function GET(request:Request,{ params }: { params: { id: string } }
         const nftArray:NftArray[]=[]
         if (nfts.length > 0) {
             console.log(`Found ${nfts.length} NFTs for the owner:`);
-            // nfts.forEach((nft, index) => {
-            //   console.log(`\nNFT #${index + 1}:`);
-            //   console.log(`Mint Address: ${nft.address.toBase58()}`);
-            //   console.log(`Name: ${nft.name}`);
-            //   console.log(`Symbol: ${nft.symbol}`);
-            //   console.log(`URI: ${nft.uri}`);
-              
-            // });
             for(const nft of nfts){
               const imageUrl=await axios.get(nft.uri)
               console.log(imageUrl.data.image)

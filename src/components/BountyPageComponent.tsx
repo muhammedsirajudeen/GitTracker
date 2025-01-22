@@ -26,6 +26,7 @@ import {
     PaginationPrevious,
 } from "@/components/ui/pagination"
 import { BountyApplication } from '@/models/BountyApplication'
+import AssignedDialog from './dialog/AssignedDialog'
 
 export interface PopulatedBounty extends Omit<BountyWithId, "ownerId" | "repositoryId"> {
     ownerId: Pick<User, "avatar_url" | "email">
@@ -50,6 +51,7 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function BountyPageComponent() {
     const [open, setOpen] = useState<boolean>(false)
+    const [assignedDialog,setAssignedDialog] = useState<boolean>(false)
     const { data, error, isLoading } = useSWR<BountyResponse>('/api/bounty', fetcher)
     const {data:applicationdata}=useSWR<BountyApplicationResponse>('/api/application',fetcher)
     const [applications,setApplications]=useState<string[]>([])
@@ -115,13 +117,17 @@ export default function BountyPageComponent() {
     function searchHandler() {
         toast({ description: "implement search", className: "bg-blue-500 text-white" })
     }
-
+    function assignedHandler(){
+        setAssignedDialog(true)
+    }
     return (
         <div className="w-full flex items-center justify-center flex-col mt-2">
             <div className='flex items-center justify-center'>
                 <Input className='mr-3 w-72' placeholder='enter the search term' />
                 <Search onClick={searchHandler} size={20} color='grey' />
             </div>
+            <AssignedDialog open={assignedDialog} setOpen={setAssignedDialog}/>
+            <Button onClick={assignedHandler}  className='mt-4' >Assigned Bounties</Button>
             {data.bounties.map((bounty) => (
                 <Card key={bounty._id} className="overflow-hidden w-3/4 mt-4">
                     <CardHeader>

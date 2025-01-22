@@ -22,7 +22,6 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination"
-import useGlobalStore from "@/store/GlobalStore"
 import { User } from "@/models/User"
 import { BlockChainProvider } from "./wallet/BlockChainProvider"
 
@@ -50,14 +49,6 @@ export default function ApplicationsComponent() {
     fetcher
   )
   //semlly code
-  const { user } = useGlobalStore()
-  const [userid, setUserId] = useState("")
-  useEffect(() => {
-    if (user) {
-      console.log(user)
-      setUserId((user as UserWith_Id)._id)
-    }
-  }, [user])
   const [open, setOpen] = useState<boolean>(false)
   const [bountyApplications, setBountyApplications] = useState<BountyApplicationWithId[]>([])
   const [bountyApplication, setBountyApplication] = useState<BountyApplicationWithId>()
@@ -135,7 +126,7 @@ export default function ApplicationsComponent() {
 
             </CardContent>
             <CardFooter>
-              <Button disabled={bountyApplication.bountyId.assignees.includes(userid)} onClick={() => assignHandler(bountyApplication)} variant={"outline"} >
+              <Button disabled={bountyApplication.bountyId.assignees.length>0} onClick={() => assignHandler(bountyApplication)} variant={"outline"} >
                 {
                   bountyApplication.bountyId.assignees.length > 0 ? "Assigned" : "Assign"
                 }

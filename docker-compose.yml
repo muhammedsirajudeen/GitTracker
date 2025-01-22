@@ -93,6 +93,19 @@ services:
   #     - elasticsearch
   #   networks:
   #     - elk
+  # solana-validator:
+  #   image: monteesharma0638/solana-test-validator:stable
+  #   container_name: solana-validator
+  #   ports:
+  #     - "8899:8899" # RPC port
+  #     - "8900:8900" # Gossip port
+  #     - "8001:8001" # TPU port
+  #     - "8000:8000" # TPU-FORWARD port
+  #   volumes:
+  #     - ./solana-config:/root/solana-config
+  #   networks:
+  #     - elk
+  #   command: ["sh","-c","touch log.txt && ./solana-test-validator > log.txt"]
 
 volumes:
   mongodb_data:

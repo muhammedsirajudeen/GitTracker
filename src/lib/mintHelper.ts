@@ -65,6 +65,7 @@ export async function mintNFT(userAddress:string):Promise<string>{
             sellerFeeBasisPoints: 0, // No royalties
             symbol: 'ISSUE',
             creators: [{ address: payer.publicKey, share: 100 }],
+            
         });
         console.log(`NFT Minted Successfully: ${nft.address.toBase58()}`);
         return metadataUri;
