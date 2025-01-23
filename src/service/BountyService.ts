@@ -7,7 +7,7 @@ interface IBountyService{
     deleteBountyById: (bountyId:string) => Promise<boolean>
     getAllBounties: (userId:string) => Promise<Bounty[] | null>;
     addAssignee:(userid:string,bountyid:string)=>Promise<boolean>
-    getBountyByAssignee:(userid:string)=>Promise<Bounty|null>
+    getBountyByAssignee:(userid:string)=>Promise<Bounty[]|null>
 
 }
 

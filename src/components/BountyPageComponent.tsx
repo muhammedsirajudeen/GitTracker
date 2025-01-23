@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/pagination"
 import { BountyApplication } from '@/models/BountyApplication'
 import AssignedDialog from './dialog/AssignedDialog'
+import PrDialog from "@/components/dialog/PrDialog";
 
 export interface PopulatedBounty extends Omit<BountyWithId, "ownerId" | "repositoryId"> {
     ownerId: Pick<User, "avatar_url" | "email">
@@ -55,6 +56,8 @@ export default function BountyPageComponent() {
     const { data, error, isLoading } = useSWR<BountyResponse>('/api/bounty', fetcher)
     const {data:applicationdata}=useSWR<BountyApplicationResponse>('/api/application',fetcher)
     const [applications,setApplications]=useState<string[]>([])
+    const [prDialog,setPrDialog]=useState(false)
+    const [populatedBounty,setPopulatedBounty]=useState<PopulatedBounty>()
     useEffect(()=>{
         setApplications(applicationdata?.applications ?? [])
     },[applicationdata?.applications]) 
@@ -126,7 +129,8 @@ export default function BountyPageComponent() {
                 <Input className='mr-3 w-72' placeholder='enter the search term' />
                 <Search onClick={searchHandler} size={20} color='grey' />
             </div>
-            <AssignedDialog open={assignedDialog} setOpen={setAssignedDialog}/>
+            <AssignedDialog setPopulatedBounty={setPopulatedBounty} setPrDialog={setPrDialog} open={assignedDialog} setOpen={setAssignedDialog}/>
+            <PrDialog open={prDialog} setOpen={setPrDialog} bounty={populatedBounty}/>
             <Button onClick={assignedHandler}  className='mt-4' >Assigned Bounties</Button>
             {data.bounties.map((bounty) => (
                 <Card key={bounty._id} className="overflow-hidden w-3/4 mt-4">

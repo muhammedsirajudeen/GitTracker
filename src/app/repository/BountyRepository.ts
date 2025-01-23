@@ -1,5 +1,5 @@
-import BountyModel, { Bounty, IBounty } from "@/models/Bounty"
-import mongoose, { Model } from "mongoose"
+import BountyModel, {Bounty, IBounty} from "@/models/Bounty"
+import mongoose, {Model} from "mongoose"
 import BaseRepository from "./BaseRepository";
 
 export interface IBountyRepository {
@@ -10,7 +10,7 @@ export interface IBountyRepository {
     getBountyById:(id:string) => Promise<Bounty|null>
     getAllBounties:(userId:string)=>Promise<Bounty[]|null>
     addAssignee:(userid:string,bountyid:string)=>Promise<boolean>
-    getBountyByAssignee:(userid:string)=>Promise<Bounty|null>
+    getBountyByAssignee:(userid:string)=>Promise<Bounty[]|null>
 }
 
 class BountyRepository extends BaseRepository implements IBountyRepository {
@@ -30,16 +30,12 @@ class BountyRepository extends BaseRepository implements IBountyRepository {
     };
     //pass the owner id here too
     async getBounties(repositoryId:string): Promise<Bounty[] | null> {
-       const bounties=await this._BountyModel.find({repositoryId:new mongoose.Types.ObjectId(repositoryId)}).populate('assignees') as Bounty[]
-       return bounties
+       return await this._BountyModel.find({repositoryId:new mongoose.Types.ObjectId(repositoryId)}).populate('assignees') as Bounty[]
+
     }
     async getBountyByIssueId(issueId:string): Promise<boolean> {
         const bounty=await this._BountyModel.findOne({issueId})
-        if(bounty){
-            return true
-        }else{
-            return false
-        }
+        return !!bounty;
     }
     async deleteBountyById(bountyId:string): Promise<boolean> {
         try {
@@ -51,14 +47,12 @@ class BountyRepository extends BaseRepository implements IBountyRepository {
         }
     };
     async getBountyById(id:string): Promise<Bounty|null> {
-        const bounty=await this._BountyModel.findById(id)
-        return bounty
+        return await this._BountyModel.findById(id)
     }
     async getAllBounties(userid:string): Promise<Bounty[]|null> {
-        const bounties = await this._BountyModel.find({ ownerId: { $ne: new mongoose.Types.ObjectId(userid) } })
-        .populate({ path: 'repositoryId' })
-        .populate({ path: 'ownerId', select: 'email avatar_url' }) as Bounty[];
-        return bounties
+        return await this._BountyModel.find({ownerId: {$ne: new mongoose.Types.ObjectId(userid)}})
+            .populate({path: 'repositoryId'})
+            .populate({path: 'ownerId', select: 'email avatar_url'}) as Bounty[]
     }
     async addAssignee(userid:string,bountyid:string): Promise<boolean> {
         try {
@@ -74,9 +68,9 @@ class BountyRepository extends BaseRepository implements IBountyRepository {
             return false
         }
     }
-    async getBountyByAssignee(userid:string): Promise<Bounty|null> {
-        const bounty = await this._BountyModel.findOne({ assignees: { $in: [new mongoose.Types.ObjectId(userid)] } });
-        return bounty
+    async getBountyByAssignee(userid:string) {
+        return await this._BountyModel.find({assignees: {$in: [new mongoose.Types.ObjectId(userid)]}}).populate('repositoryId')
+            .populate('ownerId') as unknown as Bounty[]
     }
 
 }

@@ -69,3 +69,36 @@ export interface GitHubIssue {
     title: string;
     bountyAmount:string;
 }
+
+
+
+export interface PullRequest {
+    id: number;
+    node_id: string;
+    number: number;
+    state: string;
+    locked: boolean;
+    title: string;
+    body: string | null;
+    created_at: string;
+    updated_at: string;
+    closed_at: string | null;
+    merged_at: string | null;
+    html_url: string;
+    diff_url: string;
+    patch_url: string;
+    issue_url: string;
+    comments_url: string;
+    review_comments_url: string;
+    statuses_url: string;
+    commits_url: string;
+    assignee: User | null;
+    assignees: User[];
+    requested_reviewers: User[];
+    user: User;
+    merge_commit_sha: string | null;
+    draft: boolean;
+    author_association: string;
+    auto_merge: boolean | null;
+    active_lock_reason: string | null;
+}
