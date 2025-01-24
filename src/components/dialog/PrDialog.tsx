@@ -58,7 +58,10 @@ export default  function PrDialog({open, setOpen, bounty}: PrDialogProps) {
                         <Badge className="ml-2 h-4">{bounty?.repositoryId.name}</Badge>
                 </div>
                 </DialogHeader>
-                <PullRequestList pullRequests={pullrequests}/>
+                <div className="w-full flex items-center justify-center" >
+                    <PullRequestList pullRequests={pullrequests}/>
+                </div>
+
             </DialogContent>
         </Dialog>
 

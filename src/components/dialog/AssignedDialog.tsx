@@ -41,7 +41,6 @@ export default function AssignedDialog({open,setOpen,setPrDialog,setPopulatedBou
         setOpen(false)
         setPrDialog(true)
         setPopulatedBounty(assignedBounty)
-        toast({description:"Bounty completed successfully reimbursing funds",className:"bg-green-500 text-white"})
     }
     return (
         <Dialog open={open} onOpenChange={setOpen} >
@@ -73,7 +72,7 @@ export default function AssignedDialog({open,setOpen,setPrDialog,setPopulatedBou
                                 </Badge>
                                 <span className="text-sm text-gray-500">ID: {assignedBounty.issueId}</span>
                             </CardFooter>
-                                <Button className="h-6 bg-gray-700 hover:bg-gray-200 " onClick={()=>completionHandler(assignedBounty)} >
+                                <Button className="h-6 bg-inherit hover:bg-gray-900 " onClick={()=>completionHandler(assignedBounty)} >
                                     <BookMarked color={"white"} />
                                     <p className="text-xs font-bold text-white" >Mark as completed</p>
                                 </Button>

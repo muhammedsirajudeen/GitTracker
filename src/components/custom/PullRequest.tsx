@@ -6,7 +6,8 @@ import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import {Button} from "@/components/ui/button";
-import {BoxSelect, CircleChevronRight} from "lucide-react";
+import { CircleChevronRight } from "lucide-react";
+import {toast} from "@/hooks/use-toast";
 
 interface User {
     login: string
@@ -61,7 +62,9 @@ export default function PullRequestList({ pullRequests }: PullRequestListProps) 
     }
     function selectHandler(pullrequest:PullRequest){
         console.log(pullrequest)
+        toast({description:"pr selected succesfully",className:"bg-orange-500 text-white"})
     }
+    
     return (
         <Card className="w-full max-w-3xl">
             <CardHeader>

@@ -23,7 +23,6 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination"
 import { User } from "@/models/User"
-import { BlockChainProvider } from "./wallet/BlockChainProvider"
 
 interface CustomBounty extends Omit<BountyWithId, "assignees"> {
   assignees: string[]
@@ -97,7 +96,6 @@ export default function ApplicationsComponent() {
 
   return (
     //dont forget to add pagination here and things like that
-    <BlockChainProvider>
       <div className="w-screen flex flex-col items-center justify-center mt-4">
         <div className="flex items-center justify-center m-4">
           <Input className="w-72" placeholder="enter the search query" />
@@ -155,7 +153,6 @@ export default function ApplicationsComponent() {
         </Pagination>
 
       </div>
-    </BlockChainProvider>
   )
 }
 

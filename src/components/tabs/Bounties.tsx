@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/pagination"
 import BountySearch from '../search/BountySearch';
 import { createPortal } from 'react-dom';
+import {useWallet} from "@solana/wallet-adapter-react";
 
 export interface BountyWithId extends Bounty {
   _id: string
@@ -46,6 +47,8 @@ const Bounties: React.FC = () => {
   const [bounties, setBounties] = useState<BountyWithUser[]>([])
   const [bounty, setBounty] = useState<BountyWithUser>()
   const [server, setServer] = useState<boolean>(false)
+  const {wallet,connected}=useWallet()
+  console.log(connected)
   console.log(data)
   useEffect(() => {
     if (data) {
