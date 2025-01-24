@@ -18,13 +18,13 @@ export interface PopulatedBountyRedemption extends Omit<BountyRedemption,"bounty
     applicantId: User
 }
 
-export interface IBountyRedemption extends Omit<BountyRedemption,"_id"|"bountyId"|"applicantId">,Document{
+export interface IBountyRedemptionModel extends Omit<BountyRedemption,"_id"|"bountyId"|"applicantId">,Document{
     bountyId:Types.ObjectId
     applicantId:Types.ObjectId
 }
 
 // Define the Mongoose schema
-const BountyRedemptionSchema = new Schema<IBountyRedemption>(
+const BountyRedemptionSchema = new Schema<IBountyRedemptionModel>(
     {
         _id: {
             type: Schema.Types.ObjectId,
@@ -55,7 +55,7 @@ const BountyRedemptionSchema = new Schema<IBountyRedemption>(
 );
 
 // Create the model
-const BountyRedemption = model<IBountyRedemption>(
+const BountyRedemption = model<IBountyRedemptionModel>(
     'BountyRedemption',
     BountyRedemptionSchema
 );
