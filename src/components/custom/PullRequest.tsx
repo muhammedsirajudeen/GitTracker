@@ -8,6 +8,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import {Button} from "@/components/ui/button";
 import { CircleChevronRight } from "lucide-react";
 import {toast} from "@/hooks/use-toast";
+import { PopulatedBounty } from "../BountyPageComponent"
 
 interface User {
     login: string
@@ -32,9 +33,10 @@ interface PullRequest {
 
 interface PullRequestListProps {
     pullRequests: PullRequest[]
+    bounty:PopulatedBounty | undefined
 }
 
-export default function PullRequestList({ pullRequests }: PullRequestListProps) {
+export default function PullRequestList({ pullRequests,bounty }: PullRequestListProps) {
     const [expandedPR, setExpandedPR] = useState<number | null>(null)
 
     const formatDate = (dateString: string) => {
@@ -63,6 +65,9 @@ export default function PullRequestList({ pullRequests }: PullRequestListProps) 
     function selectHandler(pullrequest:PullRequest){
         console.log(pullrequest)
         toast({description:"pr selected succesfully",className:"bg-orange-500 text-white"})
+        //here we would post to the backend and we would award the first closed issue in case of arising conflicts we would assign 
+        console.log(bounty?._id,bounty?.repositoryId.full_name,pullrequest.number)
+
     }
     
     return (

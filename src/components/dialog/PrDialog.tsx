@@ -37,7 +37,7 @@ export default  function PrDialog({open, setOpen, bounty}: PrDialogProps) {
             setPullrequests(data.pullrequests)
         }
     },[data])
-    console.log(data)
+    console.log(bounty)
     return (
         <Dialog open={open} onOpenChange={setOpen} >
             <DialogContent className="max-w-4xl bg-black" >
@@ -47,7 +47,7 @@ export default  function PrDialog({open, setOpen, bounty}: PrDialogProps) {
                         <p className="ml-2">Select Your PR.</p>
                     </DialogTitle>
                     <DialogDescription className="text-center">
-                        select your pr to correctly gain your bounty.
+                        select your closed pr to correctly gain your bounty.
                     </DialogDescription>
                     {/* fetch the bounty details here */}
                     <div className="flex w-full items-center justify-center">
@@ -59,7 +59,7 @@ export default  function PrDialog({open, setOpen, bounty}: PrDialogProps) {
                 </div>
                 </DialogHeader>
                 <div className="w-full flex items-center justify-center" >
-                    <PullRequestList pullRequests={pullrequests}/>
+                    <PullRequestList bounty={bounty} pullRequests={pullrequests}/>
                 </div>
 
             </DialogContent>

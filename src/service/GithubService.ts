@@ -19,14 +19,14 @@ interface IGithubService{
 class GithubService implements  IGithubService{
     constructor() {
     }
-    async getUser(token:string){
+    // async getUser(token:string){
 
-    }
+    // }
     async getPullRequestByRepoOfToken(token: string, repo: string): Promise<PullRequest[]> {
         try {
             //perform the necessary network requests and all here
             const user=await this.getUserGivenToken(token)
-            const prResponse=await axios.get(`${GithubUrls.base_url}/repos/${repo}/pulls?state=all`,
+            const prResponse=await axios.get(`${GithubUrls.base_url}/repos/${repo}/pulls?state=closed`,
                 {
                     headers:{
                         Authorization: `Bearer ${token}`,

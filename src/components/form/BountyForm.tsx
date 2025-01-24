@@ -81,11 +81,6 @@ const BountyForm: React.FC<{
                     programId: programId,
                     keys: [{ pubkey: publicKey, isSigner: true, isWritable: true },
                     { pubkey: escrow_account, isSigner: false, isWritable: true }
-                        , {
-                        pubkey: PublicKey.default,
-                        isSigner: false,
-                        isWritable: false,
-                    }
                     ],
                     data: Buffer.from(jsonString, "utf-8"), // Include any required data for the smart contract function
                 });
@@ -107,10 +102,10 @@ const BountyForm: React.FC<{
                     toast({ description: "Transaction Failed", className: "bg-red-500 text-white" })
                 }
                 toast({ description: "Transaction successfully completed", className: "bg-green-500 text-white" });
-                // const response = await axios.post(`/api/bounty/${id}`, { ...data, repositoryId: id }, { withCredentials: true });
-                // console.log('Bounty submitted successfully:', response.data);
-                // toast({ description: "Bounty submitted successfully", className: "bg-green-500 text-white" })
-                // setBounties((prev)=>[...prev,response.data.bounty])
+                const response = await axios.post(`/api/bounty/${id}`, { ...data, repositoryId: id }, { withCredentials: true });
+                console.log('Bounty submitted successfully:', response.data);
+                toast({ description: "Bounty submitted successfully", className: "bg-green-500 text-white" })
+                setBounties((prev)=>[...prev,response.data.bounty])
                 form.reset()
                 // keep it open temporarily
                 setOpen(false)
@@ -212,12 +207,13 @@ const BountyForm: React.FC<{
                                 <FormItem>
                                     <FormLabel>Bounty Amount</FormLabel>
                                     <FormControl>
-                                        <Input type="number" placeholder="Enter bounty amount" {...field} />
+                                        <Input type="number" placeholder="Enter bounty amount in lamports" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
                         />
+                        <p className='text-xs text-gray-400'>Bounty amount would be transferred right away from your wallet to escrow</p>
                         <Button disabled={loading} type="submit">
                             {
                                 loading ? <ClipLoader color='black' size={10} /> : 'Submit Bounty'

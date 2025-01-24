@@ -29,7 +29,7 @@ export default function AssignDialog({ open, setOpen, bountyApplication }: Assig
         try {
 
             //@ts-ignore
-            const response = await axios.put(`/api/bounty/${bountyApplication?.bountyId._id}`, { userId: bountyApplication?.applicantId._id, walletAddress: publicKey?.toString() }, { withCredentials: true })
+            const response = await axios.put(`/api/bounty/${bountyApplication?.bountyId._id}`, { userId: bountyApplication?.applicantId._id }, { withCredentials: true })
             console.log(response)
             setTimeout(() => {
                 toast({ description: "Bounty assigned successfully", className: "bg-green-500 text-white" })

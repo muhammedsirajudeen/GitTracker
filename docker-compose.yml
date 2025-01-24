@@ -105,7 +105,7 @@ services:
       - ./solana-config:/root/solana-config
     networks:
       - elk
-    # command: ["sh","-c","touch log.txt && ./solana-test-validator > log.txt"]
+    command: ["sh","-c","touch log.txt && ./solana-test-validator > log.txt"]
 
 volumes:
   mongodb_data:
