@@ -47,9 +47,6 @@ const Bounties: React.FC = () => {
   const [bounties, setBounties] = useState<BountyWithUser[]>([])
   const [bounty, setBounty] = useState<BountyWithUser>()
   const [server, setServer] = useState<boolean>(false)
-  const {wallet,connected}=useWallet()
-  console.log(connected)
-  console.log(data)
   useEffect(() => {
     if (data) {
       setBounties(data.bounties)

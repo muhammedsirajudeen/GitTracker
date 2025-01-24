@@ -33,6 +33,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { ScrollArea } from '../ui/scroll-area';
 import { Badge } from '../ui/badge';
 import { BountyWithUser } from '../tabs/Bounties';
+import { Connection, PublicKey, Transaction, TransactionInstruction, TransactionSignature } from '@solana/web3.js';
+import { useWallet } from '@solana/wallet-adapter-react';
 
 
 
@@ -58,16 +60,57 @@ const BountyForm: React.FC<{
     const { id } = useParams()
     const { data }: { data?: IssueResponse, isLoading: boolean } = useSWR(`/api/issues/${id}`, fetcher)
     const [loading, setLoading] = useState<boolean>(false)
+    const {signTransaction,publicKey,sendTransaction}=useWallet()
     const onSubmit = (data: BountyFormValues) => {
         console.log(data);
 
         const submitBounty = async () => {
             setLoading(true)
+            if(!publicKey){
+                toast({ description: "Please connect to a wallet", className: "bg-red-500 text-white" })
+                return
+            }
             try {
-                const response = await axios.post(`/api/bounty/${id}`, { ...data, repositoryId: id }, { withCredentials: true });
-                console.log('Bounty submitted successfully:', response.data);
-                toast({ description: "Bounty submitted successfully", className: "bg-green-500 text-white" })
-                setBounties((prev)=>[...prev,response.data.bounty])
+                const connection = new Connection('http://localhost:8899', 'confirmed');
+                const escrow_account = new PublicKey("5TiC68nb5fMqUwXimQK8R7MVnWxRTvtNAyDoJNpZgHh3")
+                const programId = new PublicKey('BJMmFR2ENswLKZn3GtQm8MJy9rck8o8SAcsWWdqzjDYE');
+                const transaction = new Transaction();
+                // most of this stuff is deprecated try to use the latest stuff
+                const jsonString = JSON.stringify({ amount:parseInt(data.bountyAmount) })
+                const instruction = new TransactionInstruction({
+                    programId: programId,
+                    keys: [{ pubkey: publicKey, isSigner: true, isWritable: true },
+                    { pubkey: escrow_account, isSigner: false, isWritable: true }
+                        , {
+                        pubkey: PublicKey.default,
+                        isSigner: false,
+                        isWritable: false,
+                    }
+                    ],
+                    data: Buffer.from(jsonString, "utf-8"), // Include any required data for the smart contract function
+                });
+                transaction.add(instruction);
+                const { blockhash } = await connection.getLatestBlockhash();
+                transaction.recentBlockhash = blockhash;
+                transaction.feePayer = publicKey; // Set the fee payer to the wallet's public key
+
+
+                if (!signTransaction) {
+                    toast({ description: "Transaction signing failed", className: "bg-red-500 text-white" })
+                    return
+                }
+                const signedTransaction = await signTransaction(transaction);
+
+                const signature: TransactionSignature = await sendTransaction(signedTransaction, connection);
+                const confirmation = await connection.confirmTransaction(signature, 'confirmed');
+                if (confirmation.value.err) {
+                    toast({ description: "Transaction Failed", className: "bg-red-500 text-white" })
+                }
+                toast({ description: "Transaction successfully completed", className: "bg-green-500 text-white" });
+                // const response = await axios.post(`/api/bounty/${id}`, { ...data, repositoryId: id }, { withCredentials: true });
+                // console.log('Bounty submitted successfully:', response.data);
+                // toast({ description: "Bounty submitted successfully", className: "bg-green-500 text-white" })
+                // setBounties((prev)=>[...prev,response.data.bounty])
                 form.reset()
                 // keep it open temporarily
                 setOpen(false)
