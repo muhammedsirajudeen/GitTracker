@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import {useEffect, useState} from "react"
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -9,6 +9,13 @@ import {Button} from "@/components/ui/button";
 import { CircleChevronRight } from "lucide-react";
 import {toast} from "@/hooks/use-toast";
 import { PopulatedBounty } from "../BountyPageComponent"
+import axios, {AxiosError} from "axios"
+import {HttpStatus} from "@/lib/HttpStatus";
+import useSWR from "swr";
+import {fetcher} from "@/components/RepositoryListing";
+import {BountyRedemption} from "@/models/BountyRedemption";
+import useGlobalStore from "@/store/GlobalStore";
+import {UserWithId} from "@/app/api/auth/github/route";
 
 interface User {
     login: string
@@ -35,10 +42,23 @@ interface PullRequestListProps {
     pullRequests: PullRequest[]
     bounty:PopulatedBounty | undefined
 }
+interface BountyRedemptionResponse{
+    bountyredemption:BountyRedemption|null
+    status:number
+
+}
+
 
 export default function PullRequestList({ pullRequests,bounty }: PullRequestListProps) {
+    const {data:bountyredemptiondata,isLoading:isRedemptionLoading}:{data:BountyRedemptionResponse,isLoading:boolean}=useSWR(`/api/bountyredemption/${bounty?._id}`,fetcher)
+    const [bountyredemption,setBountyRedemption]=useState<Partial<BountyRedemption> | null>(null)
+    const {user}=useGlobalStore()
+    useEffect(() => {
+        if(bountyredemptiondata){
+            setBountyRedemption((bountyredemptiondata.bountyredemption))
+        }
+    }, [bountyredemptiondata]);
     const [expandedPR, setExpandedPR] = useState<number | null>(null)
-
     const formatDate = (dateString: string) => {
         return new Date(dateString).toLocaleDateString("en-US", {
             year: "numeric",
@@ -62,12 +82,26 @@ export default function PullRequestList({ pullRequests,bounty }: PullRequestList
                 return <Badge variant="secondary">{state}</Badge>
         }
     }
-    function selectHandler(pullrequest:PullRequest){
-        console.log(pullrequest)
-        toast({description:"pr selected succesfully",className:"bg-orange-500 text-white"})
-        //here we would post to the backend and we would award the first closed issue in case of arising conflicts we would assign 
-        console.log(bounty?._id,bounty?.repositoryId.full_name,pullrequest.number)
-
+    async function selectHandler(pullrequest:PullRequest){
+        try {            
+            toast({description:"pr selected succesfully",className:"bg-orange-500 text-white"})
+            //here we would post to the backend and we would award the first closed issue in case of arising conflicts we would assign 
+            console.log(bounty?._id,bounty?.repositoryId.full_name,pullrequest.number)
+            const response=(
+                await axios.post(`/api/bountyredemption`, {bountyId:bounty?._id,fullName:bounty?.repositoryId.full_name,pullrequestNumber:pullrequest.number}, { withCredentials: true })
+            ).data
+            if(user){
+                const userwithid=user as UserWithId
+                setBountyRedemption({pullrequestNumber:pullrequest.number})
+            }
+        } catch (error) {
+            const axiosError=error as AxiosError
+            if(axiosError.status===HttpStatus.CONFLICT){
+                toast({description:"The bounty has already been claimed",className:"bg-red-500 text-white"})
+            }else{
+                toast({description:"Failed to select pr",className:"bg-red-500 text-white"})
+            }
+        }
     }
     
     return (
@@ -109,9 +143,17 @@ export default function PullRequestList({ pullRequests,bounty }: PullRequestList
                                 </button>
                             </CardContent>
                             <CardFooter>
-                                <Button className="h-6" onClick={()=>selectHandler(pr)} >
-                                    <CircleChevronRight/>
-                                </Button>
+                                {
+                                    bountyredemption?.pullrequestNumber===pr.number
+                                    ?
+                                        <Button onClick={()=>{
+                                            toast({description:"Please select a different pr to change",className:"bg-orange-500 text-white"})
+                                        }} variant="outline">selected</Button>
+                                        :
+                                    <Button className="h-6" onClick={()=>selectHandler(pr)} >
+                                        select
+                                    </Button>
+                                }
                             </CardFooter>
                         </Card>
                     ))}

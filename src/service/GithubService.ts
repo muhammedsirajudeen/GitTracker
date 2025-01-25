@@ -10,6 +10,7 @@ interface PullRequest{
     user:{
         login:string
     }
+    merged_at:string|null
 }
 interface IGithubService{
     getPullRequestByRepoOfToken(token:string,repo:string):Promise<PullRequest[]>
@@ -33,10 +34,9 @@ class GithubService implements  IGithubService{
                     }
                 }
             )
-            console.log(prResponse.data)
             const prOfUser:PullRequest[]=[]
             prResponse.data.forEach((pr:PullRequest)=>{
-                if(pr.user.login===user){
+                if(pr.user.login===user && pr.merged_at!==null){
                     prOfUser.push(pr)
                 }
             })

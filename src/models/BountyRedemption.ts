@@ -1,14 +1,14 @@
-import { Schema, model, Document, Types } from 'mongoose';
+import mongoose, { Schema, model, Document, Types } from 'mongoose';
 import { Bounty } from './Bounty';
 import { User } from '@/lib/types';
 
 // Define the interface for TypeScript type checking
 export interface BountyRedemption{
     _id: string;
-    repofullname:string
-    pullrequestnumber: number;
+    fullName:string //note that this is the full name of the repository
+    pullrequestNumber: number;
     bountyId: Types.ObjectId
-    applicantId: Types.ObjectId
+    applicantId: string
     createdAt?: Date;
     updatedAt?: Date;
 }
@@ -40,11 +40,11 @@ const BountyRedemptionSchema = new Schema<IBountyRedemptionModel>(
             ref: 'User',
             required: true,
         },
-        pullrequestnumber:{
+        pullrequestNumber:{
             type: Number,
             required: true,
         },
-        repofullname:{
+        fullName:{
             type: String,
             required: true,
         },
@@ -55,7 +55,7 @@ const BountyRedemptionSchema = new Schema<IBountyRedemptionModel>(
 );
 
 // Create the model
-const BountyRedemption = model<IBountyRedemptionModel>(
+const BountyRedemption =mongoose.models.BountyRedemption || model<IBountyRedemptionModel>(
     'BountyRedemption',
     BountyRedemptionSchema
 );

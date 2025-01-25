@@ -28,6 +28,8 @@ interface PullRequestResponse{
     status:number
 }
 
+
+
 export default  function PrDialog({open, setOpen, bounty}: PrDialogProps) {
     const fullname=bounty?.repositoryId.full_name.replace('/','~')
     const {data,isLoading}:{data:PullRequestResponse | undefined,isLoading:boolean}=useSWR(`/api/pullrequest/${fullname}`,fetcher)
@@ -37,7 +39,6 @@ export default  function PrDialog({open, setOpen, bounty}: PrDialogProps) {
             setPullrequests(data.pullrequests)
         }
     },[data])
-    console.log(bounty)
     return (
         <Dialog open={open} onOpenChange={setOpen} >
             <DialogContent className="max-w-4xl bg-black" >
@@ -47,7 +48,7 @@ export default  function PrDialog({open, setOpen, bounty}: PrDialogProps) {
                         <p className="ml-2">Select Your PR.</p>
                     </DialogTitle>
                     <DialogDescription className="text-center">
-                        select your closed pr to correctly gain your bounty.
+                        select your closed pr to correctly gain your bounty only merged pr&#39;s would appear here.
                     </DialogDescription>
                     {/* fetch the bounty details here */}
                     <div className="flex w-full items-center justify-center">

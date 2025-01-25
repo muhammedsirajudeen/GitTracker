@@ -8,6 +8,7 @@ export interface Bounty {
     title: string;
     repositoryId: mongoose.Types.ObjectId;
     bountyAmount: number; // Added bountyAmount field
+    status?:"pending" | "completed"
 }
 
 export interface IBounty extends Document, Bounty {}
@@ -43,6 +44,12 @@ const BountySchema = new Schema<IBounty>({
     bountyAmount: {
         type: Number,
         required: true // Added bountyAmount field
+    },
+    status:{
+        type:String,
+        enum:["pending","completed"],
+        required:false,
+        default:"pending"
     }
 }, {
     timestamps: true
