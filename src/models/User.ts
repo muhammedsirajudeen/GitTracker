@@ -7,6 +7,7 @@ export interface User {
   avatar_url: string;
   wallet_status: boolean;
   wallet_address:string | null;
+  role:"admin" | "user"
 }
 export interface IUser extends User, Document {}
 
@@ -43,7 +44,13 @@ const userSchema: Schema<IUser> = new mongoose.Schema(
       type:String,
       required:false,
       default:null
-    }
+    },
+    role:{
+        type:String,
+        enum:['admin','user'],
+        required:false,
+        default:'user',
+    }  
   },
   { timestamps: true }
 );

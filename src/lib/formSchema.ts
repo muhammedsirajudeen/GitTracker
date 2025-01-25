@@ -29,3 +29,17 @@ export const bountyFormSchema = z.object({
         message: "Bounty amount must be a positive number.",
     }),
 });
+
+export const adminFormSchema = z.object({
+    email: z
+        .string()
+        .min(2, {
+            message: "Email must be at least 2 characters.",
+        })
+        .max(50, {
+            message: "Email must not exceed 50 characters.",
+        }),
+    password: z.string().min(8, {
+        message: "Password must be at least 8 characters.",
+    }),
+})

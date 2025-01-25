@@ -52,7 +52,6 @@ interface BountyRedemptionResponse{
 export default function PullRequestList({ pullRequests,bounty }: PullRequestListProps) {
     const {data:bountyredemptiondata,isLoading:isRedemptionLoading}:{data:BountyRedemptionResponse,isLoading:boolean}=useSWR(`/api/bountyredemption/${bounty?._id}`,fetcher)
     const [bountyredemption,setBountyRedemption]=useState<Partial<BountyRedemption> | null>(null)
-    const {user}=useGlobalStore()
     useEffect(() => {
         if(bountyredemptiondata){
             setBountyRedemption((bountyredemptiondata.bountyredemption))
@@ -90,10 +89,9 @@ export default function PullRequestList({ pullRequests,bounty }: PullRequestList
             const response=(
                 await axios.post(`/api/bountyredemption`, {bountyId:bounty?._id,fullName:bounty?.repositoryId.full_name,pullrequestNumber:pullrequest.number}, { withCredentials: true })
             ).data
-            if(user){
-                const userwithid=user as UserWithId
-                setBountyRedemption({pullrequestNumber:pullrequest.number})
-            }
+
+            setBountyRedemption({pullrequestNumber:pullrequest.number})
+
         } catch (error) {
             const axiosError=error as AxiosError
             if(axiosError.status===HttpStatus.CONFLICT){

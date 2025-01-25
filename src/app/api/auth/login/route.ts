@@ -35,7 +35,9 @@ export async function POST(request: Request) {
         if (!verify) {
             return NextResponse.json({ message: HttpStatusMessage[HttpStatus.UNAUTHORIZED] }, { status: HttpStatus.UNAUTHORIZED })
         }
+        //from here change the flow of the token if admin go with a flow
         const token = generateToken({ email: user.email, id: user.id })
+
         const response = NextResponse.json({ message: HttpStatusMessage[HttpStatus.OK], token }, { status: HttpStatus.OK });
 
         response.cookies.set('access_token', token, {
