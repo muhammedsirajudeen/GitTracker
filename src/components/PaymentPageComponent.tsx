@@ -21,6 +21,9 @@ import {
     PaginationPrevious,
   } from "@/components/ui/pagination"
 import { Input } from "./ui/input"
+import { Connection, PublicKey, SystemProgram, Transaction } from "@solana/web3.js"
+import { SOLANA_API } from "@/lib/types"
+import { useWallet } from "@solana/wallet-adapter-react"
   
 interface BountyRedemptionResponse {
     bountyredemptions: PopulatedBountyRedemption[]
@@ -28,6 +31,7 @@ interface BountyRedemptionResponse {
 }
 
 export default function PaymentPageComponent() {
+    const {publicKey,signTransaction,sendTransaction}=useWallet()
     const { data, isLoading, }: { data?: BountyRedemptionResponse; isLoading: boolean; } = useSWR(
         "/api/admin/payments",
         fetcher,
@@ -51,8 +55,41 @@ export default function PaymentPageComponent() {
             </div>
         )
     if (!data || !data.bountyredemptions) return <div>No data available</div>
-    function releaseHandler(redemption:PopulatedBountyRedemption){
+    async function releaseHandler(redemption:PopulatedBountyRedemption){
+        console.log(redemption)
         toast({description:'Implementation pending',className:"bg-orange-500 text-white"})
+        //ensure that its not forged call a server action to fetch the latest data from the database
+        const connection=new Connection(SOLANA_API)
+        const recieverAddress=redemption.applicantId.wallet_address
+        if(!recieverAddress){
+            toast({description:"Unlinked wallet detected",className:"bg-orange-500 text-white"})
+            return
+        }
+        const amount=redemption.bountyId.bountyAmount
+        const {blockhash}=await connection.getLatestBlockhash()
+        if(!publicKey){
+            toast({description:"Public key is not defined",className:"bg-orange-500 text-white"})
+            return
+        }
+        const transaction=new Transaction().add(
+            SystemProgram.transfer(
+                {
+                    fromPubkey:publicKey,
+                    toPubkey:new PublicKey(recieverAddress ?? ""),
+                    lamports:amount
+                }
+            )
+        )  
+        transaction.recentBlockhash=blockhash
+        transaction.feePayer=publicKey
+        if(!signTransaction){
+            toast({description:"please try again",className:"bg-red-500"})
+            return
+        }
+        const signedTransaction=await signTransaction(transaction)
+        const txId=await sendTransaction(signedTransaction,connection)
+        toast({description:"Transaction completed successfully",className:"bg-green-500 text-white"})
+        console.log(txId)
     }
     return (
         <>

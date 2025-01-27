@@ -102,3 +102,6 @@ export interface PullRequest {
     auto_merge: boolean | null;
     active_lock_reason: string | null;
 }
+
+
+export const SOLANA_API="http://localhost:8899"
