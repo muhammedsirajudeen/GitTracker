@@ -1,4 +1,5 @@
 import UserRepostoryInstance, { IUserRepository } from "@/app/repository/UserRepository"
+import { verifyPassword } from "@/lib/bcryptHelper"
 import { User } from "@/models/User"
 
 interface IUserService {
@@ -8,6 +9,7 @@ interface IUserService {
     changePassword:(userid:string,password:string)=>Promise<boolean>
     getUserById:(userid:string)=>Promise<User|null>
     updateUserById:(userid:string,User:Partial<User>)=>Promise<boolean>
+    verifyAdmin:(email:string,password:string)=>Promise<boolean>
 }
 class UserService implements IUserService {
     _UserRepo: IUserRepository
@@ -35,8 +37,26 @@ class UserService implements IUserService {
     };
     async updateUserById(userid:string,User:Partial<User>){
         return this._UserRepo.updateUserByWallet(userid,User)
+
     }
-    
+    async verifyAdmin(email:string,password:string){
+        try {
+            const user=await this._UserRepo.getUserByEmail(email)
+            if(!(user?.role==="admin")){
+                return false
+            }
+            const passwordVerified=await verifyPassword(password,user.password)
+            if(!passwordVerified){
+                return false
+            }
+            //code reachability ensures that only admin and verified users reach here
+            return true
+        } catch (error) {
+            const repoError=error as Error
+            console.log(repoError.message)
+            return false
+        }
+    }
 
 }
 const UserServiceInstance = new UserService(UserRepostoryInstance)

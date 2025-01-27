@@ -10,6 +10,7 @@ export interface IUserRepository {
     changePassword:(userid:string,password:string)=>Promise<boolean>
     getUserById:(userid:string)=>Promise<User|null>
     updateUserByWallet:(userid:string,User:Partial<User>)=>Promise<boolean>
+    // verifyAdmin:(email:string,password:string)=>Promise<boolean>
 }
 
 
@@ -87,6 +88,7 @@ class UserRepository extends BaseRepository implements IUserRepository {
             return false
         }
     }
+
 }
 
 const UserRepostoryInstance = new UserRepository(UserModel)
