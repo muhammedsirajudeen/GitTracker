@@ -6,6 +6,7 @@ export interface IBountyRedemptionRepo {
     addBountyRedemption: (bountyredemption: BountyRedemption) => Promise<BountyRedemption | null>
     getbountyRedemptionByBountyId:(bountyid:string)=>Promise<BountyRedemption|null>
     updateBountyRedemption:(bountyid:string,bountyRedemption:Partial<BountyRedemption>)=>Promise<boolean>
+    getBountyRedemptions:()=>Promise<BountyRedemption[]>
 }
 
 class BountyRedemptionRepo extends BaseRepository implements IBountyRedemptionRepo {
@@ -49,6 +50,15 @@ class BountyRedemptionRepo extends BaseRepository implements IBountyRedemptionRe
             return false
         }
     }
+    async getBountyRedemptions(){
+        try {
+            return this._BountyRedemptionModel.find().populate({path:'applicantId',select:'-password'}).populate('bountyId') as unknown as BountyRedemption[]            
+        } catch (error) {
+            const repoError=error as Error
+            this._logger.error(repoError.message)
+            return []
+        }
+    };
 }
 const BountyRedemptionRepoInstance = new BountyRedemptionRepo(BountyRedemptionModel)
 export default BountyRedemptionRepoInstance

@@ -4,6 +4,7 @@ import { BountyRedemption } from "@/models/BountyRedemption";
 interface IBountyRedemptionService {
     addBountyRedemption: (bountyredemption: BountyRedemption,userid:string) => Promise<BountyRedemption | null>
     getBountyRedemptionById: (id: string) => Promise<BountyRedemption | null>
+    getBountyRedemptions:()=>Promise<BountyRedemption[]>
 }
 class BountyRedemptionService implements IBountyRedemptionService {
     _BountyRedemptionRepo: IBountyRedemptionRepo
@@ -23,6 +24,9 @@ class BountyRedemptionService implements IBountyRedemptionService {
     async getBountyRedemptionById(id: string): Promise<BountyRedemption | null> {
         return this._BountyRedemptionRepo.getbountyRedemptionByBountyId(id)
     }
+    async getBountyRedemptions () {
+        return this._BountyRedemptionRepo.getBountyRedemptions()
+    };
 
 }
 

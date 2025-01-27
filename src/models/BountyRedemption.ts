@@ -1,6 +1,6 @@
 import mongoose, { Schema, model, Document, Types } from 'mongoose';
 import { Bounty } from './Bounty';
-import { User } from '@/lib/types';
+import { User } from './User';
 
 // Define the interface for TypeScript type checking
 export interface BountyRedemption{
