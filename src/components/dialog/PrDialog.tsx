@@ -60,7 +60,7 @@ export default  function PrDialog({open, setOpen, bounty}: PrDialogProps) {
                 </div>
                 </DialogHeader>
                 <div className="w-full flex items-center justify-center" >
-                    <PullRequestList bounty={bounty} pullRequests={pullrequests}/>
+                    <PullRequestList bounty={bounty} pullRequests={pullrequests ?? []}/>
                 </div>
 
             </DialogContent>

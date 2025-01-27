@@ -9,6 +9,8 @@ export default  async function AdminLoginPage(){
     console.log(user)
     if(user && user.role==="admin"){
         redirect('/adminhome')
+    }else if(user){
+        redirect("/home")
     }
     return(
         <AdminLoginPageComponent/>

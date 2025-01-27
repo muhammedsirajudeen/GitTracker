@@ -49,7 +49,6 @@ export default function PaymentPageComponent() {
     },[data])
     const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set())
     //loading indicator
-    const [loading,setLoading]=useState<boolean>(false)
     const toggleRowExpansion = (id: string) => {
         const newExpandedRows = new Set(expandedRows)
         if (newExpandedRows.has(id)) {
@@ -68,7 +67,6 @@ export default function PaymentPageComponent() {
         )
     if (!data || !data.bountyredemptions) return <div>No data available</div>
     async function releaseHandler(redemption:PopulatedBountyRedemption){
-        setLoading(true)
         try {
             const connection=new Connection(SOLANA_API)
             const recieverAddress=redemption.applicantId.wallet_address
@@ -131,7 +129,6 @@ export default function PaymentPageComponent() {
             toast({description:"please try again",className:"bg-red-500 text-white"})
         }
         //ensure that its not forged call a server action to fetch the latest data from the database
-        setLoading(false)
     }
     return (
         <>
@@ -182,16 +179,11 @@ export default function PaymentPageComponent() {
                                                 {
                                                     redemption.status!=="completed" ?
 
-                                                    <Button disabled={loading} variant="outline" onClick={() => releaseHandler(redemption)}>
-                                                        {
-                                                            loading?
-                                                            <ClipLoader size={20} color="white"/>
-                                                            :
-                                                            <p>Release</p>
-                                                        }
+                                                    <Button  variant="outline" onClick={() => releaseHandler(redemption)}>
+                                                        Release
                                                     </Button>
                                                     :
-                                                    <Button variant="outline" disabled={true}  >Release</Button>
+                                                    <Button variant="outline" disabled={true}  >Released</Button>
 
                                                 }
                                             </TableCell>

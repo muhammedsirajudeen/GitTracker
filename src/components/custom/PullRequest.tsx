@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import {Button} from "@/components/ui/button";
-import { CircleChevronRight } from "lucide-react";
+import {  FileIcon, GitPullRequestIcon } from "lucide-react";
 import {toast} from "@/hooks/use-toast";
 import { PopulatedBounty } from "../BountyPageComponent"
 import axios, {AxiosError} from "axios"
@@ -14,8 +14,6 @@ import {HttpStatus} from "@/lib/HttpStatus";
 import useSWR from "swr";
 import {fetcher} from "@/components/RepositoryListing";
 import {BountyRedemption} from "@/models/BountyRedemption";
-import useGlobalStore from "@/store/GlobalStore";
-import {UserWithId} from "@/app/api/auth/github/route";
 
 interface User {
     login: string
@@ -52,6 +50,7 @@ interface BountyRedemptionResponse{
 export default function PullRequestList({ pullRequests,bounty }: PullRequestListProps) {
     const {data:bountyredemptiondata,isLoading:isRedemptionLoading}:{data:BountyRedemptionResponse,isLoading:boolean}=useSWR(`/api/bountyredemption/${bounty?._id}`,fetcher)
     const [bountyredemption,setBountyRedemption]=useState<Partial<BountyRedemption> | null>(null)
+    
     useEffect(() => {
         if(bountyredemptiondata){
             setBountyRedemption((bountyredemptiondata.bountyredemption))
@@ -110,6 +109,29 @@ export default function PullRequestList({ pullRequests,bounty }: PullRequestList
             </CardHeader>
             <CardContent>
                 <ScrollArea className="h-[600px] pr-4">
+                    {
+                        pullRequests.length===0&&
+                        (
+                            <Card className="w-full max-w-md mx-auto">
+                            <CardHeader>
+                              <CardTitle className="flex items-center space-x-2">
+                                <GitPullRequestIcon className="w-6 h-6" />
+                                <span>No Pull Requests</span>
+                              </CardTitle>
+                              <CardDescription>There are currently no open pull requests in this repository.</CardDescription>
+                            </CardHeader>
+                            <CardContent className="flex flex-col items-center space-y-4">
+                              <FileIcon className="w-16 h-16 text-muted-foreground" />
+                              <p className="text-center text-sm text-muted-foreground">
+                                Pull requests help you collaborate on code with others. As pull requests are opened, they&apos;ll appear here.
+                              </p>
+                              <Button asChild>
+                                <Button disabled={true} >Create a pull request</Button>
+                              </Button>
+                            </CardContent>
+                          </Card>
+                        )
+                    }
                     {pullRequests.map((pr) => (
                         <Card key={pr.id} className="mb-4">
                             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

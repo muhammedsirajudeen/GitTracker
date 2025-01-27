@@ -29,7 +29,7 @@ class BountyRedemptionService implements IBountyRedemptionService {
         return this._BountyRedemptionRepo.getBountyRedemptions()
     };
     async updateBountyRedemption (bountyredemption: Partial<BountyRedemption>) {
-        return this._BountyRedemptionRepo.updateBountyRedemption(bountyredemption.bountyId?.toHexString() as string,bountyredemption)
+        return this._BountyRedemptionRepo.updateBountyRedemption(bountyredemption.bountyId?.toString() as string,bountyredemption)
     };
 
 }

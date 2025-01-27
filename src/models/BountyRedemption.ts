@@ -51,7 +51,7 @@ const BountyRedemptionSchema = new Schema<IBountyRedemptionModel>(
         },
         status:{
             type:String,
-            enum:["pending","success"],
+            enum:["pending","completed"],
             required:false,
             default:"pending"
         }

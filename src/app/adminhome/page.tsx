@@ -1,8 +1,16 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { GitBranch, Users, DollarSign, AlertCircle, CheckCircle } from 'lucide-react'
+import { GetUserGivenAccessToken } from "@/lib/tokenHelper"
+import { cookies } from "next/headers"
+import { redirect } from "next/navigation"
 
-export default function AdminHome() {
+export default async  function AdminHome() {
+      const user=await GetUserGivenAccessToken(cookies())
+      console.log(user)
+      if(user && user.role!=="admin"){
+          redirect('/')
+      }
   return (
     <div className="p-6">      
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">

@@ -9,7 +9,7 @@ import { cookies } from "next/headers";
 export async function GET(req: Request, { params }: { params: { id: string } }) {
     try {
         const user=await GetUserGivenAccessToken(cookies())
-        if(!user || user.role!=="admin"){
+        if(!user){
             return NextResponse.json({message:HttpStatusMessage[HttpStatus.UNAUTHORIZED]},{status:HttpStatus.UNAUTHORIZED})
         }
         

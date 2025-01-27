@@ -42,9 +42,18 @@ class BountyRedemptionRepo extends BaseRepository implements IBountyRedemptionRe
     }
     async updateBountyRedemption(bountyid:string,bountyRedemption:Partial<BountyRedemption>){
         try {
+            // const checking=await this._BountyRedemptionModel.findOne({bountyId:new mongoose.Types.ObjectId(bountyid)})
+            // console.log(checking)
+            delete bountyRedemption.bountyId
             console.log(bountyid,bountyRedemption)
-            this._BountyRedemptionModel.updateOne({bountyId:new mongoose.Types.ObjectId(bountyid)},bountyRedemption)
-            return true
+            const result=await this._BountyRedemptionModel.updateOne({bountyId:new mongoose.Types.ObjectId(bountyid)},{$set:bountyRedemption})
+            if (result.modifiedCount > 0) {
+                console.log('Update successful');
+                return true;
+            } else {
+                console.log('No documents matched the query. Update not performed.');
+                return false;
+            }
         }catch (error){
             const repoError=error as Error
             this._logger.error(repoError.message)
