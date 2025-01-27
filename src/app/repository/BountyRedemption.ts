@@ -42,6 +42,7 @@ class BountyRedemptionRepo extends BaseRepository implements IBountyRedemptionRe
     }
     async updateBountyRedemption(bountyid:string,bountyRedemption:Partial<BountyRedemption>){
         try {
+            console.log(bountyid,bountyRedemption)
             this._BountyRedemptionModel.updateOne({bountyId:new mongoose.Types.ObjectId(bountyid)},bountyRedemption)
             return true
         }catch (error){
@@ -59,6 +60,7 @@ class BountyRedemptionRepo extends BaseRepository implements IBountyRedemptionRe
             return []
         }
     };
+
 }
 const BountyRedemptionRepoInstance = new BountyRedemptionRepo(BountyRedemptionModel)
 export default BountyRedemptionRepoInstance

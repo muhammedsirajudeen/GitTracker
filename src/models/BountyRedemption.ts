@@ -11,6 +11,7 @@ export interface BountyRedemption{
     applicantId: string
     createdAt?: Date;
     updatedAt?: Date;
+    status:'pending' | 'completed'
 }
 
 export interface PopulatedBountyRedemption extends Omit<BountyRedemption,"bountyId"|"applicantId">{
@@ -48,6 +49,13 @@ const BountyRedemptionSchema = new Schema<IBountyRedemptionModel>(
             type: String,
             required: true,
         },
+        status:{
+            type:String,
+            enum:["pending","success"],
+            required:false,
+            default:"pending"
+        }
+
     },
     {
         timestamps: true, // Automatically add createdAt and updatedAt fields

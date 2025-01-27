@@ -5,6 +5,7 @@ interface IBountyRedemptionService {
     addBountyRedemption: (bountyredemption: BountyRedemption,userid:string) => Promise<BountyRedemption | null>
     getBountyRedemptionById: (id: string) => Promise<BountyRedemption | null>
     getBountyRedemptions:()=>Promise<BountyRedemption[]>
+    updateBountyRedemption:(bountyredemption:Partial<BountyRedemption>)=>Promise<boolean>
 }
 class BountyRedemptionService implements IBountyRedemptionService {
     _BountyRedemptionRepo: IBountyRedemptionRepo
@@ -26,6 +27,9 @@ class BountyRedemptionService implements IBountyRedemptionService {
     }
     async getBountyRedemptions () {
         return this._BountyRedemptionRepo.getBountyRedemptions()
+    };
+    async updateBountyRedemption (bountyredemption: Partial<BountyRedemption>) {
+        return this._BountyRedemptionRepo.updateBountyRedemption(bountyredemption.bountyId?.toHexString() as string,bountyredemption)
     };
 
 }
