@@ -4,15 +4,16 @@ import {  useEffect, useRef, useState } from "react"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Send, Bot, User, Clock, Github, MessageSquare } from "lucide-react"
+import { Send, Bot, User, Clock, Github, MessageSquare, PlusIcon, Delete, X } from "lucide-react"
 import useSWR from "swr"
 import { fetcher } from "../RepositoryListing"
 import { useParams } from "next/navigation"
 import { Chat, Conversation } from "@/models/Conversation"
 import { toast } from "@/hooks/use-toast"
-import axios from "axios"
+import axios, { AxiosError } from "axios"
 import { HttpStatus } from "@/lib/HttpStatus"
 import { flushSync } from "react-dom"
+import { produce } from "immer"
 // import { ClipLoader } from "react-spinners"
 
 
@@ -24,25 +25,27 @@ export default function ChatComponent() {
     revalidateOnReconnect: false, // Optional: prevent refetch on network reconnect
     dedupingInterval: 0 // No deduplication — always trigger a request
   })
-
+  const renderRef=useRef(0)
   const [conversations, setConversations] = useState<Conversation[]>([])
   const [conversation,setConversation]=useState<Conversation>()
   const [ailoading,setAiloading]=useState(false)
   const inputRef=useRef<HTMLInputElement>(null)
   const chatRef=useRef<HTMLDivElement>(null)
+  console.log(data)
   useEffect(()=>{
-    if(data){
-      setConversations(data.conversations)
+    if(data && renderRef.current===0 ){
+      setConversations(data.conversations.toReversed())
       
       if(data.conversations.length>0){
-        setConversation(data.conversations[0])
-        setMessages(data.conversations[0].chats)
+        setConversation(data.conversations[data.conversations.length-1])
+        setMessages(data.conversations[data.conversations.length-1].chats)
         setTimeout(()=>{
             if(chatRef.current){
             chatRef.current.scrollTop=chatRef.current.scrollHeight
             }
           })
       }
+      renderRef.current++
     }
   },[data])
 
@@ -133,21 +136,73 @@ export default function ChatComponent() {
     inputRef.current.value=""
    }
   }
+  async function newConversationHandler(){
+    try {
+      const response=await axios.post(`/api/conversation/${id}`,{
+        conversationTitle:"New Conversation",
+        repositoryId:id,
+        chats:[],
+
+      },
+      {
+        withCredentials: true
+      })
+      toast({description:'conversation created',className:'bg-green-500 text-white'})
+      setConversations(produce((conversationDraft)=>{
+        conversationDraft.unshift(response.data.conversation)
+      }))
+      setConversation(response.data.conversation)
+      setMessages([])
+    } catch (error) {
+      const clientError=error as AxiosError
+      if(clientError.status===HttpStatus.UNAUTHORIZED){
+        toast({description:'please try logging in again',className:'bg-red-500 text-white'})
+      }else{
+        toast({description:'please try again',className:'bg-red-500 text-white'})
+      }
+    }
+  }
+  async function deleteHandler(id:string){
+    try {
+      await axios.delete(`/api/conversation/${id}`,{withCredentials:true})
+
+      toast({description:'Deleted successfully',className:'bg-green-500 text-white'})
+      setConversations(prev=>prev.filter((p)=>p._id!==id))
+    } catch (error) {
+      const clientError=error as Error
+      console.log(clientError.message)
+      toast({description:'Please try again',className:'bg-red-500 text-white'})
+    }
+  }
   return (
     <div className="flex w-full items-center justify-center">
         <Card className="w-3/4 min-h-[60vh] mt-4 ">
         <div className="flex h-[60vh]">
             <div className="w-1/4 border-r overflow-auto">
-            <h2 className="text-lg font-semibold p-4 border-b">Conversation History</h2>
-            {conversations.map((conversation, index) => (
+            <div className="flex items-center justify-evenly">
+              <h2 className="text-lg font-semibold p-4 border-b">Conversation History</h2>
+              <PlusIcon onClick={newConversationHandler} />
+            </div>
+            {conversations.map((Iconversation) => (
                 <div
-                key={conversation._id}
-                className={`p-4 border-b cursor-pointer hover:bg-black  ${index === 0 ? "bg-black" : ""}`}
+                key={Iconversation._id}
+                className={`p-4 border-b cursor-pointer hover:bg-black  ${Iconversation._id=== conversation?._id ? "bg-black" : ""}`}
+                onClick={()=>{
+                  console.log(Iconversation)
+                  setConversation(Iconversation)
+                  setMessages(Iconversation.chats)
+                }}
                 >
-                <h3 className="font-medium truncate">{conversation.conversationTitle}</h3>
+                <div className="flex w-full justify-between" >
+                <h3 className="font-medium truncate">{Iconversation.conversationTitle}</h3>
                 <div className="flex items-center text-xs text-gray-400 mt-1">
                     <Clock className="w-3 h-3 mr-1" />
-                    {conversation.date.toLocaleString?.()}
+                    {Iconversation.date.toLocaleString?.()}
+                </div>
+                <X onClick={(e)=>{
+                  e.stopPropagation()
+                  deleteHandler(Iconversation._id)
+                  }}  />
                 </div>
                 </div>
             ))}

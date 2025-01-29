@@ -46,6 +46,7 @@ class ConversationRepository extends BaseRepository implements IConversationRepo
             console.log("from repo",updateConv)
             return updateConv
         } catch (error) {
+            console.log(error)
             const repoError=error as Error
             this._logger.error(repoError.message)
             return null
