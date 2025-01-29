@@ -29,8 +29,8 @@ class RepositoryService implements IRepository {
     async deleteRepo (repoid: string){
         return this._Repository.deleteRepo(repoid)
     };
-    async getRepoById (userid: string) {
-        return this._Repository.getRepoById(userid)
+    async getRepoById (repoid: string) {
+        return this._Repository.getRepoById(repoid)
     };
     async increaseClosedIssuesCount(id: string) {
         try {
@@ -41,6 +41,7 @@ class RepositoryService implements IRepository {
             return null;
         }
     }
+
 }
 
 
