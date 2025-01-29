@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document, model, Types } from 'mongoose';
 
 export interface Chat {
-    _id:string
+    _id?:string
     date: Date;
     message: string;
     from: string;

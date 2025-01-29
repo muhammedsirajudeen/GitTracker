@@ -4,3 +4,5 @@
 2025/01/23 08:32:24 [emerg] 1#1: host not found in upstream "app-dev" in /etc/nginx/nginx.conf:12
 2025/01/27 03:46:20 [emerg] 1#1: host not found in upstream "app-dev" in /etc/nginx/nginx.conf:12
 2025/01/28 10:15:15 [emerg] 1#1: host not found in upstream "app-dev" in /etc/nginx/nginx.conf:12
+2025/01/29 11:32:30 [emerg] 1#1: invalid number of arguments in "proxy_pass" directive in /etc/nginx/nginx.conf:13
+2025/01/29 11:35:12 [emerg] 1#1: invalid number of arguments in "proxy_pass" directive in /etc/nginx/nginx.conf:13

@@ -9,7 +9,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { UserWithId } from "../../auth/github/route";
 import { Repository } from "@/models/Repository";
 
-interface RepositoryWithId extends Repository{
+export interface RepositoryWithId extends Repository{
     _id:string
 }
 

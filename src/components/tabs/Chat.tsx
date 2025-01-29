@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import {  useEffect, useRef, useState } from "react"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -12,29 +12,52 @@ import { Chat, Conversation } from "@/models/Conversation"
 import { toast } from "@/hooks/use-toast"
 import axios from "axios"
 import { HttpStatus } from "@/lib/HttpStatus"
+import { flushSync } from "react-dom"
+// import { ClipLoader } from "react-spinners"
 
 
 export default function ChatComponent() {
   const {id}=useParams()
-  const {data,isLoading}=useSWR(`/api/conversation/${id}`,fetcher)
-  console.log(data)
+  const {data,isLoading}=useSWR(`/api/conversation/${id}?date=${new Date().toTimeString()}`,fetcher,  {
+    revalidateIfStale: true,  // Always revalidate if data is stale
+    revalidateOnFocus: false, // Optional: prevent refetch on focus
+    revalidateOnReconnect: false, // Optional: prevent refetch on network reconnect
+    dedupingInterval: 0 // No deduplication — always trigger a request
+  })
+
   const [conversations, setConversations] = useState<Conversation[]>([])
   const [conversation,setConversation]=useState<Conversation>()
   const [ailoading,setAiloading]=useState(false)
+  const inputRef=useRef<HTMLInputElement>(null)
+  const chatRef=useRef<HTMLDivElement>(null)
   useEffect(()=>{
     if(data){
       setConversations(data.conversations)
-      setConversation(data.conversations[0])
-      setMessages(data.conversations[0].chats)
+      
+      if(data.conversations.length>0){
+        setConversation(data.conversations[0])
+        setMessages(data.conversations[0].chats)
+        setTimeout(()=>{
+            if(chatRef.current){
+            chatRef.current.scrollTop=chatRef.current.scrollHeight
+            }
+          })
+      }
     }
   },[data])
 
   const [messages, setMessages] = useState<Chat[]>([])
-  const [inputMessage, setInputMessage] = useState("")
   // const [isLoading, setIsLoading] = useState(false)
 
   const handleSendMessage = async () => {
-    setAiloading(true)
+    const inputMessage=inputRef.current?.value ?? ""
+    console.log(inputMessage)
+    flushSync(()=>{
+      setAiloading(true)
+    })
+    if(chatRef.current){
+      chatRef.current.scrollTop=chatRef.current.scrollHeight
+    }
     if (inputMessage.trim() === "") {
       toast({description:"Please enter a message",className:"bg-orange-500 text-white"})
       return
@@ -68,7 +91,6 @@ export default function ChatComponent() {
           console.log(response.data)
           setConversations([...conversations,response.data.conversation])
           setMessages(response.data.conversation.chats)
-          setInputMessage("")
         }
     } catch (error) {
       const clientError=error as Error
@@ -91,6 +113,14 @@ export default function ChatComponent() {
     })
     if(response.status===HttpStatus.OK){
       console.log(response.data)
+      setConversation(response.data.conversation)
+      flushSync(()=>{
+        setMessages(response.data.conversation.chats)
+      })
+      if(chatRef.current){
+        chatRef.current.scrollTop=chatRef.current.scrollHeight
+      }
+
     }
     } catch (error) {
       const clientError=error as Error
@@ -99,6 +129,9 @@ export default function ChatComponent() {
     }
    }
    setAiloading(false)
+   if(inputRef.current){
+    inputRef.current.value=""
+   }
   }
   return (
     <div className="flex w-full items-center justify-center">
@@ -120,10 +153,16 @@ export default function ChatComponent() {
             ))}
             </div>
             <div className="w-3/4 flex flex-col">
-            <div className="flex-grow overflow-auto p-4">
+            <div ref={chatRef} className="flex-grow  overflow-auto p-4">
                 <div className="space-y-4">
+                  {/* {
+                    isLoading &&
+                    <div className="flex w-full h-full mt-52 items-center justify-center">
+                      <ClipLoader size={40} color="white"/>
+                    </div>
+                  } */}
                   {
-                    messages.length===0 && !ailoading &&
+                    messages.length===0 && !ailoading && !isLoading &&
                     <Card className="w-full max-w-md mx-auto mt-12">
                     <CardHeader>
                       <CardTitle className="text-2xl font-bold text-center">Welcome to Repo Chat</CardTitle>
@@ -176,10 +215,9 @@ export default function ChatComponent() {
             <div className="p-4 border-t">
                 <div className="flex space-x-2">
                 <Input
+                    ref={inputRef}
                     type="text"
                     placeholder="Type your message..."
-                    value={inputMessage}
-                    onChange={(e) => setInputMessage(e.target.value)}
                     onKeyPress={(e) => {
                     if (e.key === "Enter") {
                         handleSendMessage()
