@@ -3,3 +3,4 @@
 2025/01/20 03:50:39 [emerg] 1#1: host not found in upstream "app-dev" in /etc/nginx/nginx.conf:12
 2025/01/23 08:32:24 [emerg] 1#1: host not found in upstream "app-dev" in /etc/nginx/nginx.conf:12
 2025/01/27 03:46:20 [emerg] 1#1: host not found in upstream "app-dev" in /etc/nginx/nginx.conf:12
+2025/01/28 10:15:15 [emerg] 1#1: host not found in upstream "app-dev" in /etc/nginx/nginx.conf:12
