@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 // Enum for task priority
-enum Priority {
+export enum Priority {
     LOW = "low",
     MEDIUM = "medium",
     HIGH = "high",
