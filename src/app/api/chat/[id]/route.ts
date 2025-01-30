@@ -108,3 +108,29 @@ export async function PUT(request:Request,{params}:{params:{id:string}}){
         return NextResponse.json({message:HttpStatusMessage[HttpStatus.INTERNAL_SERVER_ERROR]},{status:HttpStatus.INTERNAL_SERVER_ERROR})
     }
 }
+
+
+export async function DELETE(request:Request,{params}:{params:{id:string}}){
+    try {
+        /*
+            Author:
+            @muhammedsirajudeen
+            Remember that this id is the conversation id 
+        */
+        const user=await GetUserGivenAccessToken(cookies()) as UserWithId
+        if(!user){
+            return NextResponse.json({message:HttpStatusMessage[HttpStatus.UNAUTHORIZED]},{status:HttpStatus.UNAUTHORIZED})
+        } 
+        const {id}=params
+        if(!isObjectIdOrHexString(id)){
+            return NextResponse.json({message:HttpStatusMessage[HttpStatus.BAD_REQUEST]},{status:HttpStatus.BAD_REQUEST})
+        }
+        //used to clear memory of the user also removes the user from redis essentially clearing state
+        await axios.delete(`${process.env.BACKEND_URL}/api/v1/chat/${user.id}`,{withCredentials:true})
+        return NextResponse.json({message:HttpStatusMessage[HttpStatus.OK]},{status:HttpStatus.OK})
+    } catch (error) {
+        const controllerError=error as Error
+        Logger._logger.error(controllerError.message)
+        return NextResponse.json({message:HttpStatusMessage[HttpStatus.INTERNAL_SERVER_ERROR]},{status:HttpStatus.INTERNAL_SERVER_ERROR})
+    }
+}

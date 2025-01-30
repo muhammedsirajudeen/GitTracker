@@ -6,6 +6,7 @@ export interface IConversationRepository{
     getConversationsByFilter:(userId:string,repoId:string)=>Promise<IConversation[]>
     createConversation:(conversation:Conversation)=>Promise<IConversation|null>
     updateConversation:(conversationId:string,conversation:Partial<Conversation>)=>Promise<IConversation|null>
+    deleteConversation:(conversationId:string)=>Promise<boolean>
 }   
 class ConversationRepository extends BaseRepository implements IConversationRepository {
     _ConversationModel:Model<IConversation>
@@ -50,6 +51,16 @@ class ConversationRepository extends BaseRepository implements IConversationRepo
             const repoError=error as Error
             this._logger.error(repoError.message)
             return null
+        }
+    }
+    async deleteConversation(coversationId:string){
+        try {
+            await this._ConversationModel.findByIdAndDelete(coversationId)
+            return true
+        } catch (error) {
+            const repoError=error as Error
+            this._logger.error(repoError.message)
+            return false
         }
     }
 }

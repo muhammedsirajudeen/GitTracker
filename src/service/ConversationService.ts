@@ -5,6 +5,7 @@ interface IConversationService{
     getConversationsByFilter(userId:string,repositoryId:string):Promise<IConversation[]>
     createConversation(conversation:Conversation):Promise<IConversation|null>
     updateConversation(conversationId:string,Conversation:Partial<Conversation>):Promise<IConversation|null>
+    deleteConversation(conversationId:string):Promise<boolean>
 }
 
 class ConversationService implements IConversationService{
@@ -21,6 +22,9 @@ class ConversationService implements IConversationService{
     }
     async updateConversation(conversationId:string,conversation:Partial<Conversation>):Promise<IConversation|null>{
         return this._ConversationRepository.updateConversation(conversationId,conversation)
+    }
+    async deleteConversation(conversationId: string): Promise<boolean> {
+        return this._ConversationRepository.deleteConversation(conversationId)
     }
 }
 

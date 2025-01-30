@@ -4,7 +4,7 @@ import {  useEffect, useRef, useState } from "react"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Send, Bot, User, Clock, Github, MessageSquare, PlusIcon, Delete, X } from "lucide-react"
+import { Send, Bot, User, Clock, Github, MessageSquare, PlusIcon, X } from "lucide-react"
 import useSWR from "swr"
 import { fetcher } from "../RepositoryListing"
 import { useParams } from "next/navigation"
@@ -14,6 +14,7 @@ import axios, { AxiosError } from "axios"
 import { HttpStatus } from "@/lib/HttpStatus"
 import { flushSync } from "react-dom"
 import { produce } from "immer"
+import ConversationDelete from "../delete/ConversationDelete"
 // import { ClipLoader } from "react-spinners"
 
 
@@ -28,9 +29,11 @@ export default function ChatComponent() {
   const renderRef=useRef(0)
   const [conversations, setConversations] = useState<Conversation[]>([])
   const [conversation,setConversation]=useState<Conversation>()
+  const [conversationId,setConversationId]=useState("")
   const [ailoading,setAiloading]=useState(false)
   const inputRef=useRef<HTMLInputElement>(null)
   const chatRef=useRef<HTMLDivElement>(null)
+  const [deletedialog,setDeletedialog]=useState<boolean>(false)
   console.log(data)
   useEffect(()=>{
     if(data && renderRef.current===0 ){
@@ -163,16 +166,9 @@ export default function ChatComponent() {
     }
   }
   async function deleteHandler(id:string){
-    try {
-      await axios.delete(`/api/conversation/${id}`,{withCredentials:true})
-
-      toast({description:'Deleted successfully',className:'bg-green-500 text-white'})
-      setConversations(prev=>prev.filter((p)=>p._id!==id))
-    } catch (error) {
-      const clientError=error as Error
-      console.log(clientError.message)
-      toast({description:'Please try again',className:'bg-red-500 text-white'})
-    }
+    setConversationId(id)
+    setDeletedialog(true)
+    
   }
   return (
     <div className="flex w-full items-center justify-center">
@@ -288,6 +284,7 @@ export default function ChatComponent() {
             </div>
         </div>
         </Card>
+        <ConversationDelete setMessages={setMessages} setConversations={setConversations} conversationId={conversationId} isOpen={deletedialog} setIsOpen={setDeletedialog} />
     </div>
   )
 }

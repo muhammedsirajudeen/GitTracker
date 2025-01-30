@@ -69,8 +69,16 @@ export async function POST(request:NextRequest,{params}:{params:{id:string}}){
 } 
 export async function DELETE(request:Request,{params}:{params:{id:string}}){
     try {
+        /*
+            Author:
+            @muhammedsirajudeen
+            Remember that this id is the conversation id 
+        */
         const {id}=params
-        
+        const deletionStatus=await ConversationServiceInstance.deleteConversation(id)
+        if(!deletionStatus){
+            throw new Error('Failed to delete')
+        }
         return NextResponse.json({message:HttpStatusMessage[HttpStatus.OK]},{status:HttpStatus.OK})
     } catch (error) {
         const controllerError=error as Error

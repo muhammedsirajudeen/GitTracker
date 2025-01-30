@@ -106,6 +106,10 @@ services:
     networks:
       - elk
     command: ["sh","-c","touch log.txt && ./solana-test-validator > log.txt"]
+    deploy:
+      resources:
+        limits:
+          memory: 1g
 
 volumes:
   mongodb_data:
