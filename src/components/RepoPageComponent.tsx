@@ -14,8 +14,7 @@ import Bounties from "./tabs/Bounties"
 import FolderStructure from "./tabs/FolderStructure"
 import {BlockChainProvider} from "@/components/wallet/BlockChainProvider";
 import Chat from "./tabs/Chat"
-import KanbanBoard from "./custom/KanbanBoard"
-import TaskManagement from "./tabs/TaskManagement"
+import TaskManagementComponent from "./tabs/TaskManagementTab"
 
 export default function RepoPage() {
     const { id } = useParams()
@@ -118,7 +117,7 @@ export default function RepoPage() {
                 tab === 'issues' && <Issues />
             }
             {
-                tab === 'tasks' && <TaskManagement/>
+                tab === 'tasks' && <TaskManagementComponent/>
             }
             {
                 tab === 'bounty' && <BlockChainProvider><Bounties/></BlockChainProvider>

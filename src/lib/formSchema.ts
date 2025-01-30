@@ -1,3 +1,4 @@
+import { Priority } from "@/models/TaskManagement";
 import { z } from "zod";
 
 export const loginFormSchema = z.object({
@@ -43,3 +44,13 @@ export const adminFormSchema = z.object({
         message: "Password must be at least 8 characters.",
     }),
 })
+
+export const taskSchema = z.object({
+    taskTitle: z.string().min(1, "Task title is required"),
+    description: z.string().min(1, "Description is required"),
+    priority: z.nativeEnum(Priority),
+    issueId: z.string().min(1, "Issue is required"),
+  })
+  
+export type TaskFormValues = z.infer<typeof taskSchema>
+

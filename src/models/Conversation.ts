@@ -39,6 +39,7 @@ const ConversationSchema = new Schema<IConversation>({
     repositoryId: { type: Schema.ObjectId, ref: 'Repository', required: true }
 });
 
+
 const ConversationModel = mongoose.models.Conversation || model<IConversation>('Conversation', ConversationSchema);
 
 export default ConversationModel;

@@ -1,6 +1,6 @@
 import { Model, Types } from "mongoose";
 import BaseRepository from "./BaseRepository";
-import TaskManagement, { ITask } from "@/models/TaskManagement";
+import TaskModel, { ITask } from "@/models/TaskManagement";
 
 export interface ITaskRepository {
   createTask(taskData: Partial<ITask>): Promise<ITask>;
@@ -21,7 +21,7 @@ class TaskRepository extends BaseRepository implements ITaskRepository {
 
   async createTask(taskData: Partial<ITask>): Promise<ITask> {
     const task = new this._TaskModel(taskData);
-    return await task.save();
+    return (await (await task.save()).populate({path:'userId',select:'email avatar_url'}));
   }
 
   async getTaskById(taskId: string): Promise<ITask | null> {
@@ -60,5 +60,5 @@ class TaskRepository extends BaseRepository implements ITaskRepository {
   }
 }
 
-const TaskRepositoryInstance = new TaskRepository(TaskManagement);
+const TaskRepositoryInstance = new TaskRepository(TaskModel);
 export default TaskRepositoryInstance;

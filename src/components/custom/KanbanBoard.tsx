@@ -1,13 +1,13 @@
 "use client"
 
 import { useState } from "react"
-import { tasks as initialTasks } from "./data"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { AlertCircle, ArrowUpCircle, Circle } from "lucide-react"
+import { AlertCircle, ArrowUpCircle, Circle, Plus } from "lucide-react"
 import React from "react" // Import React
-import { Priority, Task } from "@/models/TaskManagement"
+import { PopulatedTask, Priority, Task } from "@/models/TaskManagement"
+import { Button } from "../ui/button"
 
 const priorityColors = {
   [Priority.LOW]: "bg-blue-100 text-blue-800",
@@ -21,8 +21,7 @@ const priorityIcons = {
   [Priority.HIGH]: AlertCircle,
 }
 
-export default function KanbanBoard() {
-  const [tasks, setTasks] = useState<Task[]>(initialTasks)
+export default function KanbanBoard({tasks}:{tasks:PopulatedTask[]}) {
 
   const getTasksByPriority = (priority: Priority) => tasks.filter((task) => task.priority === priority)
 
@@ -36,6 +35,16 @@ export default function KanbanBoard() {
               {priority.charAt(0).toUpperCase() + priority.slice(1)} Priority
             </h2>
             <div className="space-y-4">
+              {
+                tasks.length===0 &&
+                <Card className="flex flex-col items-center justify-center p-6 h-40 border-dashed border-2 border-gray-300">
+                <div className="text-gray-400 mb-2">{React.createElement(priorityIcons[priority], { size: 24 })}</div>
+                <p className="text-gray-500 text-center mb-4">No tasks in this priority</p>
+                <Button variant="outline" size="sm" className="flex items-center">
+                  <Plus className="mr-2 h-4 w-4" /> Add Task
+                </Button>
+              </Card>
+              }
               {getTasksByPriority(priority).map((task) => (
                 <Card key={task._id} className=" shadow-sm hover:shadow-md transition-shadow duration-200">
                   <CardHeader className="pb-2">
@@ -50,8 +59,8 @@ export default function KanbanBoard() {
                       {task.priority}
                     </Badge>
                     <Avatar className="h-6 w-6">
-                      <AvatarImage src={`https://avatar.vercel.sh/${task.ownerId}`} />
-                      <AvatarFallback>{task.ownerId.slice(0, 2).toUpperCase()}</AvatarFallback>
+                      <AvatarImage src={task.userId.avatar_url} />
+                      <AvatarFallback>{task.userId.email.slice(0, 2).toUpperCase()}</AvatarFallback>
                     </Avatar>
                   </CardFooter>
                 </Card>

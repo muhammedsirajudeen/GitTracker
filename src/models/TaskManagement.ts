@@ -1,47 +1,45 @@
-import mongoose, { Schema, Document } from "mongoose";
+import { UserWithId } from '@/app/api/auth/github/route';
+import mongoose, { Schema, Document, Model } from 'mongoose';
+import { Repository } from './Repository';
 
-// Enum for task priority
+// Define the Priority enum
 export enum Priority {
-    LOW = "low",
-    MEDIUM = "medium",
-    HIGH = "high",
+    LOW = 'low',
+    MEDIUM = 'medium',
+    HIGH = 'high'
 }
+
 export interface Task {
-    _id: string;
-    ownerId: string;
-    repositoryId: string;
+    _id:string
     taskTitle: string;
     issueId: string;
     description: string;
     priority: Priority;
+    userId:string
+    repositoryId:string
 
 }
-
-export interface ITask extends Omit<Task, "_id" | "ownerId" | "repositoryId" | "issueId">, Document {
-    ownerId: mongoose.Types.ObjectId;
-    repositoryId: mongoose.Types.ObjectId;
-    issueId: mongoose.Types.ObjectId;
+export interface PopulatedTask extends Omit<Task,"userId"|"repositoryId">{
+    userId:UserWithId
+    repositoryId:Repository
 }
 
-const TaskSchema: Schema = new Schema<ITask>(
+// Define the ITask interface
+export interface ITask extends Omit<Task,"_id"|"userId"|"repositoryId">,Document {
+    userId:mongoose.Types.ObjectId
+    repositoryId:mongoose.Types.ObjectId
+}
+
+// Define the Task schema
+const TaskSchema = new Schema<ITask>(
     {
-        ownerId: {
-            type: Schema.Types.ObjectId,
-            ref: "User",
-            required: true,
-        },
-        repositoryId: {
-            type: Schema.Types.ObjectId,
-            ref: "Repository",
-            required: true,
-        },
         taskTitle: {
             type: String,
             required: true,
             trim: true,
         },
         issueId: {
-            type: Schema.Types.ObjectId,
+            type: String,
             ref: "Issue",
             required: true,
         },
@@ -54,10 +52,22 @@ const TaskSchema: Schema = new Schema<ITask>(
             enum: Object.values(Priority),
             required: true,
         },
+        userId:{
+            type:Schema.Types.ObjectId,
+            required:true,
+            ref:'User'
+        },
+        repositoryId:{
+            type:Schema.Types.ObjectId,
+            required:true,
+            ref:'Repository'
+        }
     },
     {
         timestamps: true, // Automatically adds createdAt and updatedAt timestamps
     }
 );
+// Define the Task model
+const TaskModel: Model<ITask> =mongoose.models?.Task|| mongoose.model<ITask>("Task", TaskSchema);
 
-export default mongoose.model<ITask>("Task", TaskSchema);
+export default TaskModel;

@@ -10,3 +10,7 @@
 2025/01/30 03:30:45 [emerg] 1#1: host not found in upstream "fastapi" in /etc/nginx/nginx.conf:12
 2025/01/30 03:33:39 [emerg] 1#1: host not found in upstream "fastapi" in /etc/nginx/nginx.conf:12
 2025/01/30 09:54:06 [emerg] 1#1: host not found in upstream "fastapi" in /etc/nginx/nginx.conf:12
+2025/01/30 13:42:29 [emerg] 1#1: host not found in upstream "fastapi" in /etc/nginx/nginx.conf:12
+2025/01/30 14:09:07 [emerg] 1#1: host not found in upstream "fastapi" in /etc/nginx/nginx.conf:12
+2025/01/30 14:19:36 [emerg] 1#1: host not found in upstream "fastapi" in /etc/nginx/nginx.conf:12
+2025/01/30 14:37:07 [emerg] 1#1: host not found in upstream "fastapi" in /etc/nginx/nginx.conf:12

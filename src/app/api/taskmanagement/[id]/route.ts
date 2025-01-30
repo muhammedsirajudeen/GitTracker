@@ -7,6 +7,35 @@ import { NextRequest, NextResponse } from "next/server";
 import { UserWithId } from "../../auth/github/route";
 import { isObjectIdOrHexString } from "mongoose";
 
+export async function POST(request:NextRequest,{params}:{params:{id:string}}){
+    try {
+        const user=await GetUserGivenAccessToken(cookies()) as UserWithId
+        if(!user){
+            return NextResponse.json({message:HttpStatusMessage[HttpStatus.UNAUTHORIZED]},{status:HttpStatus.UNAUTHORIZED})
+        }
+        const taskManagement=await request.json()
+        /*
+            Author:
+            @muhammedsirajudeen
+            Complete the implementation of this
+        */
+       const {id}=params
+       if(!isObjectIdOrHexString(id)){
+        return NextResponse.json({message:HttpStatusMessage[HttpStatus.BAD_REQUEST]},{status:HttpStatus.BAD_REQUEST})
+       }
+       taskManagement.userId=user.id
+       taskManagement.repositoryId=id
+       const createdTask=await TaskServiceInstance.createTask(taskManagement)
+       if(!createdTask){
+            return NextResponse.json({message:HttpStatusMessage[HttpStatus.BAD_REQUEST]},{status:HttpStatus.BAD_REQUEST}) 
+       }
+        return NextResponse.json({message:HttpStatusMessage[HttpStatus.CREATED],task:createdTask},{status:HttpStatus.CREATED})
+    } catch (error) {
+        const controllerError=error as Error
+        Logger._logger.error(controllerError.message)
+        return NextResponse.json({message:HttpStatusMessage[HttpStatus.INTERNAL_SERVER_ERROR]},{status:HttpStatus.INTERNAL_SERVER_ERROR})
+    }
+}
 
 //used to get all the tasks
 export async function GET(request:NextRequest,{params}:{params:{id:string}}){
