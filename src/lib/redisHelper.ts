@@ -4,7 +4,7 @@ import { createClient } from 'redis';
  * Creates and connects a Redis client.
  * @returns The Redis client instance.
  */
-async function createRedisClient() {
+export async function createRedisClient() {
   const client = createClient({
     url: 'redis://redis:6379', // Update with your Redis server URL if needed
   });

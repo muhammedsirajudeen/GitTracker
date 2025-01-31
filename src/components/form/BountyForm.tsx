@@ -75,9 +75,9 @@ const BountyForm: React.FC<{
                 return
             }
             try {
-                const connection = new Connection('http://solana-validator:8899', 'confirmed');
+                const connection = new Connection('http://localhost:8899', 'confirmed');
                 const escrow_account = new PublicKey("5TiC68nb5fMqUwXimQK8R7MVnWxRTvtNAyDoJNpZgHh3")
-                const programId = new PublicKey('9DxQtfrxnfEAaS59EzuEyvtqFHLTikimXbziuSHcJZnC');
+                const programId = new PublicKey('8cPSdTRFujZP9KjgNp9p3nrhY5MUrw3gPPK4pwQarC2K');
                 const transaction = new Transaction();
                 // most of this stuff is deprecated try to use the latest stuff
                 const jsonString = JSON.stringify({ amount:parseInt(data.bountyAmount) })
