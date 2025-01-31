@@ -1,6 +1,6 @@
 "use client"
 
-import { Dispatch, SetStateAction } from "react"
+import { Dispatch, SetStateAction, useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
@@ -24,6 +24,7 @@ interface TaskManagementformProps {
     open: boolean
     setOpen: Dispatch<SetStateAction<boolean>>
     setTasks:Dispatch<SetStateAction<PopulatedTask[]>>
+    task?:PopulatedTask
 }
 
 interface IssueResponse {
@@ -32,27 +33,38 @@ interface IssueResponse {
 }
 
 
-export function TaskCreationDialog({ open, setOpen,setTasks }: TaskManagementformProps) {
+export function TaskCreationDialog({ open, setOpen,setTasks,task }: TaskManagementformProps) {
     const { id } = useParams()
     const { data }: { data?: IssueResponse, isLoading: boolean } = useSWR(`/api/issues/${id}`)
-    console.log(data)
     const form = useForm<TaskFormValues>({
         resolver: zodResolver(taskSchema),
         defaultValues: {
-            taskTitle: "",
-            description: "",
-            priority: Priority.MEDIUM,
-            issueId: "",
+            taskTitle: task?.taskTitle,
+            description: task?.description??"",
+            priority: task?.priority?? Priority.MEDIUM,
+            issueId: task?.issueId??"",
         },
     })
-
+    useEffect(() => {
+        if (task) {
+            form.reset({
+                taskTitle: task.taskTitle,
+                description: task.description ?? "",
+                priority: task.priority ?? Priority.MEDIUM,
+                issueId: task.issueId ?? "",
+            });
+        }
+    }, [task, form]);
     async function onSubmit(data: TaskFormValues) {
-        console.log(data)
+        if(task){
+            //it means that it is a put request
+        }
         try {
             const response=await axios.post(`/api/taskmanagement/${id}`,data,{withCredentials:true})
             console.log(response.data)
             toast({description:'task created successfully',className:'bg-green-500 text-white'})
             setTasks(prev=>[...prev,response.data.task])
+            setOpen(false)
         } catch (error) {
             const axiosError=error as Error
             console.log(axiosError.message)

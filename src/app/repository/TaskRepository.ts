@@ -42,21 +42,22 @@ class TaskRepository extends BaseRepository implements ITaskRepository {
 
   async getAllTasks(): Promise<ITask[]> {
     return await this._TaskModel.find().populate([
-      { path: 'ownerId', select: 'email avatar_url' },
+      { path: 'userId', select: 'email avatar_url' },
       { path: 'repositoryId' },
-      { path: 'issueId' }
     ]);
   }
 
   async getAllTasksByRepoandUser(userid: string, repositoryid: string): Promise<ITask[]> {
-    return await this._TaskModel.find({
-      ownerId: new Types.ObjectId(userid),
+    const tasks=await this._TaskModel.find({
+      userId: new Types.ObjectId(userid),
       repositoryId: new Types.ObjectId(repositoryid)
     }).populate([
-      { path: 'ownerId', select: 'email avatar_url' },
+      { path: 'userId', select: 'email avatar_url' },
       { path: 'repositoryId' },
       { path: 'issueId' }
     ]);
+    console.log(tasks)
+    return tasks 
   }
 }
 

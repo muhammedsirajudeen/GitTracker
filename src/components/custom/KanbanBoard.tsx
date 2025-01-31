@@ -1,13 +1,13 @@
 "use client"
 
-import { useState } from "react"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { AlertCircle, ArrowUpCircle, Circle, Plus } from "lucide-react"
-import React from "react" // Import React
-import { PopulatedTask, Priority, Task } from "@/models/TaskManagement"
+import { AlertCircle, ArrowUpCircle, Circle, Edit2, Plus, Trash } from "lucide-react"
+import React, { Dispatch, SetStateAction, useState } from "react" // Import React
+import { PopulatedTask, Priority } from "@/models/TaskManagement"
 import { Button } from "../ui/button"
+import TaskManagementDelete from "../delete/TaskManagementDelete"
 
 const priorityColors = {
   [Priority.LOW]: "bg-blue-100 text-blue-800",
@@ -20,11 +20,24 @@ const priorityIcons = {
   [Priority.MEDIUM]: ArrowUpCircle,
   [Priority.HIGH]: AlertCircle,
 }
-
-export default function KanbanBoard({tasks}:{tasks:PopulatedTask[]}) {
-
+interface KanbanBoardProps { 
+  tasks: PopulatedTask[], 
+  setTasks: Dispatch<SetStateAction<PopulatedTask[]>>, 
+  setTask: Dispatch<SetStateAction<PopulatedTask | undefined>> 
+  setForm:Dispatch<SetStateAction<boolean>>
+}
+export default function KanbanBoard({tasks,setTasks,setTask,setForm}:KanbanBoardProps) {
+  const [deletedialog,setDeletedialog]=useState(false)
+  const [taskId,setTaskId]=useState('')
   const getTasksByPriority = (priority: Priority) => tasks.filter((task) => task.priority === priority)
-
+  async function deleteHandler(id:string){
+    setTaskId(id)
+    setDeletedialog(true)
+  }
+  function editHandler(task:PopulatedTask){
+    setTask(task)
+    setForm(true)
+  }
   return (
     <div className="p-6  min-h-screen">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -46,7 +59,7 @@ export default function KanbanBoard({tasks}:{tasks:PopulatedTask[]}) {
               </Card>
               }
               {getTasksByPriority(priority).map((task) => (
-                <Card key={task._id} className=" shadow-sm hover:shadow-md transition-shadow duration-200">
+                <Card  key={task._id} className=" shadow-sm hover:shadow-md transition-shadow duration-200">
                   <CardHeader className="pb-2">
                     <CardTitle className="text-lg">{task.taskTitle}</CardTitle>
                     <CardDescription>Issue ID: {task.issueId}</CardDescription>
@@ -62,6 +75,8 @@ export default function KanbanBoard({tasks}:{tasks:PopulatedTask[]}) {
                       <AvatarImage src={task.userId.avatar_url} />
                       <AvatarFallback>{task.userId.email.slice(0, 2).toUpperCase()}</AvatarFallback>
                     </Avatar>
+                    <Edit2 onClick={()=>editHandler(task)} color="grey" size={15} />
+                    <Trash onClick={()=>deleteHandler(task._id)} color="grey" size={15} />
                   </CardFooter>
                 </Card>
               ))}
@@ -69,6 +84,8 @@ export default function KanbanBoard({tasks}:{tasks:PopulatedTask[]}) {
           </div>
         ))}
       </div>
+      <TaskManagementDelete setTasks={setTasks} open={deletedialog} setOpen={setDeletedialog} taskId={taskId} />
+
     </div>
   )
 }

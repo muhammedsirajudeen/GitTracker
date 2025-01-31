@@ -40,7 +40,6 @@ const TaskSchema = new Schema<ITask>(
         },
         issueId: {
             type: String,
-            ref: "Issue",
             required: true,
         },
         description: {

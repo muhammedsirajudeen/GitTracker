@@ -51,7 +51,10 @@ class TaskService {
     }
     async getTasksByUserandRepo(userid: string, repoid: string) {
         try {
-            return await this._TaskRepository.getAllTasksByRepoandUser(userid, repoid);
+            const tasks=await this._TaskRepository.getAllTasksByRepoandUser(userid, repoid)
+            console.log("uuid",tasks)
+            return tasks;
+
         } catch (error) {
             const serviceError = error as Error
             throw new Error(`Error fetching tasks by user and repo: ${serviceError.message}`)

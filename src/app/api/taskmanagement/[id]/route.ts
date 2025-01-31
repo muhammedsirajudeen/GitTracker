@@ -41,6 +41,7 @@ export async function POST(request:NextRequest,{params}:{params:{id:string}}){
 export async function GET(request:NextRequest,{params}:{params:{id:string}}){
     try {
         const {id}=params
+        console.log(id)
         const user=await GetUserGivenAccessToken(cookies()) as UserWithId
         if(!user){
             return NextResponse.json({message:HttpStatusMessage[HttpStatus.UNAUTHORIZED]},{status:HttpStatus.UNAUTHORIZED})
@@ -49,7 +50,7 @@ export async function GET(request:NextRequest,{params}:{params:{id:string}}){
             return NextResponse.json({message:HttpStatusMessage[HttpStatus.BAD_REQUEST]},{status:HttpStatus.BAD_REQUEST})
         }
         Logger._logger.info(request.url)
-        const tasks=TaskServiceInstance.getTasksByUserandRepo(user.id,id)
+        const tasks=await TaskServiceInstance.getTasksByUserandRepo(user.id,id)
         return NextResponse.json({message:HttpStatusMessage[HttpStatus.OK],tasks:tasks??[]},{status:HttpStatus.OK})
     } catch (error) {
         const controllerError=error as Error
