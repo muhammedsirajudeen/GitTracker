@@ -4,10 +4,11 @@ import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
 import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react';
 import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
 import useGlobalStore from '@/store/GlobalStore';
+import { SOLANA_API } from '@/lib/types';
 
 export const BlockChainProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
     const network = WalletAdapterNetwork.Devnet; 
-    const endpoint = useMemo(() => /*clusterApiUrl(network)*/'http://localhost:8899', []);
+    const endpoint = useMemo(() => /*clusterApiUrl(network)*/ SOLANA_API , []);
     const { setEndpoint } = useGlobalStore();
 
     useEffect(() => {

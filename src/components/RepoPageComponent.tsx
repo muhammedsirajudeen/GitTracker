@@ -137,7 +137,7 @@ export default function RepoPage() {
                 tab === 'tasks' && <TaskManagementComponent/>
             }
             {
-                tab === 'bounty' && !privateStatus  && <BlockChainProvider><Bounties status={privateStatus} /></BlockChainProvider>
+                tab === 'bounty' &&  <BlockChainProvider><Bounties status={privateStatus} /></BlockChainProvider>
             }
             {
                 tab === 'talk' && <BlockChainProvider><Chat/></BlockChainProvider>

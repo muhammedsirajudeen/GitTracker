@@ -36,7 +36,7 @@ export default function TaskManagementComponent() {
             }} variant="outline" className="mt-4" >Completed Tasks</Button>
             <KanbanBoard  setTask={setTask} setForm={setOpenForm} setTasks={setTasks} tasks={tasks} />
             <TaskCreationDialog task={task} setTasks={setTasks} open={openform} setOpen={setOpenForm}/>
-            <CompletedTasksDialog completedTasks={tasks} open={completedTasks} setOpen={setCompletedTasks}/>
+            <CompletedTasksDialog completedTasks={tasks.filter(p=>p.completed)} open={completedTasks} setOpen={setCompletedTasks}/>
         </div>
     )
 }

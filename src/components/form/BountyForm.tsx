@@ -28,12 +28,12 @@ import { ClipLoader } from 'react-spinners';
 import { useParams } from 'next/navigation';
 import useSWR from 'swr';
 import { fetcher } from '../RepositoryListing';
-import { GitHubIssue } from '@/lib/types';
+import { GitHubIssue, SOLANA_API } from '@/lib/types';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { ScrollArea } from '../ui/scroll-area';
 import { Badge } from '../ui/badge';
 import { BountyWithUser } from '../tabs/Bounties';
-import { Connection, PublicKey, Transaction, TransactionInstruction, TransactionSignature } from '@solana/web3.js';
+import { Connection, PublicKey, SystemProgram, Transaction } from '@solana/web3.js';
 import { useWallet } from '@solana/wallet-adapter-react';
 
 
@@ -75,36 +75,66 @@ const BountyForm: React.FC<{
                 return
             }
             try {
-                const connection = new Connection('http://localhost:8899', 'confirmed');
-                const escrow_account = new PublicKey("5TiC68nb5fMqUwXimQK8R7MVnWxRTvtNAyDoJNpZgHh3")
-                const programId = new PublicKey('8cPSdTRFujZP9KjgNp9p3nrhY5MUrw3gPPK4pwQarC2K');
-                const transaction = new Transaction();
-                // most of this stuff is deprecated try to use the latest stuff
-                const jsonString = JSON.stringify({ amount:parseInt(data.bountyAmount) })
-                const instruction = new TransactionInstruction({
-                    programId: programId,
-                    keys: [{ pubkey: publicKey, isSigner: true, isWritable: true },
-                    { pubkey: escrow_account, isSigner: false, isWritable: true }
-                    ],
-                    data: Buffer.from(jsonString, "utf-8"), // Include any required data for the smart contract function
-                });
-                transaction.add(instruction);
-                const { blockhash } = await connection.getLatestBlockhash();
-                transaction.recentBlockhash = blockhash;
-                transaction.feePayer = publicKey; // Set the fee payer to the wallet's public key
+                // const connection = new Connection(SOLANA_API, 'confirmed');
+                // const escrow_account = new PublicKey("5TiC68nb5fMqUwXimQK8R7MVnWxRTvtNAyDoJNpZgHh3")
+                // const programId = new PublicKey('8cPSdTRFujZP9KjgNp9p3nrhY5MUrw3gPPK4pwQarC2K');
+                // const transaction = new Transaction();
+                // // most of this stuff is deprecated try to use the latest stuff
+                // const jsonString = JSON.stringify({ amount:parseInt(data.bountyAmount) })
+                // const instruction = new TransactionInstruction({
+                //     programId: programId,
+                //     keys: [{ pubkey: publicKey, isSigner: true, isWritable: true },
+                //     { pubkey: escrow_account, isSigner: false, isWritable: true }
+                //     ],
+                //     data: Buffer.from(jsonString, "utf-8"), // Include any required data for the smart contract function
+                // });
+                // transaction.add(instruction);
+                // const { blockhash } = await connection.getLatestBlockhash();
+                // transaction.recentBlockhash = blockhash;
+                // transaction.feePayer = publicKey; // Set the fee payer to the wallet's public key
+                // console.log(publicKey.toString(),escrow_account.toString())
 
+                // if (!signTransaction) {
+                //     toast({ description: "Transaction signing failed", className: "bg-red-500 text-white" })
+                //     return
+                // }
+                // const signedTransaction = await signTransaction(transaction);
 
-                if (!signTransaction) {
-                    toast({ description: "Transaction signing failed", className: "bg-red-500 text-white" })
+                // const signature: TransactionSignature = await sendTransaction(signedTransaction, connection);
+                // const confirmation = await connection.confirmTransaction(signature, 'confirmed');
+                // if (confirmation.value.err) {
+                //     toast({ description: "Transaction Failed", className: "bg-red-500 text-white" })
+                // }
+                const connection=new Connection(SOLANA_API)
+                const recieverAddress=new PublicKey("5TiC68nb5fMqUwXimQK8R7MVnWxRTvtNAyDoJNpZgHh3")
+                if(!recieverAddress){
+                    toast({description:"Unlinked wallet detected",className:"bg-orange-500 text-white"})
                     return
                 }
-                const signedTransaction = await signTransaction(transaction);
-
-                const signature: TransactionSignature = await sendTransaction(signedTransaction, connection);
-                const confirmation = await connection.confirmTransaction(signature, 'confirmed');
-                if (confirmation.value.err) {
-                    toast({ description: "Transaction Failed", className: "bg-red-500 text-white" })
+                const amount=data.bountyAmount
+                const {blockhash}=await connection.getLatestBlockhash()
+                if(!publicKey){
+                    toast({description:"Public key is not defined",className:"bg-orange-500 text-white"})
+                    return
                 }
+                const transaction=new Transaction().add(
+                    SystemProgram.transfer(
+                        {
+                            fromPubkey:publicKey,
+                            toPubkey:new PublicKey(recieverAddress ?? ""),
+                            lamports:parseInt(amount)
+                        }
+                    )
+                )  
+                transaction.recentBlockhash=blockhash
+                transaction.feePayer=publicKey
+                if(!signTransaction){
+                    toast({description:"please try again",className:"bg-red-500"})
+                    return
+                }
+                const signedTransaction=await signTransaction(transaction)
+                await sendTransaction(signedTransaction,connection)
+
                 toast({ description: "Transaction successfully completed", className: "bg-green-500 text-white" });
                 const response = await axios.post(`/api/bounty/${id}`, { ...data, repositoryId: id }, { withCredentials: true });
                 console.log('Bounty submitted successfully:', response.data);

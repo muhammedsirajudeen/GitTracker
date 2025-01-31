@@ -26,7 +26,6 @@ import { SOLANA_API } from "@/lib/types"
 import { useWallet } from "@solana/wallet-adapter-react"
 import axios, { AxiosError } from "axios"
 import { HttpStatus } from "@/lib/HttpStatus"
-import { ClipLoader } from "react-spinners"
 import { BountyWithId } from "./tabs/Bounties"
 import { produce } from "immer"
   
