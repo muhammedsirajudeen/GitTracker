@@ -81,7 +81,7 @@ export async function PUT(request:NextRequest,{params}:{params:{id:string}}){
         if(!updatedTask){
             return NextResponse.json({message:HttpStatusMessage[HttpStatus.BAD_REQUEST]},{status:HttpStatus.BAD_REQUEST})
         }
-        return NextResponse.json({message:HttpStatusMessage[HttpStatus.OK]},{status:HttpStatus.OK})
+        return NextResponse.json({message:HttpStatusMessage[HttpStatus.OK],task:updatedTask},{status:HttpStatus.OK})
     } catch (error) {
         const controllerError=error as Error
         Logger._logger.error(controllerError.message)

@@ -33,7 +33,10 @@ class TaskRepository extends BaseRepository implements ITaskRepository {
   }
 
   async updateTaskById(taskId: string, updateData: Partial<ITask>): Promise<ITask | null> {
-    return await this._TaskModel.findByIdAndUpdate(taskId, updateData, { new: true });
+    return await this._TaskModel.findByIdAndUpdate(taskId, updateData, { new: true }).populate([
+      { path: 'userId', select: 'email avatar_url' },
+      { path: 'repositoryId' },
+    ]);
   }
 
   async deleteTaskById(taskId: string): Promise<ITask | null> {

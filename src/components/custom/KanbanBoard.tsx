@@ -3,11 +3,12 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { AlertCircle, ArrowUpCircle, Circle, Edit2, Plus, Trash } from "lucide-react"
+import { AlertCircle, ArrowUpCircle, Circle, Edit2, Plus, TicketCheck, Trash } from "lucide-react"
 import React, { Dispatch, SetStateAction, useState } from "react" // Import React
 import { PopulatedTask, Priority } from "@/models/TaskManagement"
 import { Button } from "../ui/button"
 import TaskManagementDelete from "../delete/TaskManagementDelete"
+import TaskManagementConfirm from "../dialog/MarkAsCompleteDialog"
 
 const priorityColors = {
   [Priority.LOW]: "bg-blue-100 text-blue-800",
@@ -29,7 +30,9 @@ interface KanbanBoardProps {
 export default function KanbanBoard({tasks,setTasks,setTask,setForm}:KanbanBoardProps) {
   const [deletedialog,setDeletedialog]=useState(false)
   const [taskId,setTaskId]=useState('')
-  const getTasksByPriority = (priority: Priority) => tasks.filter((task) => task.priority === priority)
+  const [completedDialog,setCompleteDialog]=useState<boolean>(false)
+  
+  const getTasksByPriority = (priority: Priority) => tasks.filter((task) => task.priority === priority && !task.completed)
   async function deleteHandler(id:string){
     setTaskId(id)
     setDeletedialog(true)
@@ -37,6 +40,12 @@ export default function KanbanBoard({tasks,setTasks,setTask,setForm}:KanbanBoard
   function editHandler(task:PopulatedTask){
     setTask(task)
     setForm(true)
+  }
+  function completeHandler(taskId:string){
+    console.log(taskId)
+    setTaskId(taskId)
+    setCompleteDialog(true)
+
   }
   return (
     <div className="p-6  min-h-screen">
@@ -61,7 +70,13 @@ export default function KanbanBoard({tasks,setTasks,setTask,setForm}:KanbanBoard
               {getTasksByPriority(priority).map((task) => (
                 <Card  key={task._id} className=" shadow-sm hover:shadow-md transition-shadow duration-200">
                   <CardHeader className="pb-2">
+                    <div className="flex w-full justify-evenly">
+                    <Avatar className="h-6 w-6">
+                      <AvatarImage src={task.userId.avatar_url} />
+                      <AvatarFallback>{task.userId.email.slice(0, 2).toUpperCase()}</AvatarFallback>
+                    </Avatar>
                     <CardTitle className="text-lg">{task.taskTitle}</CardTitle>
+                    </div>
                     <CardDescription>Issue ID: {task.issueId}</CardDescription>
                   </CardHeader>
                   <CardContent>
@@ -71,12 +86,10 @@ export default function KanbanBoard({tasks,setTasks,setTask,setForm}:KanbanBoard
                     <Badge variant="secondary" className={priorityColors[task.priority]}>
                       {task.priority}
                     </Badge>
-                    <Avatar className="h-6 w-6">
-                      <AvatarImage src={task.userId.avatar_url} />
-                      <AvatarFallback>{task.userId.email.slice(0, 2).toUpperCase()}</AvatarFallback>
-                    </Avatar>
+
                     <Edit2 onClick={()=>editHandler(task)} color="grey" size={15} />
                     <Trash onClick={()=>deleteHandler(task._id)} color="grey" size={15} />
+                    <TicketCheck onClick={()=>completeHandler(task._id)} color="grey" size={15} />
                   </CardFooter>
                 </Card>
               ))}
@@ -85,7 +98,7 @@ export default function KanbanBoard({tasks,setTasks,setTask,setForm}:KanbanBoard
         ))}
       </div>
       <TaskManagementDelete setTasks={setTasks} open={deletedialog} setOpen={setDeletedialog} taskId={taskId} />
-
+      <TaskManagementConfirm  setTasks={setTasks} taskId={taskId} open={completedDialog} setOpen={setCompleteDialog}/>
     </div>
   )
 }

@@ -15,8 +15,9 @@ export interface Task {
     issueId: string;
     description: string;
     priority: Priority;
-    userId:string
-    repositoryId:string
+    userId:string;
+    repositoryId:string;
+    completed:boolean
 
 }
 export interface PopulatedTask extends Omit<Task,"userId"|"repositoryId">{
@@ -60,7 +61,13 @@ const TaskSchema = new Schema<ITask>(
             type:Schema.Types.ObjectId,
             required:true,
             ref:'Repository'
+        },
+        completed:{
+            type:Boolean,
+            required:false,
+            default:false
         }
+
     },
     {
         timestamps: true, // Automatically adds createdAt and updatedAt timestamps

@@ -7,6 +7,7 @@ import { TaskCreationDialog } from "../form/TaskManagementForm";
 import { PopulatedTask } from "@/models/TaskManagement";
 import useSWR from "swr";
 import { fetcher } from "../RepositoryListing";
+import CompletedTasksDialog from "../custom/CompletedTasks";
 
 interface issueProps{
     tasks:PopulatedTask[]
@@ -19,6 +20,7 @@ export default function TaskManagementComponent() {
     const [openform,setOpenForm]=useState(false)
     const [task,setTask]=useState<PopulatedTask>()
     const [tasks,setTasks]=useState<PopulatedTask[]>([])
+    const [completedTasks,setCompletedTasks]=useState(false)
     useEffect(()=>{
         if(data){
             setTasks(data.tasks)
@@ -29,8 +31,12 @@ export default function TaskManagementComponent() {
             <Button onClick={()=>{
                 setOpenForm(true)
             }} >Create Task</Button>
-            <KanbanBoard setTask={setTask} setForm={setOpenForm} setTasks={setTasks} tasks={tasks} />
+            <Button onClick={()=>{
+                setCompletedTasks(true)
+            }} variant="outline" className="mt-4" >Completed Tasks</Button>
+            <KanbanBoard  setTask={setTask} setForm={setOpenForm} setTasks={setTasks} tasks={tasks} />
             <TaskCreationDialog task={task} setTasks={setTasks} open={openform} setOpen={setOpenForm}/>
+            <CompletedTasksDialog completedTasks={tasks} open={completedTasks} setOpen={setCompletedTasks}/>
         </div>
     )
 }

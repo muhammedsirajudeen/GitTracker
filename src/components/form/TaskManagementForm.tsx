@@ -58,6 +58,20 @@ export function TaskCreationDialog({ open, setOpen,setTasks,task }: TaskManageme
     async function onSubmit(data: TaskFormValues) {
         if(task){
             //it means that it is a put request
+            try {
+                const response=await axios.put(`/api/taskmanagement/${task._id}`,data,{withCredentials:true})
+                console.log(response.data)
+                toast({description:'task edited successfully successfully',className:'bg-green-500 text-white'})
+                // setTasks(prev=>[...prev,response.data.task])
+                setTasks(prev=>prev.map(p=>p._id===task._id?response.data.task:p))
+                setOpen(false)
+
+            } catch (error) {
+                const axiosError=error as Error
+                console.log(axiosError.message)
+                toast({description:'please try again',className:'bg-red-500 text-white'})
+            }
+            return
         }
         try {
             const response=await axios.post(`/api/taskmanagement/${id}`,data,{withCredentials:true})
