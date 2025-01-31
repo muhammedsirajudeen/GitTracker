@@ -21,6 +21,7 @@ class BountyRepository extends BaseRepository implements IBountyRepository {
     }
     async addBounty(bounty: Bounty): Promise<Bounty | null> {
         try {
+            console.log(bounty.repositoryId)
             const newBounty=new this._BountyModel(bounty)
             return await newBounty.save()
         } catch (error) {
