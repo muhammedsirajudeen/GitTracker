@@ -18,3 +18,4 @@
 2025/01/31 03:40:26 [emerg] 1#1: host not found in upstream "fastapi" in /etc/nginx/nginx.conf:12
 2025/01/31 05:08:39 [emerg] 1#1: host not found in upstream "fastapi" in /etc/nginx/nginx.conf:12
 2025/01/31 09:14:37 [emerg] 1#1: host not found in upstream "fastapi" in /etc/nginx/nginx.conf:12
+2025/01/31 15:54:07 [emerg] 1#1: host not found in upstream "fastapi" in /etc/nginx/nginx.conf:12

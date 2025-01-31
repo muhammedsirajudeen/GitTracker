@@ -9,20 +9,32 @@ import { Skeleton } from "./ui/skeleton"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Bug, CheckSquare, Award, MessageSquare, FolderTree } from 'lucide-react'
 import Issues from "./tabs/Issues"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Bounties from "./tabs/Bounties"
 import FolderStructure from "./tabs/FolderStructure"
 import {BlockChainProvider} from "@/components/wallet/BlockChainProvider";
 import Chat from "./tabs/Chat"
 import TaskManagementComponent from "./tabs/TaskManagementTab"
+import { CheckRepoPrivateStatus } from "@/serveractions/CheckRepoStatus"
 
 export default function RepoPage() {
     const { id } = useParams()
     const { data, isLoading } = useSWR(`/api/repository/${id}`, fetcher);
     const [tab, seTab] = useState('issues')
+    const [privateStatus,setPrivateStatus]=useState(false)
+    
+    useEffect(()=>{
+        async function repoStatus(){
+            const status=await CheckRepoPrivateStatus(id as string)
+            setPrivateStatus(status)
+        }
+        repoStatus()
+    },[id])
     const repo = data?.repository
     return (
         <>
+            
+            
             <div className="w-full max-w-3xl mx-auto px-4 py-4">
                 <Tabs defaultValue="issues" className="w-full">
                     <TabsList className="grid w-full grid-cols-2 lg:grid-cols-5 h-auto bg-black border border-gray-800">
@@ -42,6 +54,9 @@ export default function RepoPage() {
                             <CheckSquare className="w-4 h-4 mr-2" />
                             <span className="hidden sm:inline">Task Management</span>
                         </TabsTrigger>
+                        {
+                            !privateStatus && 
+
                         <TabsTrigger
                             value="bounty"
                             onClick={() => seTab('bounty')}
@@ -50,6 +65,7 @@ export default function RepoPage() {
                             <Award className="w-4 h-4 mr-2" />
                             <span className="hidden sm:inline">Bounty</span>
                         </TabsTrigger>
+                        }
                         <TabsTrigger
                             value="talk"
                             onClick={() => seTab('talk')}
@@ -69,6 +85,7 @@ export default function RepoPage() {
                     </TabsList>
                 </Tabs>
             </div>
+        
             <div id="searchbar-portal" className="flex w-full items-center justify-center">
 
             </div>
@@ -120,7 +137,7 @@ export default function RepoPage() {
                 tab === 'tasks' && <TaskManagementComponent/>
             }
             {
-                tab === 'bounty' && <BlockChainProvider><Bounties/></BlockChainProvider>
+                tab === 'bounty' && !privateStatus  && <BlockChainProvider><Bounties status={privateStatus} /></BlockChainProvider>
             }
             {
                 tab === 'talk' && <BlockChainProvider><Chat/></BlockChainProvider>

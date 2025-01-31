@@ -15,6 +15,7 @@ interface PullRequest{
 interface IGithubService{
     getPullRequestByRepoOfToken(token:string,repo:string):Promise<PullRequest[]>
     getUserGivenToken(token:string):Promise<string>
+    getRepoStatus:(token:string,repoName:string)=>Promise<boolean>
 }
 
 class GithubService implements  IGithubService{
@@ -63,6 +64,29 @@ class GithubService implements  IGithubService{
             const serviceError=e as Error
             console.log(serviceError.message)
             return ""
+        }
+    }
+    
+    async getRepoStatus(token: string, repoName: string): Promise<boolean> {
+        try {
+            const response = await axios.get(
+                `${GithubUrls.base_url}/repos/${repoName}`,
+                {
+                    headers:{
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            )
+            console.log(response.data)
+            if(response.data.private){
+                return true
+            }else{
+                return false
+            }
+        } catch (error) {
+            const serviceError = error as Error
+            console.log(serviceError.message)
+            return true
         }
     }
 

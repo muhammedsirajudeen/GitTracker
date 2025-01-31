@@ -7,7 +7,7 @@ import useGlobalStore from '@/store/GlobalStore';
 
 export const BlockChainProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
     const network = WalletAdapterNetwork.Devnet; 
-    const endpoint = useMemo(() => /*clusterApiUrl(network)*/"http://localhost:8899", []);
+    const endpoint = useMemo(() => /*clusterApiUrl(network)*/'http://localhost:8899', []);
     const { setEndpoint } = useGlobalStore();
 
     useEffect(() => {

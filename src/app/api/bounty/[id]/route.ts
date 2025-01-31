@@ -8,6 +8,8 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server"
 import { UserWithId } from "../../auth/github/route";
 import Logger from "@/lib/LoggerHelper";
+import GithubServiceInstance from "@/service/GithubService";
+import RepositoryServiceInstance from "@/service/RepositoryService";
 
 
 
@@ -28,12 +30,24 @@ export async function POST(request:Request){
     try {
         const user=await GetUserGivenAccessToken(cookies()) as UserWithId
         console.log(user)
+        const githubToken=cookies().get('github_token')
+        if(!githubToken){
+            return NextResponse.json({message:HttpStatusMessage[HttpStatus.UNAUTHORIZED]}, {status:HttpStatus.UNAUTHORIZED})
+        }
         const {issueId, description, title, bountyAmount,repositoryId} = await request.json() as BountyForm
         try {
             bountyFormSchema.parse({issueId, description, title, bountyAmount})            
         } catch (error) {
             console.log(error)
             return NextResponse.json({message:HttpStatusMessage[HttpStatus.BAD_REQUEST]}, {status:HttpStatus.BAD_REQUEST})
+        }
+        const repository=await RepositoryServiceInstance.getRepoById(repositoryId)
+        if(!repository){
+            return NextResponse.json({message:HttpStatusMessage[HttpStatus.NOT_FOUND]}, {status:HttpStatus.NOT_FOUND})
+        }
+        const privateStatus=await GithubServiceInstance.getRepoStatus(githubToken.value,repository.full_name)
+        if(privateStatus){
+            return NextResponse.json({message:HttpStatusMessage[HttpStatus.CONFLICT]}, {status:HttpStatus.CONFLICT})
         }
         //owner id things like that
         const newBounty=await BountyServiceInstance.addBounty({issueId,description,title,repositoryId:new mongoose.Types.ObjectId(repositoryId),ownerId:new mongoose.Types.ObjectId(user.id),bountyAmount:parseInt(bountyAmount),assignees:[]})

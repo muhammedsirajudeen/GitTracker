@@ -63,6 +63,10 @@ const BountyForm: React.FC<{
     const {signTransaction,publicKey,sendTransaction}=useWallet()
     const onSubmit = (data: BountyFormValues) => {
         console.log(data);
+        if(parseInt(data.bountyAmount)<10000){
+            toast({description:'please enter an amount greater than 10000',className:"bg-orange-500 text-white"})
+            return
+        }
 
         const submitBounty = async () => {
             setLoading(true)
@@ -71,9 +75,9 @@ const BountyForm: React.FC<{
                 return
             }
             try {
-                const connection = new Connection('http://localhost:8899', 'confirmed');
+                const connection = new Connection('http://solana-validator:8899', 'confirmed');
                 const escrow_account = new PublicKey("5TiC68nb5fMqUwXimQK8R7MVnWxRTvtNAyDoJNpZgHh3")
-                const programId = new PublicKey('BJMmFR2ENswLKZn3GtQm8MJy9rck8o8SAcsWWdqzjDYE');
+                const programId = new PublicKey('9DxQtfrxnfEAaS59EzuEyvtqFHLTikimXbziuSHcJZnC');
                 const transaction = new Transaction();
                 // most of this stuff is deprecated try to use the latest stuff
                 const jsonString = JSON.stringify({ amount:parseInt(data.bountyAmount) })

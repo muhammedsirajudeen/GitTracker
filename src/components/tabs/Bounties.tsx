@@ -27,7 +27,6 @@ import {
 } from "@/components/ui/pagination"
 import BountySearch from '../search/BountySearch';
 import { createPortal } from 'react-dom';
-import {useWallet} from "@solana/wallet-adapter-react";
 
 export interface BountyWithId extends Bounty {
   _id: string
@@ -40,8 +39,11 @@ interface BountyResponse {
   status: number
 }
 
+interface BountiesProps{
+  status:boolean
+}
 
-const Bounties: React.FC = () => {
+const Bounties: React.FC<BountiesProps> = ({status}) => {
   const { id } = useParams()
   const { data, isLoading }: { data?: BountyResponse, isLoading: boolean } = useSWR(`/api/bounty/${id}`, fetcher)
   const [bounties, setBounties] = useState<BountyWithUser[]>([])
@@ -67,6 +69,10 @@ const Bounties: React.FC = () => {
     router.push(`/bounties/applications/${id}`)
   }
   return (
+    status?
+    <>
+    </>
+    :
     <div className='w-full flex flex-col items-center justify-center  '>
       {
               typeof window !== 'undefined' && document.getElementById('searchbar-portal') && !server &&
