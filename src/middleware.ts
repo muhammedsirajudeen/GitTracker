@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { verifyToken } from './lib/jwtHelper';
 import { HttpStatus, HttpStatusMessage } from './lib/HttpStatus';
 const rateLimits: Map<string, { count: number; expiresAt: number }> = new Map();
-const limit = 100000000;  // Max requests per minute
+const limit = 1000000;  // Max requests per minute
 const ttl = 60 * 1000; // 60 seconds TTL
 
 export async function middleware(request: NextRequest) {

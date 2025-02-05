@@ -11,6 +11,7 @@ export interface IBountyRepository {
     getAllBounties:(userId:string)=>Promise<Bounty[]|null>
     addAssignee:(userid:string,bountyid:string)=>Promise<boolean>
     getBountyByAssignee:(userid:string)=>Promise<Bounty[]|null>
+    getAdminBounties:(page:number)=>Promise<Bounty[]|null>
 }
 
 class BountyRepository extends BaseRepository implements IBountyRepository {
@@ -18,6 +19,16 @@ class BountyRepository extends BaseRepository implements IBountyRepository {
     constructor(BountyModel: Model<IBounty>) {
         super()
         this._BountyModel = BountyModel
+    }
+    async getAdminBounties(page:number): Promise<Bounty[] | null> {
+        return await this._BountyModel.find().populate(
+            [
+                {
+                    path:'assignees',
+                    select:'email avatar_url'
+                }
+            ]
+        ).limit(this.PAGE_LIMIT).skip(page*this.PAGE_LIMIT) as Bounty[]
     }
     async addBounty(bounty: Bounty): Promise<Bounty | null> {
         try {

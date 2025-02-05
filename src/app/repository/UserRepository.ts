@@ -11,6 +11,7 @@ export interface IUserRepository {
     getUserById:(userid:string)=>Promise<User|null>
     updateUserByWallet:(userid:string,User:Partial<User>)=>Promise<boolean>
     // verifyAdmin:(email:string,password:string)=>Promise<boolean>
+    getAllUsersAdmin:(page:number)=>Promise<User[]>
 }
 
 
@@ -19,6 +20,10 @@ class UserRepository extends BaseRepository implements IUserRepository {
     constructor(userModel: Model<IUser>) {
         super()
         this._userModel = userModel
+    }
+    async getAllUsersAdmin(page:number) {
+        const users = await this._userModel.find({role:{$ne:"admin"}}).select('-password').limit(this.PAGE_LIMIT).skip(page*this.PAGE_LIMIT)
+        return users
     }
     async getUserByEmail(email: string) {
         console.log(email)

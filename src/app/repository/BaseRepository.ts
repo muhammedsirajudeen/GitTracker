@@ -9,6 +9,7 @@ import winstonElasticsearch from 'winston-elasticsearch';
 export default class BaseRepository{
     _loggerClient: Client
     _logger:winston.Logger
+    PAGE_LIMIT=10
     constructor() {
         this._loggerClient = new Client({
             node: 'http://elasticsearch:9200',  // Elasticsearch URL

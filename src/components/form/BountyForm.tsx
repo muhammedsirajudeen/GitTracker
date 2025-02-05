@@ -33,7 +33,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { ScrollArea } from '../ui/scroll-area';
 import { Badge } from '../ui/badge';
 import { BountyWithUser } from '../tabs/Bounties';
-import { Connection, PublicKey, SystemProgram, Transaction } from '@solana/web3.js';
+import { Connection, PublicKey, SystemProgram, Transaction, TransactionInstruction, TransactionSignature } from '@solana/web3.js';
 import { useWallet } from '@solana/wallet-adapter-react';
 
 
@@ -78,16 +78,22 @@ const BountyForm: React.FC<{
                 // const connection = new Connection(SOLANA_API, 'confirmed');
                 // const escrow_account = new PublicKey("5TiC68nb5fMqUwXimQK8R7MVnWxRTvtNAyDoJNpZgHh3")
                 // const programId = new PublicKey('8cPSdTRFujZP9KjgNp9p3nrhY5MUrw3gPPK4pwQarC2K');
+                // const SYSTEM_PROGRAM_ID = new PublicKey('11111111111111111111111111111111');
+
                 // const transaction = new Transaction();
                 // // most of this stuff is deprecated try to use the latest stuff
                 // const jsonString = JSON.stringify({ amount:parseInt(data.bountyAmount) })
                 // const instruction = new TransactionInstruction({
                 //     programId: programId,
                 //     keys: [{ pubkey: publicKey, isSigner: true, isWritable: true },
-                //     { pubkey: escrow_account, isSigner: false, isWritable: true }
+                //     { pubkey: escrow_account, isSigner: false, isWritable: true },
+                //     { pubkey: SYSTEM_PROGRAM_ID, isSigner: false, isWritable: false },
                 //     ],
                 //     data: Buffer.from(jsonString, "utf-8"), // Include any required data for the smart contract function
                 // });
+                // console.log("Payer Public Key:", publicKey.toString());
+                // console.log("Escrow Account:", escrow_account.toString());
+
                 // transaction.add(instruction);
                 // const { blockhash } = await connection.getLatestBlockhash();
                 // transaction.recentBlockhash = blockhash;
@@ -99,7 +105,15 @@ const BountyForm: React.FC<{
                 //     return
                 // }
                 // const signedTransaction = await signTransaction(transaction);
-
+                // const simulationResult = await connection.simulateTransaction(signedTransaction);
+                // console.log("Simulation Result:", simulationResult);
+                
+                // if (simulationResult.value.err) {
+                //     toast({ description: "Transaction simulation failed", className: "bg-red-500 text-white" });
+                //     setLoading(false)
+                //     return;
+                // }
+                
                 // const signature: TransactionSignature = await sendTransaction(signedTransaction, connection);
                 // const confirmation = await connection.confirmTransaction(signature, 'confirmed');
                 // if (confirmation.value.err) {

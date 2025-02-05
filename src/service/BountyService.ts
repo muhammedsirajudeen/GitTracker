@@ -16,6 +16,9 @@ class BountyService implements IBountyService{
     constructor(BountyRepository:IBountyRepository){
         this._BountyRepository = BountyRepository;
     }
+    async getAdminBounties(page:number){
+        return this._BountyRepository.getAdminBounties(page)
+    }
     async addBounty(bounty:Bounty){
         //checking if it exists already
         const bountyStatus=await this._BountyRepository.getBountyByIssueId(bounty.issueId)
