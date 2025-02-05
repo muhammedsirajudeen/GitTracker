@@ -9,6 +9,7 @@ export interface IRepoRepository {
     deleteRepo:(userid:string)=>Promise<boolean|null>
     getRepoById:(id:string)=>Promise<Repository|null>
     increaseClosedIssuesCount:(id:string)=>Promise<boolean|null>
+    getAllRepoAdmin:(page:number)=>Promise<Repository[]>
 }
 class RepoRepository extends BaseRepository  implements IRepoRepository {
     _RepoModel: Model<IRepositoryModel>
@@ -16,6 +17,16 @@ class RepoRepository extends BaseRepository  implements IRepoRepository {
     constructor(RepoModel: Model<IRepositoryModel>) {
         super()
         this._RepoModel = RepoModel
+    }
+    async getAllRepoAdmin(page:number) {
+        return this._RepoModel.find().populate(
+            [
+                {
+                    path:'owner_id',
+                    select:'email avatar_url'
+                }
+            ]
+        ).limit(this.Page_Limit).skip(this.Page_Limit*page)
     }
     async addRepo(repo: Repository) {
         try {

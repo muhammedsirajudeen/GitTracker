@@ -8,12 +8,16 @@ interface IRepository {
     deleteRepo:(repoid:string)=>Promise<null|boolean>
     getRepoById:(userid:string)=>Promise<Repository|null>
     increaseClosedIssuesCount:(id:string)=>Promise<boolean|null>
+    getAllRepoAdmin:(page:number)=>Promise<Repository[]>
 
 }
 class RepositoryService implements IRepository {
     _Repository: IRepoRepository
     constructor(Repository: IRepoRepository) {
         this._Repository = Repository
+    }
+    async getAllRepoAdmin(page: number) {
+        return this._Repository.getAllRepoAdmin(page)
     }
     async addRepo(repo: Repository) {
         const status = await this._Repository.addRepo(repo)
