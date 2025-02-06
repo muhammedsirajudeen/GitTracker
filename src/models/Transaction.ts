@@ -9,14 +9,17 @@ export interface Transaction{
     amount:number
     date:Date
     userId:string
+    recieverId:string
 }
 
-export interface PopulatedTransaction extends Omit<Transaction,"userId">{
+export interface PopulatedTransaction extends Omit<Transaction,"userId"|"recieverId">{
     userId:UserWithId
+    recieverId:UserWithId
 }
 
-export interface ITransaction extends Omit<Transaction,"id"|"_id"|"userId">,Document{
+export interface ITransaction extends Omit<Transaction,"id"|"_id"|"userId"|"recieverId">,Document{
     userId:ObjectId
+    recieverId:ObjectId
 }
 
 const transactionSchema = new Schema<ITransaction>(
@@ -45,6 +48,11 @@ const transactionSchema = new Schema<ITransaction>(
         ref: "User",
         required: true,
       },
+      recieverId:{
+        type:Types.ObjectId,
+        ref:"User",
+        required:true
+      }
     },
     {
       timestamps: true,
