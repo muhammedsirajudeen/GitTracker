@@ -5,13 +5,13 @@ import TransactionModel, { ITransaction } from "@/models/Transaction";
 export interface ITransactionRepository {
     create(transactionData: Partial<ITransaction>): Promise<ITransaction>;
     getById(transactionId: string): Promise<ITransaction | null>;
-    getAll(): Promise<ITransaction[]>;
+    getAll(page:number): Promise<ITransaction[]>;
     updateById(
         transactionId: string,
         updateData: Partial<ITransaction>
     ): Promise<ITransaction | null>;
     deleteById(transactionId: string): Promise<ITransaction | null>;
-    findByUserId(userId: string): Promise<ITransaction[]>;
+    findByUserId(userId: string,page:number): Promise<ITransaction[]>;
 }
 
 
@@ -35,8 +35,8 @@ class TransactionRepository extends BaseRepository implements ITransactionReposi
     }
 
     // Get all transactions
-    async getAll(): Promise<ITransaction[]> {
-        return await this._TransactionModel.find().exec();
+    async getAll(page:number): Promise<ITransaction[]> {
+        return await this._TransactionModel.find().limit(this.PAGE_LIMIT).skip(this.PAGE_LIMIT*page).exec();
     }
 
     // Update a transaction by ID
@@ -57,8 +57,8 @@ class TransactionRepository extends BaseRepository implements ITransactionReposi
     }
 
     // Find transactions by userId
-    async findByUserId(userId: string): Promise<ITransaction[]> {
-        return await this._TransactionModel.find({ userId: new Types.ObjectId(userId) }).exec();
+    async findByUserId(userId: string,page:number): Promise<ITransaction[]> {
+        return await this._TransactionModel.find({ userId: new Types.ObjectId(userId) }).limit(this.PAGE_LIMIT).skip(this.PAGE_LIMIT*page).exec();
     }
 }
 

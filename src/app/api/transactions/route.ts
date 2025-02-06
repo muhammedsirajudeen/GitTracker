@@ -16,7 +16,7 @@ export async function GET(request:NextRequest){
             return NextResponse.json({message:HttpStatusMessage[HttpStatus.UNAUTHORIZED]},{status:HttpStatus.UNAUTHORIZED})
         }
         //fetch all users
-        const transactions=await TransactionServiceInstance.getTransactionsByUserId(user.id)
+        const transactions=await TransactionServiceInstance.getTransactionsByUserId(user.id,parseInt(page))
         return NextResponse.json({message:HttpStatusMessage[HttpStatus.OK],transactions:transactions},{status:HttpStatus.OK})
     } catch (error) {
         const controllerError=error as Error
