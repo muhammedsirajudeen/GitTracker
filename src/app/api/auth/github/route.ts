@@ -8,6 +8,7 @@ import { User } from "@/models/User";
 import { parse } from "cookie";
 import { RedisOtpHelper } from "@/lib/redisHelper";
 import { HttpStatus, HttpStatusMessage } from "@/lib/HttpStatus";
+import { UserWith_Id } from "@/components/ApplicationsPageComponent";
 
 export interface UserWithId extends User {
   id: string;
@@ -23,7 +24,6 @@ export async function GET(request: NextRequest) {
     if (!code) {
       return NextResponse.error();
     }
-
     const response = await axios.post(
       'https://github.com/login/oauth/access_token',
       new URLSearchParams({
@@ -40,44 +40,44 @@ export async function GET(request: NextRequest) {
       }
     );
 
-    const accessToken = response.data.access_token;
 
-    const decodedUser =await  verifyToken(access_token_jwt) as UserWithId;
-    console.log(decodedUser)
+    const accessToken = response.data.access_token;
+    const decodedUser =await  verifyToken(access_token_jwt) as UserWithId | null;
     const userResponse = await axios.get('https://api.github.com/user', {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
     });
-
     let email = userResponse.data.login; //this is actually the username
     if (decodedUser) {
       email = decodedUser.email;
     }
     const password = await hashPassword(generateSixDigitRandomNumber().toString());
-    const user = await UserServiceInstance.getUserByEmail(email) as UserWithId;
+    const user = await UserServiceInstance.getUserByEmail(email) as UserWith_Id;
     const newUserBody = { email: email, verified: true,id:""};
     if (!user) {
-      const newUser = await UserServiceInstance.InsertUser({ email: email, password: password, verified: true, avatar_url: userResponse.data.avatar_url }) as UserWithId;
-      newUserBody.id=newUser.id
+      const newUser = await UserServiceInstance.InsertUser({ email: email, password: password, verified: true, avatar_url: userResponse.data.avatar_url,wallet_status:false,wallet_address:"",role:"user" }) as UserWith_Id;
+      newUserBody.id=newUser._id
       if (!newUser) {
         return NextResponse.json({ message: HttpStatusMessage[HttpStatus.INTERNAL_SERVER_ERROR] }, { status: HttpStatus.INTERNAL_SERVER_ERROR });
       }
     }
-    newUserBody.id=user.id
+    
+    //look into the reason for this later
+    if(user){
+      newUserBody.id=user._id
+    }
     //overriding part
     if (decodedUser) {
-      newUserBody.email = decodedUser.email;
+      newUserBody.email = decodedUser?.email;
       newUserBody.id = decodedUser.id;
-    }
-
-
+    }    
     // Set cookies
     const responseWithCookie = NextResponse.redirect(new URL('/home', request.url));
     const token = generateToken(newUserBody);
     const refresh_token=generateToken(newUserBody,'1d')
     //adding refresh token to the cache
-    await RedisOtpHelper(user.email,refresh_token,'refresh')
+    await RedisOtpHelper(user?.email || userResponse.data.login ,refresh_token,'refresh')
     responseWithCookie.cookies.set('refresh_token', refresh_token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
@@ -85,7 +85,6 @@ export async function GET(request: NextRequest) {
         path: '/',
     });
 
-    console.log(token);
     responseWithCookie.cookies.set('access_token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',

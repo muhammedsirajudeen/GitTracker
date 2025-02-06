@@ -1,4 +1,5 @@
 import { Priority } from "@/models/TaskManagement";
+import { Transaction } from "@/models/Transaction";
 import { z } from "zod";
 
 export const loginFormSchema = z.object({
@@ -52,5 +53,16 @@ export const taskSchema = z.object({
     issueId: z.string().min(1, "Issue is required"),
   })
   
+
 export type TaskFormValues = z.infer<typeof taskSchema>
 
+
+
+
+export const TransactionSchema = z.object({
+  fromAddress: z.string().min(1, "From address is required."),
+  toAddress: z.string().min(1, "To address is required."),
+  amount: z.number().min(0, "Amount must be a positive number."),
+  date: z.string().default(() => new Date().toDateString()).optional(), // Default to the current date
+//   userId: z.string().min(1, "User ID is required."),
+});

@@ -34,6 +34,8 @@ export async function PATCH(request:NextRequest){
         if(!userId || !isObjectIdOrHexString(userId)){
             return NextResponse.json({message:HttpStatusMessage[HttpStatus.BAD_REQUEST]},{status:HttpStatus.BAD_REQUEST})
         }
+        //user block
+        const status=await UserServiceInstance.updateUserByWallet(userId,{isBlock:true})
         return NextResponse.json({message:HttpStatusMessage[HttpStatus.OK]},{status:HttpStatus.OK})
 
     } catch (error) {

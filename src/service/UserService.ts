@@ -11,6 +11,7 @@ interface IUserService {
     updateUserById:(userid:string,User:Partial<User>)=>Promise<boolean>
     verifyAdmin:(email:string,password:string)=>Promise<boolean>
     getAllUsersAdmin:(page:number)=>Promise<User[]>
+    updateUserByWallet:(userid:string,User:Partial<User>)=>Promise<boolean>
 }
 class UserService implements IUserService {
     _UserRepo: IUserRepository
@@ -60,6 +61,9 @@ class UserService implements IUserService {
             console.log(repoError.message)
             return false
         }
+    }
+    async updateUserByWallet(userid:string,user:Partial<User>){
+        return this._UserRepo.updateUserByWallet(userid,user)
     }
 
 }
