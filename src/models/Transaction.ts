@@ -1,5 +1,5 @@
 import { UserWithId } from "@/app/api/auth/github/route"
-import mongoose, { model, mongo, ObjectId, Schema, Types } from "mongoose"
+import mongoose, { model, ObjectId, Schema, Types } from "mongoose"
 
 export interface Transaction{
     _id:string

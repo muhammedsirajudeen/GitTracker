@@ -26,6 +26,13 @@ class BountyRepository extends BaseRepository implements IBountyRepository {
                 {
                     path:'assignees',
                     select:'email avatar_url'
+                },
+                {
+                    path:'ownerId',
+                    select:'email avatar_url'
+                },
+                {
+                    path:'repositoryId'
                 }
             ]
         ).limit(this.PAGE_LIMIT).skip(page*this.PAGE_LIMIT) as Bounty[]

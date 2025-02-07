@@ -36,7 +36,14 @@ class TransactionRepository extends BaseRepository implements ITransactionReposi
 
     // Get all transactions
     async getAll(page:number): Promise<ITransaction[]> {
-        return await this._TransactionModel.find().limit(this.PAGE_LIMIT).skip(this.PAGE_LIMIT*page).exec();
+        return await this._TransactionModel.find().limit(this.PAGE_LIMIT).skip(this.PAGE_LIMIT*page).populate(
+            [
+                {
+                    path:'userId',
+                    select:'email avatar_url'
+                }
+            ]
+        ).exec();
     }
 
     // Update a transaction by ID

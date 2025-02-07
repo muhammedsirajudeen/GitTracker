@@ -33,7 +33,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { ScrollArea } from '../ui/scroll-area';
 import { Badge } from '../ui/badge';
 import { BountyWithUser } from '../tabs/Bounties';
-import { Connection, PublicKey, SystemProgram, Transaction, TransactionInstruction, TransactionSignature } from '@solana/web3.js';
+import { Connection, PublicKey, SystemProgram, Transaction } from '@solana/web3.js';
 import { useWallet } from '@solana/wallet-adapter-react';
 
 
@@ -120,7 +120,7 @@ const BountyForm: React.FC<{
                 //     toast({ description: "Transaction Failed", className: "bg-red-500 text-white" })
                 // }
                 const connection=new Connection(SOLANA_API)
-                const recieverAddress=new PublicKey("5TiC68nb5fMqUwXimQK8R7MVnWxRTvtNAyDoJNpZgHh3")
+                const recieverAddress=new PublicKey("EjR46ovWUwKM7yAGvpongyMY42k9E9gBLxZpjao6zKQx")
                 if(!recieverAddress){
                     toast({description:"Unlinked wallet detected",className:"bg-orange-500 text-white"})
                     return
