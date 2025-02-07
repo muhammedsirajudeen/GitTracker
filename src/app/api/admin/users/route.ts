@@ -35,7 +35,14 @@ export async function PATCH(request:NextRequest){
             return NextResponse.json({message:HttpStatusMessage[HttpStatus.BAD_REQUEST]},{status:HttpStatus.BAD_REQUEST})
         }
         //user block
-        const status=await UserServiceInstance.updateUserByWallet(userId,{isBlock:true})
+        const blockUserStatus=await UserServiceInstance.getUserById(userId)
+        if(!blockUserStatus){
+            return NextResponse.json({message:HttpStatusMessage[HttpStatus.NOT_FOUND]},{status:HttpStatus.NOT_FOUND})
+        }
+        const status=await UserServiceInstance.updateUserByWallet(userId,{isBlock:!blockUserStatus.isBlock})
+        if(!status){
+            return NextResponse.json({message:HttpStatusMessage[HttpStatus.CONFLICT]},{status:HttpStatus.CONFLICT})
+        }
         return NextResponse.json({message:HttpStatusMessage[HttpStatus.OK]},{status:HttpStatus.OK})
 
     } catch (error) {

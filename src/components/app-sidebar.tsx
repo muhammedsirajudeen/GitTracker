@@ -1,5 +1,5 @@
 'use client'
-import { Contact2Icon, DollarSign, FolderArchive, Home, InboxIcon, LogOut, LucideDollarSign, Settings, User } from "lucide-react"
+import { Banknote, Circle, Contact2Icon, DollarSign, FolderArchive, GitGraph, Home, InboxIcon, LogOut, LucideDollarSign, Settings, User } from "lucide-react"
 
 import {
   Sidebar,
@@ -94,6 +94,22 @@ const adminitems = [
     url: "/account",
     icon: User
   },
+  {
+    title:'Repositories',
+    url:"/admin/repositories",
+    icon:GitGraph
+  },
+  {
+    title:'Bounties',
+    url:'/admin/bounties',
+    icon:Circle
+  },
+  {
+    title:'Transactions',
+    url:'/admin/transactions',
+    icon:Banknote
+  }
+  ,
   {
     title: "Logout",
     url: "#",

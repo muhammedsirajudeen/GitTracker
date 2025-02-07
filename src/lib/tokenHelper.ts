@@ -20,7 +20,10 @@ export async function GetUserGivenAccessToken(cookie:ReadonlyRequestCookies){
         await connectToDatabase(process.env.MONGODB_URI!)
     }
     const user=await UserServiceInstance.getUserById(decodedUser.id)
-    if(!user?.verified){
+    if(!user){
+        return null
+    }
+    if(!user.verified || user.isBlock){
         return null
     }
     return user
