@@ -1,10 +1,11 @@
 import RepoPage from "@/components/RepoPageComponent";
-import { TokenVerification } from "../page";
 import { redirect } from "next/navigation";
+import { GetUserGivenAccessToken } from "@/lib/tokenHelper";
+import { cookies } from "next/headers";
 
 export default async  function Page(){
-    const token=await TokenVerification()
-    if(!token){
+    const user=await GetUserGivenAccessToken(cookies())
+    if(!user){
       redirect('/')
     }
     return(

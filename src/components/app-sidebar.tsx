@@ -1,5 +1,5 @@
 'use client'
-import { Banknote, Circle, Contact2Icon, DollarSign, FolderArchive, GitGraph, Home, InboxIcon, LogOut, LucideDollarSign, Settings, User } from "lucide-react"
+import { Banknote, Circle, DollarSign, GitGraph, Home, LogOut, LucideDollarSign, Settings, User } from "lucide-react"
 
 import {
   Sidebar,
@@ -25,26 +25,10 @@ const items = [
     icon: Home,
   },
   {
-    title: "Issues",
-    url: "/issues",
-    icon: InboxIcon,
-  },
-  {
     title: "Bounties",
     url: "/bounties",
     icon: LucideDollarSign,
   },
-  {
-    title: "Talk To Your Repo",
-    url: "/talktorepo",
-    icon: Contact2Icon
-  },
-  {
-    title: "Folder Structure",
-    url: "/folderstructure",
-    icon: FolderArchive
-  }
-  ,
   {
     title: "Settings",
     url: "#",

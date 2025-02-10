@@ -131,7 +131,7 @@ export default function RepoPage() {
                     </div>
             }
             {
-                tab === 'issues' && <Issues />
+                tab === 'issues' && <BlockChainProvider><Issues /></BlockChainProvider>
             }
             {
                 tab === 'tasks' && <TaskManagementComponent/>

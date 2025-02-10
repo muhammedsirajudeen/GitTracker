@@ -14,6 +14,7 @@ import { useParams } from 'next/navigation';
 import { toast } from '@/hooks/use-toast';
 import { ClipLoader } from 'react-spinners';
 import { GitHubIssue } from '@/lib/types';
+import { useWallet } from '@solana/wallet-adapter-react';
 
 interface CloseIssueProps {
     open: boolean;
@@ -25,12 +26,13 @@ interface CloseIssueProps {
 }
 
 const CloseIssue: React.FC<CloseIssueProps> = ({ open, setOpen, issueNumber, setIssues, setAchievementdialog, setNft }) => {
+    const {publicKey}=useWallet()
     const { id } = useParams()
     const [loading, setLoading] = useState<boolean>(false)
     async function deleteHandler() {
         setLoading(true)
         try {
-            const response = await axios.patch(`/api/issues/${id}`, { issueNumber }, {
+            const response = await axios.patch(`/api/issues/${id}`, { issueNumber,walletAddress:publicKey }, {
                 headers: {
                     'Content-Type': 'application/json',
                 },

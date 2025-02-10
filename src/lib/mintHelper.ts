@@ -13,6 +13,7 @@ export async function mintNFT(userAddress:string):Promise<string>{
         if(!secretKey){
             throw new Error('Payer secret key not found')
         }
+        console.log(secretKey)
         const payer=Keypair.fromSecretKey(bs58.decode(secretKey))
         const metaplex=Metaplex.make(connection).use(keypairIdentity(payer)).use(
             irysStorage({

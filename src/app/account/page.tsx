@@ -1,10 +1,11 @@
 import React from 'react';
-import { TokenVerification } from '../home/page';
 import { redirect } from 'next/navigation';
 import AccountPage from '@/components/AccountPageComponent';
+import { GetUserGivenAccessToken } from '@/lib/tokenHelper';
+import { cookies } from 'next/headers';
 
 const Page: React.FC = async   () => {
-    const user=await TokenVerification()
+    const user=await GetUserGivenAccessToken(cookies())
     if(!user){
         redirect('/login')
     }

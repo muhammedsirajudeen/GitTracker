@@ -116,7 +116,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
     try {
         const { id } = params;
         const body = await request.json();
-        const { issueNumber } = body;
+        const { issueNumber,walletAddress } = body;
 
         const cookie = cookies();
         const access_token = cookie.get('access_token');
@@ -154,7 +154,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
         await axios.patch(url, { "state": "closed" }, { headers });
         await RepositoryServiceInstance.increaseClosedIssuesCount(id);
         //right now mint here later pass the wallet address 
-        const nftAddress=await mintNFT("uqoHrityZY2tzfWVpKFgoPtabN5ffaugpsP6x75EfBo")
+        const nftAddress=await mintNFT(walletAddress)
         console.log(nftAddress)
         if(!nftAddress){
             return NextResponse.json({ message: HttpStatusMessage[HttpStatus.INTERNAL_SERVER_ERROR] }, { status: HttpStatus.INTERNAL_SERVER_ERROR });
