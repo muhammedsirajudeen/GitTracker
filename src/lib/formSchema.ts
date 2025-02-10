@@ -64,5 +64,5 @@ export const TransactionSchema = z.object({
   toAddress: z.string().min(1, "To address is required."),
   amount: z.number().min(0, "Amount must be a positive number."),
   date: z.string().default(() => new Date().toDateString()).optional(), // Default to the current date
-  recieverId: z.string().min(1, "User ID is required."),
+//   recieverId: z.string().min(1, "User ID is required."),
 });

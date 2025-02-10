@@ -5,7 +5,6 @@ import { NextRequest, NextResponse } from "next/server"
 import Logger from "@/lib/LoggerHelper"
 import TransactionServiceInstance from "@/service/TransactionService"
 import { UserWithId } from "../auth/github/route"
-import { ZodError } from "zod"
 import { TransactionSchema } from "@/lib/formSchema"
 export async function GET(request:NextRequest){
     try {

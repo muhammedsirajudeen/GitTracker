@@ -13,7 +13,7 @@ import {
 
 import { toast } from '@/hooks/use-toast'
 import { BountyWithUser } from '../tabs/Bounties'
-import axios, { AxiosError } from 'axios'
+import  { AxiosError } from 'axios'
 import { HttpStatus } from '@/lib/HttpStatus'
 
 interface DeleteBountyProps {
@@ -23,19 +23,20 @@ interface DeleteBountyProps {
     setOpen:Dispatch<SetStateAction<boolean>>
 }
 
-export default function DeleteBounty({ bounty, setBounties,open,setOpen }: DeleteBountyProps) {
+export default function DeleteBounty({ bounty, /*setBounties,*/open,setOpen }: DeleteBountyProps) {
     const [isDeleting, setIsDeleting] = useState(false)
 
     async function deleteHandler() {
         setIsDeleting(true)
         try {
-            const response = await axios.delete(`/api/bounty/${bounty?._id}`, { withCredentials: true });
-            if (response.status === HttpStatus.OK) {
-                setBounties(prevBounties => prevBounties.filter(bountyH => bountyH._id !== bounty?._id));
-                toast({ description: 'Bounty deleted successfully', className: 'bg-green-500 text-white' });
-                setTimeout(()=>setOpen(false),1000)
+            // const response = await axios.delete(`/api/bounty/${bounty?._id}`, { withCredentials: true });
+            // if (response.status === HttpStatus.OK) {
+            //     setBounties(prevBounties => prevBounties.filter(bountyH => bountyH._id !== bounty?._id));
+            //     toast({ description: 'Bounty deleted successfully', className: 'bg-green-500 text-white' });
+            //     setTimeout(()=>setOpen(false),1000)
                 
-            }
+            // }
+            toast({description:'Thinking about another flow here do it with next week',className:'bg-orange-500 text-white'})
         } catch (error) {
             console.log(error);
             const axiosError = error as AxiosError;

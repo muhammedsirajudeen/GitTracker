@@ -35,7 +35,9 @@ import { Badge } from '../ui/badge';
 import { BountyWithUser } from '../tabs/Bounties';
 import { Connection, PublicKey, SystemProgram, Transaction } from '@solana/web3.js';
 import { useWallet } from '@solana/wallet-adapter-react';
-
+import { Transaction as ITransaction } from '@/models/Transaction';
+import useGlobalStore from '@/store/GlobalStore';
+import { UserWithId } from '@/app/api/auth/github/route';
 
 
 type BountyFormValues = z.infer<typeof bountyFormSchema>;
@@ -61,6 +63,7 @@ const BountyForm: React.FC<{
     const { data }: { data?: IssueResponse, isLoading: boolean } = useSWR(`/api/issues/${id}`, fetcher)
     const [loading, setLoading] = useState<boolean>(false)
     const {signTransaction,publicKey,sendTransaction}=useWallet()
+    const {user}=useGlobalStore()
     const onSubmit = (data: BountyFormValues) => {
         console.log(data);
         if(parseInt(data.bountyAmount)<10000){
@@ -154,6 +157,18 @@ const BountyForm: React.FC<{
                 console.log('Bounty submitted successfully:', response.data);
                 toast({ description: "Bounty submitted successfully", className: "bg-green-500 text-white" })
                 setBounties((prev)=>[...prev,response.data.bounty])
+                // here send api request to show
+                const transactionPayload:Partial<ITransaction>={
+                    amount:parseInt(data.bountyAmount),
+                    fromAddress:publicKey.toString(),
+                    date:new Date(),
+                    toAddress:recieverAddress.toString(),
+                    userId:(user as UserWithId).id,
+                } 
+                const transactionResponse=await axios.post('/api/transactions',transactionPayload,{withCredentials:true})
+                if(transactionResponse.status!==HttpStatus.CREATED){
+                    toast({description:'transaction recording failed',className:'bg-red-500 text-white'})
+                }
                 form.reset()
                 // keep it open temporarily
                 setOpen(false)
