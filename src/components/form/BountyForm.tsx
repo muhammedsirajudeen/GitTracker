@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useState } from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -38,6 +38,8 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { Transaction as ITransaction } from '@/models/Transaction';
 import useGlobalStore from '@/store/GlobalStore';
 import { UserWithId } from '@/app/api/auth/github/route';
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
+import { ArrowUpDown } from 'lucide-react';
 
 
 type BountyFormValues = z.infer<typeof bountyFormSchema>;
@@ -56,24 +58,39 @@ const BountyForm: React.FC<{
             issueId: '',
             description: '',
             title: '',
-            bountyAmount: ''
+            bountyAmount: '1000000'
         }
     });
     const { id } = useParams()
     const { data }: { data?: IssueResponse, isLoading: boolean } = useSWR(`/api/issues/${id}`, fetcher)
     const [loading, setLoading] = useState<boolean>(false)
-    const {signTransaction,publicKey,sendTransaction}=useWallet()
-    const {user}=useGlobalStore()
+    const { signTransaction, publicKey, sendTransaction } = useWallet()
+    const { user } = useGlobalStore()
+    const { data: exchangeRate } = useSWR('/api/exchangerate', fetcher)
+    const [solanaprice, setSolanaprice] = useState(0)
+    const [exchangedRate, setExchangedRate] = useState(0)
+    const amount = form.watch('bountyAmount')
+    useEffect(() => {
+        if (exchangeRate) {
+            setSolanaprice(exchangeRate.price)
+        }
+    }, [exchangeRate])
+    useEffect(() => {
+        if (amount) {
+            const convertedInSol = parseInt(amount) / solanaprice
+            setExchangedRate(convertedInSol)
+        }
+    }, [amount, solanaprice])
     const onSubmit = (data: BountyFormValues) => {
         console.log(data);
-        if(parseInt(data.bountyAmount)<10000){
-            toast({description:'please enter an amount greater than 10000',className:"bg-orange-500 text-white"})
+        if (parseInt(data.bountyAmount) < 10000) {
+            toast({ description: 'please enter an amount greater than 10000', className: "bg-orange-500 text-white" })
             return
         }
 
         const submitBounty = async () => {
             setLoading(true)
-            if(!publicKey){
+            if (!publicKey) {
                 toast({ description: "Please connect to a wallet", className: "bg-red-500 text-white" })
                 return
             }
@@ -110,64 +127,65 @@ const BountyForm: React.FC<{
                 // const signedTransaction = await signTransaction(transaction);
                 // const simulationResult = await connection.simulateTransaction(signedTransaction);
                 // console.log("Simulation Result:", simulationResult);
-                
+
                 // if (simulationResult.value.err) {
                 //     toast({ description: "Transaction simulation failed", className: "bg-red-500 text-white" });
                 //     setLoading(false)
                 //     return;
                 // }
-                
+
                 // const signature: TransactionSignature = await sendTransaction(signedTransaction, connection);
                 // const confirmation = await connection.confirmTransaction(signature, 'confirmed');
                 // if (confirmation.value.err) {
                 //     toast({ description: "Transaction Failed", className: "bg-red-500 text-white" })
                 // }
-                const connection=new Connection(SOLANA_API)
-                const recieverAddress=new PublicKey("EjR46ovWUwKM7yAGvpongyMY42k9E9gBLxZpjao6zKQx")
-                if(!recieverAddress){
-                    toast({description:"Unlinked wallet detected",className:"bg-orange-500 text-white"})
+                const connection = new Connection(SOLANA_API)
+                const recieverAddress = new PublicKey("EjR46ovWUwKM7yAGvpongyMY42k9E9gBLxZpjao6zKQx")
+                if (!recieverAddress) {
+                    toast({ description: "Unlinked wallet detected", className: "bg-orange-500 text-white" })
                     return
                 }
-                const amount=data.bountyAmount
-                const {blockhash}=await connection.getLatestBlockhash()
-                if(!publicKey){
-                    toast({description:"Public key is not defined",className:"bg-orange-500 text-white"})
+                const amount = data.bountyAmount
+                const { blockhash } = await connection.getLatestBlockhash()
+                if (!publicKey) {
+                    toast({ description: "Public key is not defined", className: "bg-orange-500 text-white" })
                     return
                 }
-                const transaction=new Transaction().add(
+                const transaction = new Transaction().add(
                     SystemProgram.transfer(
                         {
-                            fromPubkey:publicKey,
-                            toPubkey:new PublicKey(recieverAddress ?? ""),
-                            lamports:parseInt(amount)
+                            fromPubkey: publicKey,
+                            toPubkey: new PublicKey(recieverAddress ?? ""),
+                            lamports: parseInt(amount)
                         }
                     )
-                )  
-                transaction.recentBlockhash=blockhash
-                transaction.feePayer=publicKey
-                if(!signTransaction){
-                    toast({description:"please try again",className:"bg-red-500"})
+                )
+                transaction.recentBlockhash = blockhash
+                transaction.feePayer = publicKey
+                if (!signTransaction) {
+                    toast({ description: "please try again", className: "bg-red-500" })
                     return
                 }
-                const signedTransaction=await signTransaction(transaction)
-                await sendTransaction(signedTransaction,connection)
+                const signedTransaction = await signTransaction(transaction)
+                await sendTransaction(signedTransaction, connection)
 
                 toast({ description: "Transaction successfully completed", className: "bg-green-500 text-white" });
                 const response = await axios.post(`/api/bounty/${id}`, { ...data, repositoryId: id }, { withCredentials: true });
                 console.log('Bounty submitted successfully:', response.data);
                 toast({ description: "Bounty submitted successfully", className: "bg-green-500 text-white" })
-                setBounties((prev)=>[...prev,response.data.bounty])
+                setBounties((prev) => [...prev, response.data.bounty])
                 // here send api request to show
-                const transactionPayload:Partial<ITransaction>={
-                    amount:parseInt(data.bountyAmount),
-                    fromAddress:publicKey.toString(),
-                    date:new Date(),
-                    toAddress:recieverAddress.toString(),
-                    userId:(user as UserWithId).id,
-                } 
-                const transactionResponse=await axios.post('/api/transactions',transactionPayload,{withCredentials:true})
-                if(transactionResponse.status!==HttpStatus.CREATED){
-                    toast({description:'transaction recording failed',className:'bg-red-500 text-white'})
+
+                const transactionPayload: Partial<ITransaction> = {
+                    amount: parseInt(data.bountyAmount),
+                    fromAddress: publicKey.toString(),
+                    date: new Date(),
+                    toAddress: recieverAddress.toString(),
+                    userId: (user as UserWithId).id,
+                }
+                const transactionResponse = await axios.post('/api/transactions', transactionPayload, { withCredentials: true })
+                if (transactionResponse.status !== HttpStatus.CREATED) {
+                    toast({ description: 'transaction recording failed', className: 'bg-red-500 text-white' })
                 }
                 form.reset()
                 // keep it open temporarily
@@ -276,6 +294,29 @@ const BountyForm: React.FC<{
                                 </FormItem>
                             )}
                         />
+                        <Card className="w-full overflow-hidden">
+                            <CardHeader className="bg-gradient-to-r  text-white p-4">
+                                <CardTitle className="text-lg font-semibold flex items-center justify-between">
+                                    You are transferring
+                                    <Badge variant="secondary" className="ml-2">
+                                        {amount} SOL
+                                    </Badge>
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="p-6">
+                                <div className="flex items-center justify-center">
+                                    <ArrowUpDown className="text-muted-foreground mr-2" />
+                                    <div
+                                        className="text-4xl font-bold"
+                                    >
+                                        ₹{exchangedRate}
+                                    </div>
+                                </div>
+                                <p className="text-center text-sm text-muted-foreground mt-2">
+                                    Current exchange rate: 1 SOL = ₹{solanaprice.toFixed(2)}
+                                </p>
+                            </CardContent>
+                        </Card>
                         <p className='text-xs text-gray-400'>Bounty amount would be transferred right away from your wallet to escrow</p>
                         <Button disabled={loading} type="submit">
                             {
