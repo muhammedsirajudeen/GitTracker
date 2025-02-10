@@ -1,6 +1,5 @@
 import { Connection, Keypair, PublicKey } from "@solana/web3.js";
 import { Metaplex, keypairIdentity, irysStorage } from '@metaplex-foundation/js'; // Removed bundlrStorage import
-import bs58 from 'bs58';
 import { createMint, getOrCreateAssociatedTokenAccount, mintTo } from '@solana/spl-token';
 import axios from "axios";
 
@@ -9,12 +8,19 @@ import axios from "axios";
 export async function mintNFT(userAddress:string):Promise<string>{
     try {        
         const connection = new Connection('https://api.devnet.solana.com', 'confirmed');
-        const secretKey=process.env.SOLANA_PAYER_PRIVATE as string
+        const secretKey=JSON.parse(process.env.SOLANA_PAYER_PRIVATE as string)
         if(!secretKey){
             throw new Error('Payer secret key not found')
         }
         console.log(secretKey)
-        const payer=Keypair.fromSecretKey(bs58.decode(secretKey))
+        // const payer=Keypair.fromSecretKey(bs58.decode(secretKey))
+
+        if(secretKey.length!==64){
+            throw new Error('Invalid secret key length')
+        }
+        const decodedSecretKey = new Uint8Array(secretKey); // If it's already an array of numbers
+        const payer=Keypair.fromSecretKey(decodedSecretKey)
+ 
         const metaplex=Metaplex.make(connection).use(keypairIdentity(payer)).use(
             irysStorage({
                 address: 'https://devnet.irys.xyz', // Replace with the appropriate Irys endpoint
@@ -31,6 +37,7 @@ export async function mintNFT(userAddress:string):Promise<string>{
             0
         )
         console.log('Mint created')
+        console.log(userAddress)
         const userPublicKey=new PublicKey(userAddress)
         const userTokenAccount=await getOrCreateAssociatedTokenAccount(connection,payer,mint,userPublicKey)
         console.log(`User Token Account: ${userTokenAccount.address.toBase58()}`);

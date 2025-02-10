@@ -36,3 +36,9 @@
 2025/02/06 12:45:21 [emerg] 1#1: host not found in upstream "fastapi" in /etc/nginx/nginx.conf:12
 2025/02/06 14:42:14 [emerg] 1#1: host not found in upstream "fastapi" in /etc/nginx/nginx.conf:12
 2025/02/07 03:53:15 [emerg] 1#1: host not found in upstream "fastapi" in /etc/nginx/nginx.conf:12
+2025/02/10 05:51:10 [error] 22#22: *25 upstream timed out (110: Connection timed out) while reading response header from upstream, client: 172.18.0.7, server: your-domain.com, request: "POST /ipfs HTTP/1.1", upstream: "http://172.18.0.2:4000/ipfs", host: "nginx"
+2025/02/10 05:52:06 [error] 22#22: *27 upstream timed out (110: Connection timed out) while reading response header from upstream, client: 172.18.0.7, server: your-domain.com, request: "POST /ipfs HTTP/1.1", upstream: "http://172.18.0.2:4000/ipfs", host: "nginx"
+2025/02/10 05:53:17 [error] 22#22: *29 upstream timed out (110: Connection timed out) while reading response header from upstream, client: 172.18.0.7, server: your-domain.com, request: "POST /ipfs HTTP/1.1", upstream: "http://172.18.0.2:4000/ipfs", host: "nginx"
+2025/02/10 05:53:56 [error] 22#22: *31 upstream timed out (110: Connection timed out) while reading response header from upstream, client: 172.18.0.7, server: your-domain.com, request: "POST /ipfs HTTP/1.1", upstream: "http://172.18.0.2:4000/ipfs", host: "nginx"
+2025/02/10 06:09:40 [error] 22#22: *45 upstream timed out (110: Connection timed out) while reading response header from upstream, client: 172.18.0.7, server: your-domain.com, request: "POST /ipfs HTTP/1.1", upstream: "http://172.18.0.2:4000/ipfs", host: "nginx"
+2025/02/10 06:11:22 [error] 22#22: *47 upstream timed out (110: Connection timed out) while reading response header from upstream, client: 172.18.0.7, server: your-domain.com, request: "POST /ipfs HTTP/1.1", upstream: "http://172.18.0.2:4000/ipfs", host: "nginx"
