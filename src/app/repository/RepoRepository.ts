@@ -10,6 +10,7 @@ export interface IRepoRepository {
     getRepoById:(id:string)=>Promise<Repository|null>
     increaseClosedIssuesCount:(id:string)=>Promise<boolean|null>
     getAllRepoAdmin:(page:number)=>Promise<Repository[]>
+    getRepositoriesCount:()=>Promise<number>
 }
 class RepoRepository extends BaseRepository  implements IRepoRepository {
     _RepoModel: Model<IRepositoryModel>
@@ -97,6 +98,15 @@ class RepoRepository extends BaseRepository  implements IRepoRepository {
             return null
         }
     };
+    async getRepositoriesCount(){
+        try {
+            return await this._RepoModel.find().countDocuments()
+        } catch (error) {
+            const repoError=error as Error
+            this._logger.error(repoError.message)
+            return 0
+        }
+    }
 
 }
 

@@ -9,6 +9,7 @@ interface IRepository {
     getRepoById:(userid:string)=>Promise<Repository|null>
     increaseClosedIssuesCount:(id:string)=>Promise<boolean|null>
     getAllRepoAdmin:(page:number)=>Promise<Repository[]>
+    getRepositoriesCount:()=>Promise<number>
 
 }
 class RepositoryService implements IRepository {
@@ -44,6 +45,9 @@ class RepositoryService implements IRepository {
             console.error("Error increasing closed issues count:", error);
             return null;
         }
+    }
+    async getRepositoriesCount(){
+        return await this._Repository.getRepositoriesCount()
     }
 
 }

@@ -8,6 +8,7 @@ interface IBountyService{
     getAllBounties: (userId:string) => Promise<Bounty[] | null>;
     addAssignee:(userid:string,bountyid:string)=>Promise<boolean>
     getBountyByAssignee:(userid:string)=>Promise<Bounty[]|null>
+    getTotalBounties:()=>Promise<number>
 
 }
 
@@ -48,6 +49,9 @@ class BountyService implements IBountyService{
     }
     async getBountyByAssignee(userid:string){
         return this._BountyRepository.getBountyByAssignee(userid)
+    }
+    async getTotalBounties(){
+        return await this._BountyRepository.getTotalAmount()
     }
 
 }
