@@ -11,11 +11,11 @@ import { BlockChainProvider } from './BlockChainProvider';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import Achievements from '../tabs/Achievements';
+import TransactionsComponent from '../custom/TransactionsComponent';
 
 
 export const BlockChainComponent: FC = () => {
     const { user } = useGlobalStore()
-
     return (
         <BlockChainProvider>
             <Tabs defaultValue="wallet" className="w-full max-w-4xl mx-auto">
@@ -60,7 +60,8 @@ export const BlockChainComponent: FC = () => {
                 </TabsContent>
                 
                 <TabsContent value="history">
-                    <Card>
+                    <TransactionsComponent/>
+                    {/* <Card>
                         <CardHeader>
                             <CardTitle>History</CardTitle>
                             <CardDescription>Your transaction history and past activities.</CardDescription>
@@ -68,7 +69,7 @@ export const BlockChainComponent: FC = () => {
                         <CardContent>
                             <p>Placeholder for transaction history.</p>
                         </CardContent>
-                    </Card>
+                    </Card> */}
                 </TabsContent>
             </Tabs>
         </BlockChainProvider>  

@@ -11,7 +11,7 @@ export async function GET(request:NextRequest){
         const {searchParams}=new URL(request.url)
         const page=searchParams.get('page')??"0"
         const user=await GetUserGivenAccessToken(cookies()) as UserWithId
-        if(!user || user.role!=="admin"){
+        if(!user){
             return NextResponse.json({message:HttpStatusMessage[HttpStatus.UNAUTHORIZED]},{status:HttpStatus.UNAUTHORIZED})
         }
         //fetch all users

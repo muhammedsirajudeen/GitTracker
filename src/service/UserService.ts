@@ -12,6 +12,7 @@ interface IUserService {
     verifyAdmin:(email:string,password:string)=>Promise<boolean>
     getAllUsersAdmin:(page:number)=>Promise<User[]>
     updateUserByWallet:(userid:string,User:Partial<User>)=>Promise<boolean>
+    getCountsofUser:()=>Promise<number>
 }
 class UserService implements IUserService {
     _UserRepo: IUserRepository
@@ -64,6 +65,9 @@ class UserService implements IUserService {
     }
     async updateUserByWallet(userid:string,user:Partial<User>){
         return this._UserRepo.updateUserByWallet(userid,user)
+    }
+    async getCountsofUser(){
+        return this._UserRepo.getCountsOfUser()
     }
 
 }

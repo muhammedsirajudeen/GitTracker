@@ -12,6 +12,7 @@ export interface IUserRepository {
     updateUserByWallet:(userid:string,User:Partial<User>)=>Promise<boolean>
     // verifyAdmin:(email:string,password:string)=>Promise<boolean>
     getAllUsersAdmin:(page:number)=>Promise<User[]>
+    getCountsOfUser:()=>Promise<number>
 }
 
 
@@ -91,6 +92,15 @@ class UserRepository extends BaseRepository implements IUserRepository {
             const repoError:Error=error as Error
             this._logger.error(repoError.message)
             return false
+        }
+    }
+    async getCountsOfUser(){
+        try {
+            return await this._userModel.find().countDocuments()
+        } catch (error) {
+            const repoError=error as Error
+            this._logger.error(repoError.message)
+            return 0
         }
     }
 
