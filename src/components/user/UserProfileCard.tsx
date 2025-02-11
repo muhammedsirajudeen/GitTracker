@@ -5,9 +5,16 @@ import { User as UserType } from '@/models/User'
 import { Button } from '../ui/button'
 import { toast } from '@/hooks/use-toast'
 import axios from 'axios';
+import { useRef, useState } from 'react'
+import { UpdateUserProfile } from '@/serveractions/UpdateUserProfile'
+import { ClipLoader } from 'react-spinners'
+import { isImageFile } from '@/lib/isFile'
 
 
 export default function UserProfileCard({ user }: { user: UserType | null }) {
+    const fileRef=useRef<HTMLInputElement>(null)
+    const imageRef=useRef<HTMLImageElement>(null)
+    const [uploading,setUploading]=useState(false)
     async function logoutHandler(){
 
         try {
@@ -25,37 +32,93 @@ export default function UserProfileCard({ user }: { user: UserType | null }) {
         console.error('There was a problem with the logout request:', error);
         }
     }
+    function fileuploadHandler(){
+        try {
+            if(fileRef.current){
+                fileRef.current.click()
+            }
+            // toast({description:'implementation pending',className:'bg-orange-500 text-white'})
+        } catch (error) {
+            console.log(error)
+            toast({description:"Error in uploading file",className:'bg-red-500 text-white'})
+        }
+    }
+    async function fileChangeHandler(e:React.ChangeEvent<HTMLInputElement>){
+        setUploading(true)
+        try {
+            console.log(e.target.files)
+            const file=e.target.files
+            if(!file){
+                toast({description:'please enter a file',className:'bg-orange-500 text-white'})
+                setUploading(false)
+
+                return
+            }
+            const fileStatus=await isImageFile(file[0])
+            if(!fileStatus){
+                toast({description:'please enter a image file',className:'bg-red-500 text-white'})
+                setUploading(false)
+                return
+            }
+            // if(file){
+            //     const fileStatus=await isImageFile(file[0])
+            //     if(!fileStatus){
+            //         to
+            //     }
+            // }
+
+            if(!file){
+                toast({description:'please enter a file',className:'bg-orange-500 text-white'})
+                setUploading(false)
+                return
+            }
+            const url=URL.createObjectURL(file[0])
+            if(imageRef.current){
+                imageRef.current.src=url
+            }
+            //make network request but before that create the api end point
+            console.log(imageRef.current)
+            const formData=new FormData()
+            formData.append('profileImage',file[0])
+            const response=await axios.post(`http://localhost/upload`,formData,{timeout:10000})
+            console.log(response)
+            const status=await UpdateUserProfile(response.data.url)
+            console.log(status)
+            if(status){
+                toast({description:'Succeeded in profile image',className:'bg-green-500 text-white'})
+            }
+        } catch(error) {
+            console.log(error)
+            toast({description:"Error in uploading file",className:'bg-red-500 text-white'})
+        }
+        setUploading(false)
+    }
     return (
         <Card className="w-full max-w-sm mx-auto mt-0">
+            <input ref={fileRef} type='file' className='hidden' onChange={fileChangeHandler} />
             <CardHeader className="flex flex-col items-center">
                 <Avatar className="w-24 h-24">
-                    <AvatarImage src={user?.avatar_url} alt={user?.email} />
-                    <AvatarFallback>
+                    <AvatarImage ref={imageRef} onClick={fileuploadHandler}  src={user?.avatar_url} alt={user?.email} />
+                    <AvatarFallback onClick={fileuploadHandler}>
                         <User className="w-12 h-12" />
                     </AvatarFallback>
                 </Avatar>
-                {/* <h2 className="mt-4 text-2xl font-bold">{user.}</h2>
-        <p className="text-sm text-muted-foreground">{user.role}</p> */}
+                {
+                    uploading && <ClipLoader size={20} color='white' />
+                }
             </CardHeader>
             <CardContent className="text-center">
-                {/* <p className="text-sm mb-4">{user?.bio}</p> */}
                 <div className="flex justify-center items-center space-x-2 text-sm">
                     <User className="w-4 h-4" />
                     <span>{user?.email}</span>
                 </div>
             </CardContent>
             <CardFooter className="flex justify-center">
-                {/* here add logout handler */}
                 <Button onClick={() => logoutHandler()} >
                     <LogOut />
                     <p className='text-xs' >logout</p>
                 </Button>
-                {/* <Button
-          variant={isFollowing ? "outline" : "default"}
-          onClick={() => setIsFollowing(!isFollowing)}
-        >
-          {isFollowing ? 'Unfollow' : 'Follow'}
-        </Button> */}
+
             </CardFooter>
         </Card>
     )

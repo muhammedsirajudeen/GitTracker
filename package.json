@@ -39,6 +39,7 @@
     "clsx": "^2.1.1",
     "cookie": "^1.0.2",
     "dotenv": "^16.4.7",
+    "formidable": "^3.5.2",
     "framer-motion": "^11.17.0",
     "immer": "^10.1.1",
     "ioredis": "^5.4.2",
@@ -64,6 +65,7 @@
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
     "@types/canvas-confetti": "^1.9.0",
+    "@types/formidable": "^3.4.5",
     "@types/jsonwebtoken": "^9.0.7",
     "@types/node": "^20",
     "@types/nodemailer": "^6.4.17",

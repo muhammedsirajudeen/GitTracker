@@ -58,7 +58,7 @@ const BountyForm: React.FC<{
             issueId: '',
             description: '',
             title: '',
-            bountyAmount: '1000000'
+            bountyAmount: '10000000'
         }
     });
     const { id } = useParams()
