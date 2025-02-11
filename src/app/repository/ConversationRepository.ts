@@ -1,6 +1,7 @@
 import ConversationModel, { Conversation, IConversation } from "@/models/Conversation";
 import { Model, Types } from "mongoose";
 import BaseRepository from "./BaseRepository";
+import RecentActivityServiceInstance from "@/service/RecentActivityService";
 
 export interface IConversationRepository{
     getConversationsByFilter:(userId:string,repoId:string)=>Promise<IConversation[]>
@@ -19,6 +20,7 @@ class ConversationRepository extends BaseRepository implements IConversationRepo
         return await this._ConversationModel.find({userId:new Types.ObjectId(userId),repositoryId:new Types.ObjectId(repoId)}) as IConversation[]
     }
     async createConversation(conversation:Conversation):Promise<IConversation|null>{
+        await RecentActivityServiceInstance.createActivity({type:'chat',date:new Date().toDateString(),message:'New conversation created'})
         return await this._ConversationModel.create(conversation)
     }
     async updateConversation(conversationId:string,conversation:Partial<Conversation>):Promise<IConversation|null>{

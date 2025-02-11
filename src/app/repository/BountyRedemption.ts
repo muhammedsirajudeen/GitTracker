@@ -1,6 +1,7 @@
 import mongoose, { Model } from "mongoose";
 import BaseRepository from "./BaseRepository";
 import BountyRedemptionModel, { BountyRedemption, IBountyRedemptionModel } from "@/models/BountyRedemption";
+import RecentActivityServiceInstance from "@/service/RecentActivityService";
 
 export interface IBountyRedemptionRepo {
     addBountyRedemption: (bountyredemption: BountyRedemption) => Promise<BountyRedemption | null>
@@ -19,6 +20,7 @@ class BountyRedemptionRepo extends BaseRepository implements IBountyRedemptionRe
         try {
             const _bountyredemption = new this._BountyRedemptionModel(bountyredemption)
             const newbounty = await _bountyredemption.save()
+            await RecentActivityServiceInstance.createActivity({type:"bountycompletion",date:new Date().toDateString(),message:"New bounty application submitted"})
             return newbounty as unknown as BountyRedemption
         } catch (error) {
             const repoError = error as Error

@@ -16,6 +16,7 @@ class BountyApplicationRepository extends BaseRepository implements IBountyAppli
         this._BountyApplicationModel = BountyApplicationModel
     }
     async addBountyApplication(bountyApplication: BountyApplication){
+
         return this._BountyApplicationModel.create(bountyApplication)
     }
     async getApplicationByIdandApplicant(bountyId:mongoose.Types.ObjectId,applicantId:mongoose.Types.ObjectId){

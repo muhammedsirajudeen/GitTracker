@@ -1,6 +1,7 @@
 import RepositoryModel, { IRepositoryModel, Repository } from "@/models/Repository";
 import mongoose, { Model } from "mongoose";
 import BaseRepository from "./BaseRepository";
+import RecentActivityServiceInstance from "@/service/RecentActivityService";
 
 export interface IRepoRepository {
     addRepo: (repo: Repository) => Promise<Repository | null>
@@ -43,6 +44,7 @@ class RepoRepository extends BaseRepository  implements IRepoRepository {
             }
             const newRepo = new this._RepoModel(RepoToAdd)
             const savedRepo=await newRepo.save()
+            await RecentActivityServiceInstance.createActivity({type:"repository",date:new Date().toDateString(),message:"Repository Created"})
             return savedRepo
         } catch (error) {
             console.log(error)
