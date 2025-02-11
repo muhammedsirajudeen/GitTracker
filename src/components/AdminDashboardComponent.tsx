@@ -6,6 +6,7 @@ import { Progress } from "@/components/ui/progress"
 import useSWR from "swr"
 import { fetcher } from "./RepositoryListing"
 import { useEffect, useState } from "react"
+import { RecentActivity } from "@/models/RecentActivity"
 
 interface AdminDashboardResponse{
     status:number
@@ -15,8 +16,15 @@ interface AdminDashboardResponse{
     totalAmount:number
 }
 
+interface RecentActivityResponse{
+  message:string
+  status:number
+  recents:RecentActivity[]
+}
+
 export default function AdminDashboardComponent(){
     const {data}=useSWR<AdminDashboardResponse>('/api/admin/dashboard',fetcher)
+    const {data:recentData}=useSWR<RecentActivityResponse>('/api/admin/recentactivity',fetcher)
     console.log(data)
     const [server,setServer]=useState(false)
     useEffect(()=>{
@@ -84,14 +92,24 @@ export default function AdminDashboardComponent(){
               <div className="space-y-4">
                 {
                   server &&
-                  [...Array(8)].map((_, i) => (
+                  // [...Array(8)].map((_, i) => (
+                  //   <div key={i} className="flex items-center p-2 rounded-lg hover:bg-muted">
+                  //     {i % 3 === 0 && <CheckCircle className="h-4 w-4 text-green-500 mr-2" />}
+                  //     {i % 3 === 1 && <AlertCircle className="h-4 w-4 text-yellow-500 mr-2" />}
+                  //     {i % 3 === 2 && <Users className="h-4 w-4 text-blue-500 mr-2" />}
+                  //     <span>{getRandomActivity()}</span>
+                  //   </div>
+                  // ))
+                  recentData?.recents.map((recent,i)=>{
+                  return(
                     <div key={i} className="flex items-center p-2 rounded-lg hover:bg-muted">
-                      {i % 3 === 0 && <CheckCircle className="h-4 w-4 text-green-500 mr-2" />}
-                      {i % 3 === 1 && <AlertCircle className="h-4 w-4 text-yellow-500 mr-2" />}
-                      {i % 3 === 2 && <Users className="h-4 w-4 text-blue-500 mr-2" />}
-                      <span>{getRandomActivity()}</span>
+                      {(recent.type  === "bounty" || recent.type === "chat" || recent.type==="bountycompletion")  && <CheckCircle className="h-4 w-4 text-green-500 mr-2" />}
+                      {recent.type==="repository" && <AlertCircle className="h-4 w-4 text-yellow-500 mr-2" />}
+                      {/* {i % 3 === 2 && <Users className="h-4 w-4 text-blue-500 mr-2" />} */}
+                      <span>{recent.message}</span>
                     </div>
-                  ))
+                  )      
+                  })
                 }
                 
               </div>
@@ -159,20 +177,7 @@ export default function AdminDashboardComponent(){
     )
 }
 
-function getRandomActivity() {
-    const activities = [
-      "New repository created: 'awesome-project'",
-      "Bounty claimed: Fix pagination bug",
-      "New user registered: johndoe123",
-      "AI agent completed task: Code review",
-      "System update: v2.3.1 deployed",
-      "New bounty posted: Implement dark mode",
-      "User milestone achieved: 100 contributions",
-      "Security alert: Unusual login attempt blocked",
-    ]
-    return activities[Math.floor(Math.random() * activities.length)]
-  }
-  
+
   function getSystemStatus() {
     return [
       { name: "GitHub API", status: "Operational", color: "green" },
