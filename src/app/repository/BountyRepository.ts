@@ -1,6 +1,7 @@
 import BountyModel, { Bounty, IBounty } from "@/models/Bounty"
 import mongoose, { Model } from "mongoose"
 import BaseRepository from "./BaseRepository";
+import RecentActivityServiceInstance from "@/service/RecentActivityService";
 
 export interface IBountyRepository {
     addBounty: (bounty: Bounty) => Promise<Bounty | null>;
@@ -41,6 +42,7 @@ class BountyRepository extends BaseRepository implements IBountyRepository {
     async addBounty(bounty: Bounty): Promise<Bounty | null> {
         try {
             const newBounty = new this._BountyModel(bounty)
+            await RecentActivityServiceInstance.createActivity({type:"bounty",date:new Date().toDateString(),message:"new bounty created"})
             return await newBounty.save()
         } catch (error) {
             console.log(error)

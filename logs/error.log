@@ -46,3 +46,4 @@
 2025/02/11 06:22:32 [emerg] 1#1: host not found in upstream "fastapi" in /etc/nginx/nginx.conf:12
 2025/02/11 09:10:02 [error] 22#22: *12 client intended to send too large body: 324966550 bytes, client: 172.18.0.1, server: your-domain.com, request: "POST /upload HTTP/1.1", host: "localhost", referrer: "http://localhost:3000/"
 2025/02/11 14:28:25 [emerg] 1#1: host not found in upstream "fastapi" in /etc/nginx/nginx.conf:12
+2025/02/11 15:52:33 [emerg] 1#1: host not found in upstream "fastapi" in /etc/nginx/nginx.conf:12

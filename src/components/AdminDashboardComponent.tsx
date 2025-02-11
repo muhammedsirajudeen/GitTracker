@@ -5,6 +5,7 @@ import { GitBranch, Users, DollarSign, AlertCircle, CheckCircle, BarChart2, Acti
 import { Progress } from "@/components/ui/progress"
 import useSWR from "swr"
 import { fetcher } from "./RepositoryListing"
+import { useEffect, useState } from "react"
 
 interface AdminDashboardResponse{
     status:number
@@ -17,6 +18,10 @@ interface AdminDashboardResponse{
 export default function AdminDashboardComponent(){
     const {data}=useSWR<AdminDashboardResponse>('/api/admin/dashboard',fetcher)
     console.log(data)
+    const [server,setServer]=useState(false)
+    useEffect(()=>{
+      setServer(true)
+    },[])
     return(
         <div className="p-6 space-y-8 mt-10">
 
@@ -77,14 +82,18 @@ export default function AdminDashboardComponent(){
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {[...Array(8)].map((_, i) => (
-                  <div key={i} className="flex items-center p-2 rounded-lg hover:bg-muted">
-                    {i % 3 === 0 && <CheckCircle className="h-4 w-4 text-green-500 mr-2" />}
-                    {i % 3 === 1 && <AlertCircle className="h-4 w-4 text-yellow-500 mr-2" />}
-                    {i % 3 === 2 && <Users className="h-4 w-4 text-blue-500 mr-2" />}
-                    <span>{getRandomActivity()}</span>
-                  </div>
-                ))}
+                {
+                  server &&
+                  [...Array(8)].map((_, i) => (
+                    <div key={i} className="flex items-center p-2 rounded-lg hover:bg-muted">
+                      {i % 3 === 0 && <CheckCircle className="h-4 w-4 text-green-500 mr-2" />}
+                      {i % 3 === 1 && <AlertCircle className="h-4 w-4 text-yellow-500 mr-2" />}
+                      {i % 3 === 2 && <Users className="h-4 w-4 text-blue-500 mr-2" />}
+                      <span>{getRandomActivity()}</span>
+                    </div>
+                  ))
+                }
+                
               </div>
             </CardContent>
           </Card>
