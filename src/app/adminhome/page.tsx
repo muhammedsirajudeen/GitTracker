@@ -11,7 +11,7 @@ export default async function AdminHome() {
   }
 
   return (
-  <AdminDashboardComponent/>
+  <AdminDashboardComponent user={user}  />
   )
 }
 

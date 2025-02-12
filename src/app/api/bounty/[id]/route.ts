@@ -16,6 +16,10 @@ import RepositoryServiceInstance from "@/service/RepositoryService";
 
 export async function GET(request:Request,{params}:{params:{id:string}}){
     try {
+        const user=await GetUserGivenAccessToken(cookies())
+        if(!user){
+            return NextResponse.json({message:HttpStatusMessage[HttpStatus.UNAUTHORIZED]},{status:HttpStatus.UNAUTHORIZED})
+        }
         const {id}=params
         const bounties=await BountyServiceInstance.getBounties(id)
         return NextResponse.json({message:HttpStatusMessage[HttpStatus.OK],bounties:bounties??[]}, {status:HttpStatus.OK})
@@ -63,6 +67,10 @@ export async function POST(request:Request){
 
 export async function DELETE(request:Request,{params}:{params:{id:string}}){
     try {
+        const user=await GetUserGivenAccessToken(cookies())
+        if(!user){
+            return NextResponse.json({message:HttpStatusMessage[HttpStatus.UNAUTHORIZED]},{status:HttpStatus.UNAUTHORIZED})
+        }
         const {id}=params
         const deleteBountyById = await BountyServiceInstance.deleteBountyById(id)
         //handle all cases but for now handle conflict

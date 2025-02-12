@@ -9,12 +9,15 @@ import { useRef, useState } from 'react'
 import { UpdateUserProfile } from '@/serveractions/UpdateUserProfile'
 import { ClipLoader } from 'react-spinners'
 import { isImageFile } from '@/lib/isFile'
+import { useRouter } from 'next/navigation'
 
 
 export default function UserProfileCard({ user }: { user: UserType | null }) {
     const fileRef=useRef<HTMLInputElement>(null)
     const imageRef=useRef<HTMLImageElement>(null)
     const [uploading,setUploading]=useState(false)
+    const [newImage,setNewImage]=useState(false)
+    const router=useRouter()
     async function logoutHandler(){
 
         try {
@@ -75,6 +78,7 @@ export default function UserProfileCard({ user }: { user: UserType | null }) {
             const url=URL.createObjectURL(file[0])
             if(imageRef.current){
                 imageRef.current.src=url
+                setNewImage(true)
             }
             //make network request but before that create the api end point
             console.log(imageRef.current)
@@ -83,9 +87,13 @@ export default function UserProfileCard({ user }: { user: UserType | null }) {
             const response=await axios.post(`http://localhost/upload`,formData,{timeout:10000})
             console.log(response)
             const status=await UpdateUserProfile(response.data.url)
+
             console.log(status)
             if(status){
-                toast({description:'Succeeded in profile image',className:'bg-green-500 text-white'})
+                toast({description:'Succeeded in uploading profile image',className:'bg-green-500 text-white'})
+                router.refresh()
+                
+
             }
         } catch(error) {
             console.log(error)
@@ -99,9 +107,12 @@ export default function UserProfileCard({ user }: { user: UserType | null }) {
             <CardHeader className="flex flex-col items-center">
                 <Avatar className="w-24 h-24">
                     <AvatarImage ref={imageRef} onClick={fileuploadHandler}  src={user?.avatar_url} alt={user?.email} />
-                    <AvatarFallback onClick={fileuploadHandler}>
+                    {
+                        !newImage &&
+                    <AvatarFallback  onClick={fileuploadHandler}>
                         <User className="w-12 h-12" />
                     </AvatarFallback>
+                    }
                 </Avatar>
                 {
                     uploading && <ClipLoader size={20} color='white' />

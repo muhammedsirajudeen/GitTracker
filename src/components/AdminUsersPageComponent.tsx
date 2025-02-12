@@ -108,7 +108,7 @@ export default function AdminUsersPageComponent() {
                 <TableRow key={user._id}>
                   <TableCell>
                     <Avatar>
-                      <AvatarImage src={user.avatar_url} />
+                      <AvatarImage className="h-10 w-10" src={user.avatar_url} />
                       <AvatarFallback>{user.email.slice(0, 2).toUpperCase()}</AvatarFallback>
                     </Avatar>
                   </TableCell>

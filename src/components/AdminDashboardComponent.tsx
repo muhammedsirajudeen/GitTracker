@@ -7,6 +7,8 @@ import useSWR from "swr"
 import { fetcher } from "./RepositoryListing"
 import { useEffect, useState } from "react"
 import { RecentActivity } from "@/models/RecentActivity"
+import { User } from "@/models/User"
+import useGlobalStore from "@/store/GlobalStore"
 
 interface AdminDashboardResponse{
     status:number
@@ -22,14 +24,19 @@ interface RecentActivityResponse{
   recents:RecentActivity[]
 }
 
-export default function AdminDashboardComponent(){
+export default function AdminDashboardComponent({user}:{user:User | null}){
     const {data}=useSWR<AdminDashboardResponse>('/api/admin/dashboard',fetcher)
     const {data:recentData}=useSWR<RecentActivityResponse>('/api/admin/recentactivity',fetcher)
     console.log(data)
     const [server,setServer]=useState(false)
+    const {setUser}=useGlobalStore()
     useEffect(()=>{
       setServer(true)
-    },[])
+      if(user){
+        setUser(user)
+      }
+      
+    },[setUser, user])
     return(
         <div className="p-6 space-y-8 mt-10">
 
