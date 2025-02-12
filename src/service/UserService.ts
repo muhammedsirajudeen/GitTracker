@@ -10,7 +10,7 @@ interface IUserService {
     getUserById:(userid:string)=>Promise<User|null>
     updateUserById:(userid:string,User:Partial<User>)=>Promise<boolean>
     verifyAdmin:(email:string,password:string)=>Promise<boolean>
-    getAllUsersAdmin:(page:number)=>Promise<User[]>
+    getAllUsersAdmin:(page:number,filter:string)=>Promise<User[]>
     updateUserByWallet:(userid:string,User:Partial<User>)=>Promise<boolean>
     getCountsofUser:()=>Promise<number>
 }
@@ -19,8 +19,8 @@ class UserService implements IUserService {
     constructor(UserRepo: IUserRepository) {
         this._UserRepo = UserRepo
     }
-    async getAllUsersAdmin(page:number){
-        return this._UserRepo.getAllUsersAdmin(page)
+    async getAllUsersAdmin(page:number,filter:string){
+        return this._UserRepo.getAllUsersAdmin(page,filter)
     }
     async getUserByEmail(email: string) {
         const user = await this._UserRepo.getUserByEmail(email)

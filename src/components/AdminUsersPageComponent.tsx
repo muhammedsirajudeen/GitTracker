@@ -2,7 +2,7 @@
 
 import useSWR from "swr"
 import { fetcher } from "./RepositoryListing"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import type { UserWith_Id } from "./ApplicationsPageComponent"
 import { Button } from "@/components/ui/button"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -24,9 +24,10 @@ import {
 
 export default function AdminUsersPageComponent() {
   const [currentPage, setCurrentPage] = useState(0)
-  const { data, error, isLoading, mutate } = useSWR(`/api/admin/users?page=${currentPage}`, fetcher)
+  const [search,setSearch]=useState("")
+  const searchRef=useRef<HTMLInputElement>(null)
+  const { data, error, isLoading, mutate } = useSWR(`/api/admin/users?page=${currentPage}&search=${search}`, fetcher)
   const [users, setUsers] = useState<UserWith_Id[]>([])
-
   useEffect(() => {
     if (data) {
       setUsers(data.users)
@@ -56,6 +57,11 @@ export default function AdminUsersPageComponent() {
   const handlePageChange = (page: number) => {
     setCurrentPage(page)
   }
+  const handleSearch=()=>{
+    if(searchRef.current){
+      setSearch(searchRef.current.value)
+    }
+  }
 
   if (error) {
     return (
@@ -71,8 +77,8 @@ export default function AdminUsersPageComponent() {
     <>
       <div className="container mx-auto py-8">
         <div className="w-full flex items-center justify-center">
-          <Input className="w-96 mr-2" placeholder="Enter the search term" />
-          <Search color="grey" />
+          <Input ref={searchRef} className="w-96 mr-2" placeholder="Enter the search term" />
+          <Search onClick={handleSearch} color="grey" />
         </div>
 
         {isLoading ? (

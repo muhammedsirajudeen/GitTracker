@@ -14,7 +14,9 @@ export async function GET(request:NextRequest){
         }
         const {searchParams}=new URL(request.url)
         const page=searchParams.get('page')??"0"
-        const users=await UserServiceInstance.getAllUsersAdmin(parseInt(page))
+        const search=searchParams.get('search') ?? ""
+        console.log(search)
+        const users=await UserServiceInstance.getAllUsersAdmin(parseInt(page),search)
         return NextResponse.json({message:HttpStatusMessage[HttpStatus.OK],users:users},{status:HttpStatus.OK})
     } catch (error) {
         const controllerError=error as Error

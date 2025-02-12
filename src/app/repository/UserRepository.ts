@@ -11,7 +11,7 @@ export interface IUserRepository {
     getUserById:(userid:string)=>Promise<User|null>
     updateUserByWallet:(userid:string,User:Partial<User>)=>Promise<boolean>
     // verifyAdmin:(email:string,password:string)=>Promise<boolean>
-    getAllUsersAdmin:(page:number)=>Promise<User[]>
+    getAllUsersAdmin:(page:number,filter:string)=>Promise<User[]>
     getCountsOfUser:()=>Promise<number>
 }
 
@@ -22,8 +22,8 @@ class UserRepository extends BaseRepository implements IUserRepository {
         super()
         this._userModel = userModel
     }
-    async getAllUsersAdmin(page:number) {
-        const users = await this._userModel.find({role:{$ne:"admin"}}).select('-password').limit(this.PAGE_LIMIT).skip(page*this.PAGE_LIMIT)
+    async getAllUsersAdmin(page:number,filter:string) {
+        const users = await this._userModel.find({role:{$ne:"admin"},email:{$regex:new RegExp(filter)}}).select('-password').limit(this.PAGE_LIMIT).skip(page*this.PAGE_LIMIT)
         return users
     }
     async getUserByEmail(email: string) {
