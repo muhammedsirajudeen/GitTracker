@@ -6,6 +6,7 @@ interface GlobalState {
   setUser: (user: User) => void;
   endpoint:string;
   setEndpoint:(endpoint:string)=>void;
+  // setUserProfile:(avatar_url:string)=>void
 }
 
 const useGlobalStore = create<GlobalState>()((set) => ({

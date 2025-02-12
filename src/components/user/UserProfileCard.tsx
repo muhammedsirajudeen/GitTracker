@@ -10,6 +10,7 @@ import { UpdateUserProfile } from '@/serveractions/UpdateUserProfile'
 import { ClipLoader } from 'react-spinners'
 import { isImageFile } from '@/lib/isFile'
 import { useRouter } from 'next/navigation'
+import useGlobalStore from '@/store/GlobalStore'
 
 
 export default function UserProfileCard({ user }: { user: UserType | null }) {
@@ -18,6 +19,7 @@ export default function UserProfileCard({ user }: { user: UserType | null }) {
     const [uploading,setUploading]=useState(false)
     const [newImage,setNewImage]=useState(false)
     const router=useRouter()
+    const {setUser}=useGlobalStore()
     async function logoutHandler(){
 
         try {
@@ -91,7 +93,10 @@ export default function UserProfileCard({ user }: { user: UserType | null }) {
             console.log(status)
             if(status){
                 toast({description:'Succeeded in uploading profile image',className:'bg-green-500 text-white'})
-                router.refresh()
+                //instead of this use state update      
+                router.replace('/account')   
+                setUser({...user!,avatar_url:response.data.url})       
+                // window.location.reload()
                 
 
             }
