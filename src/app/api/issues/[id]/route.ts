@@ -1,6 +1,7 @@
 import { HttpStatus, HttpStatusMessage } from "@/lib/HttpStatus"
 import { verifyToken } from "@/lib/jwtHelper"
 import { mintNFT } from "@/lib/mintHelper"
+import { GetUserGivenAccessToken } from "@/lib/tokenHelper"
 import RepositoryServiceInstance from "@/service/RepositoryService"
 import axios from "axios"
 import { Issue } from "next/dist/build/swc"
@@ -15,6 +16,11 @@ export async function GET(request: Request, { params }: { params: { id: string }
         const page = searchParams.get('page') ?? "1"
         const search = searchParams.get('search') ?? ""
         console.log(search)
+        const user=await GetUserGivenAccessToken(cookies())
+        if(!user){
+            return NextResponse.json({message:HttpStatusMessage[HttpStatus.UNAUTHORIZED]},{status:HttpStatus.UNAUTHORIZED})
+        }
+
         const cookie = cookies()
         const access_token = cookie.get('access_token')
         const github_token = cookie.get('github_token')
@@ -70,6 +76,10 @@ export async function POST(request: Request, { params }: { params: { id: string 
         const { id } = params
         const body = await request.json();
         const { title, description: issueBody } = body;
+        const user=await GetUserGivenAccessToken(cookies())
+        if(!user){
+            return NextResponse.json({message:HttpStatusMessage[HttpStatus.UNAUTHORIZED]},{status:HttpStatus.UNAUTHORIZED})
+        }
 
         const cookie = cookies();
         const access_token = cookie.get('access_token');
@@ -117,7 +127,10 @@ export async function PATCH(request: Request, { params }: { params: { id: string
         const { id } = params;
         const body = await request.json();
         const { issueNumber,walletAddress } = body;
-
+        const user=await GetUserGivenAccessToken(cookies())
+        if(!user){
+            return NextResponse.json({message:HttpStatusMessage[HttpStatus.UNAUTHORIZED]},{status:HttpStatus.UNAUTHORIZED})
+        }
         const cookie = cookies();
         const access_token = cookie.get('access_token');
         const github_token = cookie.get('github_token');
@@ -173,6 +186,11 @@ export async function PUT(request: Request, { params }: { params: { id: string }
         const { issueNumber, title, description: issueBody } = body;
         console.log(issueNumber, title, issueBody);
         const cookie = cookies();
+        const user=await GetUserGivenAccessToken(cookies())
+        if(!user){
+            return NextResponse.json({message:HttpStatusMessage[HttpStatus.UNAUTHORIZED]},{status:HttpStatus.UNAUTHORIZED})
+        }
+
         const access_token = cookie.get('access_token');
         const github_token = cookie.get('github_token');
         if (!access_token) {

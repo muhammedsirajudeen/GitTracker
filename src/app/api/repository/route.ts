@@ -6,11 +6,17 @@ import { Repository } from "@/models/Repository";
 import mongoose from "mongoose";
 import RepositoryServiceInstance from "@/service/RepositoryService";
 import axios from "axios";
-
+import { GetUserGivenAccessToken } from "@/lib/tokenHelper";
+import { HttpStatus, HttpStatusMessage } from "@/lib/HttpStatus";
+import { cookies as Cookies } from "next/headers";
 
 
 export async function GET(request: Request) {
     try {
+        const user=await GetUserGivenAccessToken(Cookies())
+        if(!user){
+            return NextResponse.json({message:HttpStatusMessage[HttpStatus.UNAUTHORIZED]},{status:HttpStatus.UNAUTHORIZED})
+        }
 
         const cookies = request.headers.get('cookie')
         if (!cookies) {

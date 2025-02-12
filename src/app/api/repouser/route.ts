@@ -3,13 +3,20 @@ import { parse } from "cookie"
 import { verifyToken } from "@/lib/jwtHelper";
 import { User } from "@/models/User";
 import RepositoryServiceInstance from "@/service/RepositoryService";
-
+import { GetUserGivenAccessToken } from "@/lib/tokenHelper";
+import { HttpStatus, HttpStatusMessage } from "@/lib/HttpStatus";
+import { cookies as Cookies } from "next/headers";
 interface ExtendedUser extends User {
     id: string
 }
 
 export async function GET(request: Request) {
     try {
+        const authUser=await GetUserGivenAccessToken(Cookies())
+        if(!authUser){
+            return NextResponse.json({message:HttpStatusMessage[HttpStatus.UNAUTHORIZED]},{status:HttpStatus.UNAUTHORIZED})
+        }
+
         const searchParams=new URL(request.url).searchParams
         const page=searchParams.get('page')??"0"
         const name=searchParams.get('name')??""
