@@ -2,7 +2,7 @@
 
 import useSWR from "swr"
 import { fetcher } from "./RepositoryListing"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import type { Repository } from "@/models/Repository"
 import type { UserWith_Id } from "./ApplicationsPageComponent"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -29,7 +29,9 @@ interface PopulatedRepository extends Omit<Repository, "owner_id"> {
 
 export default function AdminRepositoriesComponent() {
   const [currentPage, setCurrentPage] = useState(0)
-  const { data, error, isLoading } = useSWR(`/api/admin/repositories?page=${currentPage}`, fetcher)
+  const [search,setSearch]=useState("")
+  const searchRef=useRef<HTMLInputElement>(null)
+  const { data, error, isLoading } = useSWR(`/api/admin/repositories?page=${currentPage}&search=${search}`, fetcher)
   const [repositories, setRepositories] = useState<PopulatedRepository[]>([])
 
   useEffect(() => {
@@ -40,6 +42,11 @@ export default function AdminRepositoriesComponent() {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page)
+  }
+  function searchHandler(){
+    if(searchRef.current){
+      setSearch(searchRef.current.value)
+    }
   }
 
   if (error) {
@@ -56,8 +63,8 @@ export default function AdminRepositoriesComponent() {
     <>
       <div className="container mx-auto py-8">
         <div className="w-full flex items-center justify-center">
-          <Input className="w-96" placeholder="Enter the search term" />
-          <Search color="grey" className="ml-2" />
+          <Input ref={searchRef} className="w-96" placeholder="Enter the search term" />
+          <Search onClick={searchHandler} color="grey" className="ml-2" />
         </div>
         {isLoading ? (
           <div className="grid grid-cols-1 mt-10 md:grid-cols-2 lg:grid-cols-3 gap-6">

@@ -10,7 +10,7 @@ export interface IRepoRepository {
     deleteRepo:(userid:string)=>Promise<boolean|null>
     getRepoById:(id:string)=>Promise<Repository|null>
     increaseClosedIssuesCount:(id:string)=>Promise<boolean|null>
-    getAllRepoAdmin:(page:number)=>Promise<Repository[]>
+    getAllRepoAdmin:(page:number,filter:string)=>Promise<Repository[]>
     getRepositoriesCount:()=>Promise<number>
 }
 class RepoRepository extends BaseRepository  implements IRepoRepository {
@@ -20,8 +20,8 @@ class RepoRepository extends BaseRepository  implements IRepoRepository {
         super()
         this._RepoModel = RepoModel
     }
-    async getAllRepoAdmin(page:number) {
-        return this._RepoModel.find().populate(
+    async getAllRepoAdmin(page:number,filter:string) {
+        return this._RepoModel.find({name:{$regex:new RegExp(filter)}}).populate(
             [
                 {
                     path:'owner_id',
