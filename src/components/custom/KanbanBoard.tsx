@@ -3,12 +3,13 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { AlertCircle, ArrowUpCircle, Circle, Edit2, Plus, TicketCheck, Trash } from "lucide-react"
+import { AlertCircle, ArrowUpCircle, Circle, Edit2, Paperclip, Plus, TicketCheck, Trash } from "lucide-react"
 import React, { type Dispatch, type SetStateAction, useState } from "react"
-import { type PopulatedTask, Priority } from "@/models/TaskManagement"
+import { type PopulatedTask, Priority, Task } from "@/models/TaskManagement"
 import { Button } from "../ui/button"
 import TaskManagementDelete from "../delete/TaskManagementDelete"
 import TaskManagementConfirm from "../dialog/MarkAsCompleteDialog"
+import { ImageDialog } from "./ImageDialog"
 
 const priorityColors = {
   [Priority.LOW]: "bg-blue-100 text-blue-800",
@@ -33,7 +34,8 @@ export default function KanbanBoard({ tasks, setTasks, setTask, setForm }: Kanba
   const [deletedialog, setDeletedialog] = useState(false)
   const [taskId, setTaskId] = useState("")
   const [completedDialog, setCompleteDialog] = useState<boolean>(false)
-
+  const [images,setImages]=useState<string[]>([])
+  const [open,setOpen]=useState<boolean>(false)
   const getTasksByPriority = (priority: Priority) =>
     tasks.filter((task) => task.priority === priority && !task.completed)
 
@@ -50,6 +52,10 @@ export default function KanbanBoard({ tasks, setTasks, setTask, setForm }: Kanba
   function completeHandler(taskId: string) {
     setTaskId(taskId)
     setCompleteDialog(true)
+  }
+  function imageHandler(task:PopulatedTask){
+    setImages(task.images)
+    setOpen(true)
   }
 
   return (
@@ -109,6 +115,10 @@ export default function KanbanBoard({ tasks, setTasks, setTask, setForm }: Kanba
                         <Button variant="ghost" size="sm" onClick={() => completeHandler(task._id)}>
                           <TicketCheck className="h-4 w-4 text-green-500" />
                         </Button>
+                        <Button variant="ghost" size="sm" onClick={() => imageHandler(task)}>
+                          <Paperclip onClick={()=>imageHandler(task)} className="h-4 w-4 text-green-500" />
+                        </Button>
+
                       </div>
                     </CardFooter>
                   </Card>
@@ -118,6 +128,7 @@ export default function KanbanBoard({ tasks, setTasks, setTask, setForm }: Kanba
           </div>
         ))}
       </div>
+      <ImageDialog open={open} setOpen={setOpen} images={images} />
       <TaskManagementDelete setTasks={setTasks} open={deletedialog} setOpen={setDeletedialog} taskId={taskId} />
       <TaskManagementConfirm setTasks={setTasks} taskId={taskId} open={completedDialog} setOpen={setCompleteDialog} />
     </div>

@@ -18,6 +18,7 @@ export interface Task {
     userId:string;
     repositoryId:string;
     completed:boolean
+    images:string[]
 
 }
 export interface PopulatedTask extends Omit<Task,"userId"|"repositoryId">{
@@ -66,6 +67,11 @@ const TaskSchema = new Schema<ITask>(
             type:Boolean,
             required:false,
             default:false
+        },
+        images:{
+            type:[String],
+            required:true,
+            
         }
 
     },
