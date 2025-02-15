@@ -1,5 +1,4 @@
 'use client'
-
 import useSWR from "swr"
 import { fetcher } from "../RepositoryListing"
 import { HttpStatus } from "@/lib/HttpStatus"
@@ -30,6 +29,7 @@ import { createPortal } from "react-dom"
 import IssueSearch from "../search/IssueSearch"
 import NftAchieved from "../custom/NftAchieved"
 import DOMpurify from "dompurify"
+import ClosedIssues from "../custom/ClosedIssues"
 interface IssueResponse {
     status: number
     message: string
@@ -53,6 +53,7 @@ export default function Issues() {
     const [page, setPage] = useState<number>(1)
     const [achievementdialog,setAchievementdialog]=useState(false)
     const [nft,setNft]=useState("")
+    const [closedIssuesDialog,setClosedIssuesDialog]=useState<boolean>(false)
     const toggleExpand = (issueId: number) => {
         setExpandedIssue(expandedIssue === issueId ? null : issueId)
     }
@@ -65,10 +66,6 @@ export default function Issues() {
         setLoading(true)
         setPage(prev => {
             const nextpage = prev - 1 < 1 ? 1 : prev - 1
-            // if(nextpage===1){
-            //     setLoading(false)
-            //     return nextpage
-            // }
             async function asyncWrapper() {
                 const response = await fetcher(`/api/issues/${id}?page=${nextpage}`)
                 console.log(response)
@@ -106,16 +103,26 @@ export default function Issues() {
         setOpen(true)
 
     }
+    function closedIssueHandler(){
+        setClosedIssuesDialog(true)
+    }
     return (
         <div className="flex flex-col items-center justify-center w-full">
             {
                 typeof window !== 'undefined' && document.getElementById('searchbar-portal') && !server &&
                 createPortal(<IssueSearch setIssues={setIssues} />, document.getElementById('searchbar-portal') as Element)
             }
-            {!isLoading && <Button onClick={() => {
-                setOpen(true)
-                setIssue(undefined)
-            }} >Add Issue</Button>}
+            {!isLoading &&
+            <div className="flex">
+                <Button onClick={() => {
+                    setOpen(true)
+                    setIssue(undefined)
+                }} >Add Issue</Button>
+                <Button onClick={closedIssueHandler}   variant="outline" className="ml-2" >
+                    Closed Issues
+                </Button>
+            </div>
+            }
             {
                 !isLoading && !loading && issues.length === 0 && data?.status !== HttpStatus.UNPROCESSABLE_ENTITY && (
                     <div className="flex flex-col items-center justify-center mt-20 ">
@@ -132,6 +139,7 @@ export default function Issues() {
                 )
             }
             <IssueForm open={open} setOpen={setOpen} setIssues={setIssues} issue={issue} method={method} />
+            <ClosedIssues open={closedIssuesDialog} setOpen={setClosedIssuesDialog}/>
             {data?.status === HttpStatus.UNPROCESSABLE_ENTITY && (
                 <LinkGithub />
             )

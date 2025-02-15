@@ -1,3 +1,4 @@
+import { GitHubIssue } from "@/lib/types";
 import axios from "axios";
 
 
@@ -16,6 +17,7 @@ interface IGithubService{
     getPullRequestByRepoOfToken(token:string,repo:string):Promise<PullRequest[]>
     getUserGivenToken(token:string):Promise<string>
     getRepoStatus:(token:string,repoName:string)=>Promise<boolean>
+    getClosedIssues:(repo:string,token:string)=>Promise<GitHubIssue[]>
 }
 
 class GithubService implements  IGithubService{
@@ -87,6 +89,20 @@ class GithubService implements  IGithubService{
             const serviceError = error as Error
             console.log(serviceError.message)
             return true
+        }
+    }
+    async getClosedIssues(repo: string, token: string) {
+        try {
+            const response=await axios.get(`${GithubUrls.base_url}/repos/${repo}/issues?state=closed`,{
+                headers:{
+                    Authorization:`token ${token}`
+                }
+            })
+            return response.data as GitHubIssue[]
+        } catch (error) {
+            const serviceError = error as Error
+            console.log(serviceError.message)
+            return []
         }
     }
 
