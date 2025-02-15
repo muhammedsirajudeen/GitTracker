@@ -14,6 +14,7 @@ import { Avatar } from "@radix-ui/react-avatar"
 import { AvatarFallback, AvatarImage } from "../ui/avatar"
 import { useEffect, useState } from "react"
 import { Skeleton } from "../ui/skeleton"
+import {marked} from "marked"
 import {
     Pagination,
     PaginationContent,
@@ -28,7 +29,7 @@ import DeleteIssue from "../delete/DeleteIssue"
 import { createPortal } from "react-dom"
 import IssueSearch from "../search/IssueSearch"
 import NftAchieved from "../custom/NftAchieved"
-
+import DOMpurify from "dompurify"
 interface IssueResponse {
     status: number
     message: string
@@ -172,7 +173,7 @@ export default function Issues() {
                     <div className="space-y-4 flex items-center justify-start flex-col w-full ">
 
                         {issues.map((issue) => (
-                            <Card key={issue.id} className="w-3/4 mt-4 p-1 ">
+                            <Card key={issue.id} className="w-3/4 mt-4 p-1 max-h-96 overflow-y-scroll ">
                                 <CardHeader>
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center space-x-2">
@@ -195,9 +196,8 @@ export default function Issues() {
                                         </Avatar>
                                         <span className="font-medium">{issue.user.login}</span>
                                     </div>
-                                    <p className={`text-sm mt-2 ${expandedIssue === issue.id ? '' : 'line-clamp-2'}`}>
-                                        {issue.body}
-                                    </p>
+                                    {/* I think XSS is possible but have to consider the implementation of the package */}
+                                    <p className={`text-sm mt-2 ${expandedIssue === issue.id ? '' : 'line-clamp-2'}`} dangerouslySetInnerHTML={{__html:DOMpurify.sanitize(marked.parse(issue.body) as string)}} ></p>
                                     {issue.body && issue.body.length > 100 && (
                                         <Button variant="link" size="sm" onClick={() => toggleExpand(issue.id)}>
                                             {expandedIssue === issue.id ? 'Show less' : 'Show more'}

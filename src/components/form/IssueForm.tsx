@@ -56,7 +56,6 @@ const IssueForm: React.FC<IssueFormProps> = ({ setIssues, open, setOpen, issue, 
     const imageTwo = useRef<HTMLImageElement>(null)
     const imageThree = useRef<HTMLImageElement>(null)
     const filesArrayRef = useRef<File[]>([])
-    const [imageCount,setImageCount]=useState<number>(0)
     const onSubmit = async (data: IssueFormValues) => {
         setLoading(true)
         //post to backend and get the urls
@@ -67,12 +66,12 @@ const IssueForm: React.FC<IssueFormProps> = ({ setIssues, open, setOpen, issue, 
             }
         }
         console.log(formData)
-        const imageResponse=await axios.post('http://localhost/attachments',formData)
+        const imageResponse = await axios.post('http://localhost/attachments', formData)
         //in the imageResponse.data.urls we have all the links available 
         console.log(imageResponse)
-        const urls=imageResponse.data.urls as string[]
-        urls.forEach((url,index)=>{
-            data.description=data.description+"\n"+`![attachment ${index}](${url})`
+        const urls = imageResponse.data.urls as string[]
+        urls.forEach((url, index) => {
+            data.description = data.description + "\n" + `![attachment ${index}](${url})`
         })
         if (method === 'PUT') {
             try {
@@ -121,23 +120,28 @@ const IssueForm: React.FC<IssueFormProps> = ({ setIssues, open, setOpen, issue, 
         }
     }
     function fileChangeHandler(e: ChangeEvent<HTMLInputElement>) {
-        if(filesArrayRef.current && filesArrayRef.current.length>3){
-            toast({description:'Maximum three images allowed',className:'bg-orange-500 text-white'})
+        if (filesArrayRef.current && filesArrayRef.current.length > 3) {
+            toast({ description: 'Maximum three images allowed', className: 'bg-orange-500 text-white' })
             return
         }
         if (e.target.files) {
             const file = e.target.files[0]
             if (filesArrayRef.current) {
                 filesArrayRef.current.push(file)
-                setImageCount(prev=>prev+1)
                 const imageUrl = URL.createObjectURL(file)
                 if (filesArrayRef.current.length === 1) {
                     if (imageOne.current) imageOne.current.src = imageUrl
+                    // setImageCount(prev=>prev-1)
                 }
                 else if (filesArrayRef.current.length === 2) {
+
                     if (imageTwo.current) imageTwo.current.src = imageUrl
+                    // setImageCount(prev=>prev-1)
+
                 } else if (filesArrayRef.current.length === 3) {
                     if (imageThree.current) imageThree.current.src = imageUrl
+                    // setImageCount(prev=>prev-1)
+
                 }
             }
         }
@@ -147,16 +151,16 @@ const IssueForm: React.FC<IssueFormProps> = ({ setIssues, open, setOpen, issue, 
     function imageRemoveHandler(pos: number) {
         console.log(pos)
         if (pos === 1) {
-            if(imageOne.current) imageOne.current.src=''
+            if (imageOne.current) imageOne.current.src = ''
         } else if (pos === 2) {
-            if(imageTwo.current) imageTwo.current.src=''
-            
+            if (imageTwo.current) imageTwo.current.src = ''
+
         } else if (pos === 3) {
-            if(imageThree.current) imageThree.current.src=''
-            
+            if (imageThree.current) imageThree.current.src = ''
+
         }
-        if(pos<4){
-            if(filesArrayRef.current) filesArrayRef.current.splice(pos-1,1)
+        if (pos < 4) {
+            if (filesArrayRef.current) filesArrayRef.current.splice(pos - 1, 1)
         }
         console.log(filesArrayRef)
     }
@@ -195,7 +199,7 @@ const IssueForm: React.FC<IssueFormProps> = ({ setIssues, open, setOpen, issue, 
                                     <FormControl>
                                         <Textarea
                                             placeholder="Describe the issue in detail"
-                                            className="resize-none"
+                                            className="resize-none h-32"
                                             {...field}
                                         />
                                     </FormControl>
@@ -222,17 +226,17 @@ const IssueForm: React.FC<IssueFormProps> = ({ setIssues, open, setOpen, issue, 
                     </form>
                 </Form>
                 <div className='flex items-center justify-evenly w-full' >
-                        <div>
-                            <X onClick={() => imageRemoveHandler(1)} color='white' className='bg-red-700 h-4 w-4 rounded-full' />
-                            <Image src='' alt='attachments' height={10} className='h-40 rounded-xl ' width={120} ref={imageOne} />
-                        </div>
-                    
-                    <div>
-                        <X onClick={() => imageRemoveHandler(2)} color='white' className='bg-red-700 h-4 w-4 rounded-full' />
+                    <div className={` w-[120px] h-40  border border-gray-400 border-dashed `} >
+                        <X onClick={() => imageRemoveHandler(1)} color='white' className='bg-red-700 absolute h-4 w-4 rounded-full' />
+                        <Image src='' alt='attachments' height={10} className='h-40 rounded-xl' width={120} ref={imageOne} />
+                    </div>
+
+                    <div className={` w-[120px] h-40  border border-gray-400 border-dashed `} >
+                        <X onClick={() => imageRemoveHandler(2)} color='white' className='bg-red-700 h-4 w-4 absolute rounded-full' />
                         <Image src='' alt='attachments' height={10} className='h-40 rounded-xl ' width={120} ref={imageTwo} />
                     </div>
-                    <div>
-                        <X onClick={() => imageRemoveHandler(3)} color='white' className='bg-red-700 h-4 w-4 rounded-full' />
+                    <div className={` w-[120px] h-40  border border-gray-400 border-dashed `} >
+                        <X onClick={() => imageRemoveHandler(3)} color='white' className='bg-red-700 h-4 w-4 absolute rounded-full' />
                         <Image src='' alt='attachments' height={10} className='h-40 rounded-xl ' width={120} ref={imageThree} />
                     </div>
                 </div>
