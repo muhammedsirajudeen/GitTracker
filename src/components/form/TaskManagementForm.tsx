@@ -1,6 +1,6 @@
 "use client"
 
-import { Dispatch, SetStateAction, useEffect } from "react"
+import { Dispatch, SetStateAction, useEffect, useRef } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
@@ -17,6 +17,7 @@ import { GitHubIssue } from "@/lib/types"
 import { toast } from "@/hooks/use-toast"
 import axios from "axios"
 import { PopulatedTask, Priority } from "@/models/TaskManagement"
+import Image from "next/image"
 
 
 
@@ -45,6 +46,9 @@ export function TaskCreationDialog({ open, setOpen,setTasks,task }: TaskManageme
             issueId: task?.issueId??"",
         },
     })
+    const imageOne=useRef<HTMLImageElement>(null)
+    const imageTwo=useRef<HTMLImageElement>(null)
+    const imageThree=useRef<HTMLImageElement>(null)
     useEffect(() => {
         if (task) {
             form.reset({
@@ -181,6 +185,10 @@ export function TaskCreationDialog({ open, setOpen,setTasks,task }: TaskManageme
                         <DialogFooter>
                             <Button type="submit">Save Task</Button>
                         </DialogFooter>
+                        <Image ref={imageOne} src="" alt="attachments" height={40} width={120} />
+                        <Image ref={imageTwo} src="" alt="attachments" height={40} width={120}/>
+                        <Image ref={imageThree} src="" alt="attachments" height={40} width={120}/>
+
                     </form>
                 </Form>
             </DialogContent>
