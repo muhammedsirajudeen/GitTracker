@@ -47,7 +47,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
         )
         const username = userResponse.data.login
         if (search) {
-            const url = `https://api.github.com/search/issues?q=repo:${username}/${repository.name}+is:issue+state:open+${search}&page=${page}&per_page=10`;
+            const url = `https://api.github.com/search/issues?q=repo:${username}/${repository.name}+is:issue+state:open+${search}+in:title,body,comments&page=${page}&per_page=10`;
             const headers = {
                 Authorization: `token ${github_token.value}`,
                 Accept: "application/vnd.github.v3+json",
