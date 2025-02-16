@@ -1,8 +1,8 @@
 {
     "functions": {
-        "src/app/api/auth/signup.ts": {
-            "maxDuration": 60
-          }
+      "src/app/api/**/*.ts": {
+        "maxDuration": 60
+      }
     }
   }
   
