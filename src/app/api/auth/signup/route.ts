@@ -13,6 +13,7 @@ export function generateSixDigitRandomNumber(): number {
   }
 
 export async function POST(request: Request) {
+
     try {
         const signupRequest=await request.json() as User
         const findUser=await UserServiceInstance.getUserByEmail(signupRequest.email)
