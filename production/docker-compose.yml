@@ -1,0 +1,122 @@
+version: "3.9"
+
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+    networks:
+      - elk
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+    networks:
+      - elk
+
+  nextjs:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app:Z
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - REDIS_HOST=redis
+      - MONGO_URL=mongodb://admin:password@mongodb:27017
+    networks:
+      - elk
+  nginx:
+    image: nginx
+    container_name: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:Z
+      - ./html:/usr/share/nginx/html:Z
+      - ./logs:/var/log/nginx:Z
+    networks:
+      - elk
+  # elasticsearch:
+  #   image: docker.elastic.co/elasticsearch/elasticsearch:8.6.2
+  #   container_name: elasticsearch
+  #   environment:
+  #     - "discovery.type=single-node"
+  #     - "xpack.security.enabled=false"           # Disable security features
+  #     - "xpack.security.http.ssl.enabled=false"  # Disable SSL for HTTP
+  #     - "http.port=9200"  
+  #   ports:
+  #     - "9200:9200"
+  #   volumes:
+  #     - elasticsearch-data:/usr/share/elasticsearch/data
+  #   networks:
+  #     - elk
+
+  
+
+  # logstash:
+  #   image: docker.elastic.co/logstash/logstash:8.5.0
+  #   container_name: logstash
+  #   environment:
+  #     - "xpack.monitoring.enabled=false"       # Disable monitoring if not needed
+  #     - ELASTICSEARCH_HOST=elasticsearch
+  #   ports:
+  #     - "5044:5044"                           # Map Logstash Beats input port
+  #     - "5000:5000"                           # Map Logstash TCP input port (adjust if needed)
+  #   volumes:
+  #     - ./logstash/pipeline:/usr/share/logstash/pipeline:Z  # M
+  #   networks:
+  #     - elk
+
+  # kibana:
+  #   image: docker.elastic.co/kibana/kibana:8.6.2
+  #   environment:
+  #     - ELASTICSEARCH_HOST=http://elasticsearch:9200
+  #   ports:
+  #     - "5601:5601"
+  #   depends_on:
+  #     - elasticsearch
+  #   networks:
+  #     - elk
+  solana-validator:
+    image: monteesharma0638/solana-test-validator:stable
+    container_name: solana-validator
+    ports:
+      - "8899:8899" # RPC port
+      - "8900:8900" # Gossip port
+      - "8001:8001" # TPU port
+      - "8000:8000" # TPU-FORWARD port
+    volumes:
+      - solana-config:/root/solana-config
+    networks:
+      - elk
+    command: ["sh","-c","touch log.txt && ./solana-test-validator > log.txt"]
+    # deploy:
+    #   resources:
+    #     limits:
+    #       memory: 5g
+
+volumes:
+  mongodb_data:
+  redis_data:
+  elasticsearch-data:
+  solana-config:
+
+networks:
+  elk:
+    driver: bridge

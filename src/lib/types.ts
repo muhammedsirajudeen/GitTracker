@@ -104,5 +104,5 @@ export interface PullRequest {
 }
 
 
-export const SOLANA_API="http://localhost:8899"
-// export const SOLANA_API="https://api.devnet.solana.com	"
+// export const SOLANA_API="http://localhost:8899"
+export const SOLANA_API="https://api.devnet.solana.com	"
