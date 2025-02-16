@@ -20,7 +20,7 @@ import ConversationDelete from "../delete/ConversationDelete"
 
 export default function ChatComponent() {
   const {id}=useParams()
-  const {data,isLoading}=useSWR(`/api/conversation/${id}?date=${new Date().toTimeString()}`,fetcher,  {
+  const {data,isLoading}=useSWR(`/api/conversation`,fetcher,  {
     revalidateIfStale: true,  // Always revalidate if data is stale
     revalidateOnFocus: false, // Optional: prevent refetch on focus
     revalidateOnReconnect: false, // Optional: prevent refetch on network reconnect
