@@ -11,7 +11,7 @@ import { ClipLoader } from 'react-spinners'
 import { isImageFile } from '@/lib/isFile'
 import { useRouter } from 'next/navigation'
 import useGlobalStore from '@/store/GlobalStore'
-import { backendUrl, frontendUrl } from '@/lib/backendUrl'
+import { backendUrl } from '@/lib/backendUrl'
 
 
 export default function UserProfileCard({ user }: { user: UserType | null }) {

@@ -1,39 +1,55 @@
-import winston from 'winston';
-import { ElasticsearchTransportOptions } from 'winston-elasticsearch';
+// import winston from 'winston';
+// import { ElasticsearchTransportOptions } from 'winston-elasticsearch';
 import { Client } from '@elastic/elasticsearch';
-import winstonElasticsearch from 'winston-elasticsearch';
+// import winstonElasticsearch from 'winston-elasticsearch';
 
-
-
-
-export default class BaseRepository{
-    _loggerClient: Client
-    _logger:winston.Logger
-    PAGE_LIMIT=10
-    constructor() {
-        this._loggerClient = new Client({
-            node: 'http://elasticsearch:9200',  // Elasticsearch URL
-        });
-        const esTransportOpts: ElasticsearchTransportOptions = {
-            level: 'info',  // Log level (info, debug, warn, error, etc.)
-            client: this._loggerClient,  // Elasticsearch client instance
-            index: 'logstash-nextjs',  // Elasticsearch index where logs will be stored
-            transformer: (logData) => {
-              return {
-                message: logData.message,
-                timestamp: logData.timestamp,
-                level: logData.level,
-                meta: logData.meta,  // Optional: Attach additional metadata
-              };
-            },
-          };
-          this._logger = winston.createLogger({
-            level: 'info',
-            transports: [
-              new winston.transports.Console(),  // Log to console (optional)
-              // new winstonElasticsearch.ElasticsearchTransport(esTransportOpts),  // Log to Elasticsearch
-            ],
-          });
-    }
+interface Logger{
+  info:(message:string)=>void
+  error:(message:string)=>void
 }
 
+export default class BaseRepository {
+  _loggerClient: Client;
+  _logger: Logger;
+  PAGE_LIMIT = 10;
+
+  constructor() {
+    this._loggerClient = new Client({
+      node: process.env.ELASTIC_URL,
+      auth: {
+        apiKey: process.env.ELASTIC_API!,
+      },
+    });
+
+    this._loggerClient.ping()
+      .then(() => console.log('✅ Elasticsearch connection succeeded'))
+      .catch((error) => {
+        console.error('❌ Elasticsearch connection failed:', error);
+    });
+    this._logger={
+      info:(message:string)=>{
+        console.log({level:"info",message,"@timestamp":new Date().toDateString()})
+        this._loggerClient.index({
+          index: 'logstash-nextjs',
+          body: {
+            message: message,
+            "@timestamp": new Date().toISOString(),
+            level: 'info',
+          },
+        })
+      }
+      ,
+      error:(message:string)=>{
+        console.log({level:"error",message,"@timestamp":new Date().toDateString()})
+        this._loggerClient.index({
+          index: 'logstash-nextjs',
+          body: {
+            message: message,
+            "@timestamp": new Date().toISOString(),
+            level: 'error',
+          },
+        })        
+      }
+    }
+  }
+}
