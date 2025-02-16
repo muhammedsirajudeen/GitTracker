@@ -2,7 +2,6 @@ import { hashPassword } from "@/lib/bcryptHelper"
 import UserModel, { IUser, User } from "@/models/User"
 import  { Model } from "mongoose"
 import BaseRepository from "./BaseRepository"
-import { connectToDatabase } from "@/models/dbConnect"
 
 export interface IUserRepository {
     getUserByEmail: (email: string) => Promise<User | null>
@@ -22,7 +21,6 @@ class UserRepository extends BaseRepository implements IUserRepository {
     constructor(userModel: Model<IUser>) {
         super()
         this._userModel = userModel
-        connectToDatabase(process.env.MONGODB_URI!)
     }
     async getAllUsersAdmin(page:number,filter:string) {
         const users = await this._userModel.find({role:{$ne:"admin"},email:{$regex:new RegExp(filter)}}).select('-password').limit(this.PAGE_LIMIT).skip(page*this.PAGE_LIMIT)

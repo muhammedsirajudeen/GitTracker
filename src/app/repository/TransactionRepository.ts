@@ -21,6 +21,7 @@ class TransactionRepository extends BaseRepository implements ITransactionReposi
     constructor(TransactionModel: Model<ITransaction>) {
         super();
         this._TransactionModel = TransactionModel;
+        
     }
 
     // Create a new transaction

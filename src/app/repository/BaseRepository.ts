@@ -1,5 +1,6 @@
 // import winston from 'winston';
 // import { ElasticsearchTransportOptions } from 'winston-elasticsearch';
+import { connectToDatabase } from '@/models/dbConnect';
 import { Client } from '@elastic/elasticsearch';
 // import winstonElasticsearch from 'winston-elasticsearch';
 
@@ -14,6 +15,8 @@ export default class BaseRepository {
   PAGE_LIMIT = 10;
 
   constructor() {
+    connectToDatabase(process.env.MONGODB_URI!)
+
     this._loggerClient = new Client({
       node: process.env.ELASTIC_URL,
       auth: {
