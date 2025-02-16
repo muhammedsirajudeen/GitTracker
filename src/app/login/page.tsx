@@ -23,6 +23,7 @@ import { loginFormSchema } from "@/lib/formSchema";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Github, User } from "lucide-react";
+import { frontendUrl } from "@/lib/backendUrl"
 
 
 export default function LoginForm() {
@@ -155,7 +156,7 @@ export default function LoginForm() {
             <Separator className="my-4" />
             <Button
               onClick={() => {
-                window.location.href = `https://github.com/login/oauth/authorize?client_id=Ov23li0zclDZ7XsACEGa&redirect_uri=http://localhost:3000/api/auth/github&scope=repo`;
+                window.location.href = `https://github.com/login/oauth/authorize?client_id=Ov23li0zclDZ7XsACEGa&redirect_uri=${frontendUrl}/api/auth/github&scope=repo`;
               }}
               variant="outline"
               className="w-full"

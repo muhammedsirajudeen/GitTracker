@@ -3,6 +3,7 @@ import { parse } from 'cookie';
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyToken } from './lib/jwtHelper';
 import { HttpStatus, HttpStatusMessage } from './lib/HttpStatus';
+import { frontendUrl } from './lib/backendUrl';
 const rateLimits: Map<string, { count: number; expiresAt: number }> = new Map();
 const limit = 1000000;  // Max requests per minute
 const ttl = 60 * 1000; // 60 seconds TTL
@@ -66,12 +67,12 @@ export async function middleware(request: NextRequest) {
             Todo:
             request.url should go to env this is a hacky solution
         */
-        if(request.url.includes('login')||request.url.includes('signup')||request.url==='http://localhost:3000/'){
+        if(request.url.includes('login')||request.url.includes('signup')||request.url===frontendUrl+'/'){
             const cookies=parse(request.headers.get('cookie') || '')
             const access_token=cookies['access_token']
             const decodedUser=await verifyToken(access_token as string)
             if(decodedUser){
-                return NextResponse.redirect(new URL('/verifybot', request.url));        
+                return NextResponse.redirect(new URL('/', request.url));        
             }
             return NextResponse.next();
         }

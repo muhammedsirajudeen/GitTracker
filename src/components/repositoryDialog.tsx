@@ -26,6 +26,7 @@ interface ExtendedRepo extends Repository{
 import {produce} from "immer"
 import { Repository } from '@/models/Repository'
 import { SearchRepo } from '@/serveractions/SearchRepo'
+import { frontendUrl } from '@/lib/backendUrl'
 export default function RepositoryDialog({setRepositories}:{setRepositories: Dispatch<SetStateAction<ExtendedRepo[]>>}) {
     const [searchQuery, setSearchQuery] = useState('')
     const { toast } = useToast()
@@ -136,7 +137,7 @@ export default function RepositoryDialog({setRepositories}:{setRepositories: Dis
                                   </CardHeader>
                                   <CardContent className="flex justify-center">
                                     <Button onClick={()=>{
-                                        window.location.href = `https://github.com/login/oauth/authorize?client_id=Ov23li0zclDZ7XsACEGa&redirect_uri=http://localhost:3000/api/auth/github&scope=repo`;
+                                        window.location.href = `https://github.com/login/oauth/authorize?client_id=Ov23li0zclDZ7XsACEGa&redirect_uri=${frontendUrl}/api/auth/github&scope=repo`;
 
                                     }} className="bg-[#2da44e] text-white hover:bg-[#2c974b] px-6">
                                       <Github className="mr-2 h-4 w-4" />

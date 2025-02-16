@@ -20,6 +20,7 @@ import { HttpStatus } from '@/lib/HttpStatus'
 import { toast } from '@/hooks/use-toast'
 import { Paperclip, X } from 'lucide-react'
 import Image from 'next/image'
+import { backendUrl } from '@/lib/backendUrl'
 
 export const issueSchema = z.object({
     title: z.string().min(1, "Title is required").max(100, "Title must be 100 characters or less"),
@@ -66,7 +67,7 @@ const IssueForm: React.FC<IssueFormProps> = ({ setIssues, open, setOpen, issue, 
             }
         }
         console.log(formData)
-        const imageResponse = await axios.post('http://localhost/attachments', formData)
+        const imageResponse = await axios.post(`${backendUrl}/attachments`, formData)
         //in the imageResponse.data.urls we have all the links available 
         console.log(imageResponse)
         const urls = imageResponse.data.urls as string[]

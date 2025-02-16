@@ -20,6 +20,7 @@ import { PopulatedTask, Priority } from "@/models/TaskManagement"
 import Image from "next/image"
 import { Paperclip, X } from "lucide-react"
 import { ClipLoader } from "react-spinners"
+import { backendUrl } from "@/lib/backendUrl"
 
 
 
@@ -75,7 +76,7 @@ export function TaskCreationDialog({ open, setOpen, setTasks, task }: TaskManage
         for(const file of filesArrayRef.current){
             formData.append("attachments",file)
         }
-        const imageResponse=await axios.post('http://localhost/attachments',formData)
+        const imageResponse=await axios.post(`${backendUrl}/attachments`,formData)
         // console.log(response.data.urls)
         if (task) {
             //it means that it is a put request

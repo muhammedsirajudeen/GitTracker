@@ -11,6 +11,7 @@ import { ClipLoader } from 'react-spinners'
 import { isImageFile } from '@/lib/isFile'
 import { useRouter } from 'next/navigation'
 import useGlobalStore from '@/store/GlobalStore'
+import { backendUrl, frontendUrl } from '@/lib/backendUrl'
 
 
 export default function UserProfileCard({ user }: { user: UserType | null }) {
@@ -86,7 +87,7 @@ export default function UserProfileCard({ user }: { user: UserType | null }) {
             console.log(imageRef.current)
             const formData=new FormData()
             formData.append('profileImage',file[0])
-            const response=await axios.post(`http://localhost/upload`,formData,{timeout:10000})
+            const response=await axios.post(`${backendUrl}/upload`,formData,{timeout:10000})
             console.log(response)
             const status=await UpdateUserProfile(response.data.url)
 
