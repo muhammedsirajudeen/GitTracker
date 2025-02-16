@@ -26,8 +26,8 @@ export async function GET() {
             return NextResponse.json({ message: HttpStatusMessage[HttpStatus.UNAUTHORIZED] }, { status: HttpStatus.UNAUTHORIZED })
         }
         const response = NextResponse.json({ message: HttpStatusMessage[HttpStatus.OK] }, { status: HttpStatus.OK })
-        const accessTokenPayload = generateToken({ email: decodedUser.email, id: decodedUser.id }, '5m')
-        const refreshTokenPayload = generateToken({ email: decodedUser.email, id: decodedUser.id }, '1d')
+        const accessTokenPayload =await generateToken({ email: decodedUser.email, id: decodedUser.id }, '5m')
+        const refreshTokenPayload = await generateToken({ email: decodedUser.email, id: decodedUser.id }, '1d')
         await RedisOtpHelper(decodedUser.email, 'refresh')
         response.cookies.set('access_token', accessTokenPayload, {
             httpOnly: true,

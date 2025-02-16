@@ -1,6 +1,6 @@
 import { User } from '@/models/User';
-import jwt from 'jsonwebtoken';
-import { jwtVerify } from 'jose';
+import { jwtVerify,SignJWT } from 'jose';
+import { JwtPayload } from 'jsonwebtoken';
 
 
 // Define your secret key and token expiration
@@ -12,8 +12,15 @@ const TOKEN_EXPIRATION = '1d'; // Adjust as needed (e.g., '1h', '7d', etc.)
  * @param payload - The payload to encode in the JWT.
  * @returns A signed JWT token.
  */
-export function generateToken(payload: object,expiry?:string): string {
-  return jwt.sign(payload, JWT_SECRET, { expiresIn: expiry??TOKEN_EXPIRATION });
+
+export async function generateToken(payload: object,expiry?:string): Promise<string> {
+  const jwt = await new SignJWT(payload as JwtPayload)
+  .setProtectedHeader({ alg: "HS256" }) // Set algorithm
+  .setIssuedAt() // Set issued time
+  .setExpirationTime(expiry??TOKEN_EXPIRATION) // Set expiration time
+  .sign(new TextEncoder().encode(JWT_SECRET)); // Sign with secret
+  return jwt
+
 }
 
 /**

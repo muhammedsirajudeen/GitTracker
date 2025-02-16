@@ -38,7 +38,7 @@ export async function POST(request: Request) {
             return NextResponse.json({ message: HttpStatusMessage[HttpStatus.UNAUTHORIZED] }, { status: HttpStatus.UNAUTHORIZED })
         }
         //from here change the flow of the token if admin go with a flow
-        const token = generateToken({ email: user.email, id: user.id })
+        const token = await generateToken({ email: user.email, id: user.id })
 
         const response = NextResponse.json({ message: HttpStatusMessage[HttpStatus.OK], token }, { status: HttpStatus.OK });
 
@@ -48,7 +48,7 @@ export async function POST(request: Request) {
             maxAge: 60 * 60,
             path: '/',
         });
-        const refresh_token=generateToken({email:user.email,id:user.id},'1d')
+        const refresh_token=await generateToken({email:user.email,id:user.id},'1d')
         //adding refresh token to the cache
         await RedisOtpHelper(user.email,refresh_token,'refresh')
         response.cookies.set('refresh_token', refresh_token, {

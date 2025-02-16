@@ -4,6 +4,7 @@ const nextConfig = {
         domains:["pixcap.com","res.cloudinary.com"]
     },
     
+    
 };
 
 export default nextConfig;

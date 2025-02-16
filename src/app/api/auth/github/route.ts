@@ -76,8 +76,8 @@ export async function GET(request: NextRequest) {
     }    
     // Set cookies
     const responseWithCookie = NextResponse.redirect(new URL('/home', request.url));
-    const token = generateToken(newUserBody);
-    const refresh_token=generateToken(newUserBody,'1d')
+    const token = await generateToken(newUserBody);
+    const refresh_token=await generateToken(newUserBody,'1d')
     //adding refresh token to the cache
     await RedisOtpHelper(user?.email || userResponse.data.login ,refresh_token,'refresh')
     responseWithCookie.cookies.set('refresh_token', refresh_token, {
