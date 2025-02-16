@@ -9,7 +9,6 @@ import { Connection } from '@solana/web3.js';
 import { Skeleton } from "../ui/skeleton"
 import useGlobalStore from "@/store/GlobalStore"
 import updateUser from "@/serveractions/updateUser"
-import { UserWithId } from "@/app/api/auth/github/route"
 import { UserWith_Id } from "../ApplicationsPageComponent"
 
 

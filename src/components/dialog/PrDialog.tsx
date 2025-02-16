@@ -32,7 +32,7 @@ interface PullRequestResponse{
 
 export default  function PrDialog({open, setOpen, bounty}: PrDialogProps) {
     const fullname=bounty?.repositoryId.full_name.replace('/','~')
-    const {data,isLoading}:{data:PullRequestResponse | undefined,isLoading:boolean}=useSWR(`/api/pullrequest/${fullname}`,fetcher)
+    const {data}:{data:PullRequestResponse | undefined,isLoading:boolean}=useSWR(`/api/pullrequest/${fullname}`,fetcher)
     const [pullrequests,setPullrequests]=useState<PullRequest[]>([])
     useEffect(()=>{
         if(data){

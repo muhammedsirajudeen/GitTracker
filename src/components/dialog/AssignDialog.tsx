@@ -28,7 +28,7 @@ export default function AssignDialog({ open, setOpen, bountyApplication }: Assig
         setLoading(true)
         try {
 
-            //@ts-ignore
+            //@ts-expect-error essentially this is because iam too lazy to assert this 😇
             const response = await axios.put(`/api/bounty/${bountyApplication?.bountyId._id}`, { userId: bountyApplication?.applicantId._id }, { withCredentials: true })
             console.log(response)
             setTimeout(() => {

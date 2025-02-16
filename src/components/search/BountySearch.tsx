@@ -1,6 +1,6 @@
 "use client"
 
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react"
+import {  useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Search } from 'lucide-react'
-import { useParams } from "next/navigation"
 
 export const searchFormSchema = z.object({
     query: z.string().min(0),
@@ -25,9 +24,7 @@ type SearchFormValues = z.infer<typeof searchFormSchema>
 
 //convert this to a generic search component that can be used everywhere
 export default function BountySearch() {
-    const [isSearching, setIsSearching] = useState(false)
-    const render=useRef(0)
-    const {id}=useParams()
+    const [isSearching] = useState(false)
     const form = useForm<SearchFormValues>({
         resolver: zodResolver(searchFormSchema),
         defaultValues: {

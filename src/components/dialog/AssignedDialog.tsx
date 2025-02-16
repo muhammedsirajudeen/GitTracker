@@ -11,7 +11,6 @@ import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} f
 import {Badge} from "@/components/ui/badge";
 import {BookMarked, DollarSign} from "lucide-react";
 import {Button} from "@/components/ui/button";
-import {toast} from "@/hooks/use-toast";
 import {PopulatedBounty} from "@/components/BountyPageComponent";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 
@@ -29,7 +28,7 @@ interface BountyAssignedResponse{
 }
 
 export default function AssignedDialog({open,setOpen,setPrDialog,setPopulatedBounty}:AssignedDialogProps) {
-    const {data,isLoading}:{data:BountyAssignedResponse,isLoading:boolean}=useSWR('/api/bounty/assigned',fetcher)
+    const {data}:{data:BountyAssignedResponse,isLoading:boolean}=useSWR('/api/bounty/assigned',fetcher)
     const [assignedBounties,setAssignedBounties]=useState<PopulatedBounty[]>([])
     console.log(assignedBounties)
     useEffect(()=>{

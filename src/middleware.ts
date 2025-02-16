@@ -72,7 +72,7 @@ export async function middleware(request: NextRequest) {
             const access_token=cookies['access_token']
             const decodedUser=await verifyToken(access_token as string)
             if(decodedUser){
-                return NextResponse.redirect(new URL('/', request.url));        
+                return NextResponse.redirect(new URL('/verifybot', request.url));        
             }
             return NextResponse.next();
         }

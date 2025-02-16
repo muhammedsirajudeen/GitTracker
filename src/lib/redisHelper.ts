@@ -6,7 +6,7 @@ import { createClient } from 'redis';
  */
 export async function createRedisClient() {
   const client = createClient({
-    url: 'redis://redis:6379', // Update with your Redis server URL if needed
+    url: process.env.REDIS_URL, // Update with your Redis server URL if needed
   });
 
   client.on('error', (err) => {

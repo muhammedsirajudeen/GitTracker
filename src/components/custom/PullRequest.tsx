@@ -1,19 +1,19 @@
 "use client"
 
-import {useEffect, useState} from "react"
-import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card"
+import { useEffect, useState } from "react"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import {Button} from "@/components/ui/button";
-import {  FileIcon, GitPullRequestIcon } from "lucide-react";
-import {toast} from "@/hooks/use-toast";
+import { Button } from "@/components/ui/button";
+import { FileIcon, GitPullRequestIcon } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
 import { PopulatedBounty } from "../BountyPageComponent"
-import axios, {AxiosError} from "axios"
-import {HttpStatus} from "@/lib/HttpStatus";
+import axios, { AxiosError } from "axios"
+import { HttpStatus } from "@/lib/HttpStatus";
 import useSWR from "swr";
-import {fetcher} from "@/components/RepositoryListing";
-import {BountyRedemption} from "@/models/BountyRedemption";
+import { fetcher } from "@/components/RepositoryListing";
+import { BountyRedemption } from "@/models/BountyRedemption";
 
 interface User {
     login: string
@@ -38,21 +38,21 @@ interface PullRequest {
 
 interface PullRequestListProps {
     pullRequests: PullRequest[]
-    bounty:PopulatedBounty | undefined
+    bounty: PopulatedBounty | undefined
 }
-interface BountyRedemptionResponse{
-    bountyredemption:BountyRedemption|null
-    status:number
+interface BountyRedemptionResponse {
+    bountyredemption: BountyRedemption | null
+    status: number
 
 }
 
 
-export default function PullRequestList({ pullRequests,bounty }: PullRequestListProps) {
-    const {data:bountyredemptiondata,isLoading:isRedemptionLoading}:{data:BountyRedemptionResponse,isLoading:boolean}=useSWR(`/api/bountyredemption/${bounty?._id}`,fetcher)
-    const [bountyredemption,setBountyRedemption]=useState<Partial<BountyRedemption> | null>(null)
-    
+export default function PullRequestList({ pullRequests, bounty }: PullRequestListProps) {
+    const { data: bountyredemptiondata }: { data: BountyRedemptionResponse, isLoading: boolean } = useSWR(`/api/bountyredemption/${bounty?._id}`, fetcher)
+    const [bountyredemption, setBountyRedemption] = useState<Partial<BountyRedemption> | null>(null)
+
     useEffect(() => {
-        if(bountyredemptiondata){
+        if (bountyredemptiondata) {
             setBountyRedemption((bountyredemptiondata.bountyredemption))
         }
     }, [bountyredemptiondata]);
@@ -80,27 +80,26 @@ export default function PullRequestList({ pullRequests,bounty }: PullRequestList
                 return <Badge variant="secondary">{state}</Badge>
         }
     }
-    async function selectHandler(pullrequest:PullRequest){
-        try {            
-            toast({description:"pr selected succesfully",className:"bg-orange-500 text-white"})
+    async function selectHandler(pullrequest: PullRequest) {
+        try {
+            toast({ description: "pr selected succesfully", className: "bg-orange-500 text-white" })
             //here we would post to the backend and we would award the first closed issue in case of arising conflicts we would assign 
-            console.log(bounty?._id,bounty?.repositoryId.full_name,pullrequest.number)
-            const response=(
-                await axios.post(`/api/bountyredemption`, {bountyId:bounty?._id,fullName:bounty?.repositoryId.full_name,pullrequestNumber:pullrequest.number}, { withCredentials: true })
-            ).data
+            console.log(bounty?._id, bounty?.repositoryId.full_name, pullrequest.number)
 
-            setBountyRedemption({pullrequestNumber:pullrequest.number})
+            await axios.post(`/api/bountyredemption`, { bountyId: bounty?._id, fullName: bounty?.repositoryId.full_name, pullrequestNumber: pullrequest.number }, { withCredentials: true })
+
+            setBountyRedemption({ pullrequestNumber: pullrequest.number })
 
         } catch (error) {
-            const axiosError=error as AxiosError
-            if(axiosError.status===HttpStatus.CONFLICT){
-                toast({description:"The bounty has already been claimed",className:"bg-red-500 text-white"})
-            }else{
-                toast({description:"Failed to select pr",className:"bg-red-500 text-white"})
+            const axiosError = error as AxiosError
+            if (axiosError.status === HttpStatus.CONFLICT) {
+                toast({ description: "The bounty has already been claimed", className: "bg-red-500 text-white" })
+            } else {
+                toast({ description: "Failed to select pr", className: "bg-red-500 text-white" })
             }
         }
     }
-    
+
     return (
         <Card className="w-full max-w-3xl">
             <CardHeader>
@@ -110,26 +109,26 @@ export default function PullRequestList({ pullRequests,bounty }: PullRequestList
             <CardContent>
                 <ScrollArea className="h-[600px] pr-4">
                     {
-                        pullRequests.length===0&&
+                        pullRequests.length === 0 &&
                         (
                             <Card className="w-full max-w-md mx-auto">
-                            <CardHeader>
-                              <CardTitle className="flex items-center space-x-2">
-                                <GitPullRequestIcon className="w-6 h-6" />
-                                <span>No Pull Requests</span>
-                              </CardTitle>
-                              <CardDescription>There are currently no open pull requests in this repository.</CardDescription>
-                            </CardHeader>
-                            <CardContent className="flex flex-col items-center space-y-4">
-                              <FileIcon className="w-16 h-16 text-muted-foreground" />
-                              <p className="text-center text-sm text-muted-foreground">
-                                Pull requests help you collaborate on code with others. As pull requests are opened, they&apos;ll appear here.
-                              </p>
-                              <Button asChild>
-                                <Button disabled={true} >Create a pull request</Button>
-                              </Button>
-                            </CardContent>
-                          </Card>
+                                <CardHeader>
+                                    <CardTitle className="flex items-center space-x-2">
+                                        <GitPullRequestIcon className="w-6 h-6" />
+                                        <span>No Pull Requests</span>
+                                    </CardTitle>
+                                    <CardDescription>There are currently no open pull requests in this repository.</CardDescription>
+                                </CardHeader>
+                                <CardContent className="flex flex-col items-center space-y-4">
+                                    <FileIcon className="w-16 h-16 text-muted-foreground" />
+                                    <p className="text-center text-sm text-muted-foreground">
+                                        Pull requests help you collaborate on code with others. As pull requests are opened, they&apos;ll appear here.
+                                    </p>
+                                    <Button asChild>
+                                        <Button disabled={true} >Create a pull request</Button>
+                                    </Button>
+                                </CardContent>
+                            </Card>
                         )
                     }
                     {pullRequests.map((pr) => (
@@ -164,15 +163,15 @@ export default function PullRequestList({ pullRequests,bounty }: PullRequestList
                             </CardContent>
                             <CardFooter>
                                 {
-                                    bountyredemption?.pullrequestNumber===pr.number
-                                    ?
-                                        <Button onClick={()=>{
-                                            toast({description:"Please select a different pr to change",className:"bg-orange-500 text-white"})
+                                    bountyredemption?.pullrequestNumber === pr.number
+                                        ?
+                                        <Button onClick={() => {
+                                            toast({ description: "Please select a different pr to change", className: "bg-orange-500 text-white" })
                                         }} variant="outline">selected</Button>
                                         :
-                                    <Button className="h-6" onClick={()=>selectHandler(pr)} >
-                                        select
-                                    </Button>
+                                        <Button className="h-6" onClick={() => selectHandler(pr)} >
+                                            select
+                                        </Button>
                                 }
                             </CardFooter>
                         </Card>
