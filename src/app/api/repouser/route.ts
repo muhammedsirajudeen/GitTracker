@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { NextResponse } from "next/server";
 import { parse } from "cookie"
 import { verifyToken } from "@/lib/jwtHelper";

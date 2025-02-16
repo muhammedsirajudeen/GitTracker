@@ -4,8 +4,8 @@ import { Client } from '@elastic/elasticsearch';
 // import winstonElasticsearch from 'winston-elasticsearch';
 
 interface Logger{
-  info:(message:string)=>void
-  error:(message:string)=>void
+  info:(message:unknown)=>void
+  error:(message:unknown)=>void
 }
 
 export default class BaseRepository {
@@ -27,7 +27,7 @@ export default class BaseRepository {
         console.error('❌ Elasticsearch connection failed:', error);
     });
     this._logger={
-      info:(message:string)=>{
+      info:(message:unknown)=>{
         console.log({level:"info",message,"@timestamp":new Date().toDateString()})
         this._loggerClient.index({
           index: 'logstash-nextjs',
@@ -39,7 +39,7 @@ export default class BaseRepository {
         })
       }
       ,
-      error:(message:string)=>{
+      error:(message:unknown)=>{
         console.log({level:"error",message,"@timestamp":new Date().toDateString()})
         this._loggerClient.index({
           index: 'logstash-nextjs',

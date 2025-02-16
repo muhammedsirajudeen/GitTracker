@@ -28,7 +28,8 @@ export async function verifyToken(token: string): Promise<User | null> {
     // return payload as User
     return payload as unknown as User
   } catch (err) {
-    console.log(err)
+    const error=err as Error
+    console.log(error.message)
     return null
   }
 }

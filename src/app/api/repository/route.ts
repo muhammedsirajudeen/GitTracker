@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import RepoRepositoryInstance from "@/app/repository/RepoRepository";
 import { verifyToken } from "@/lib/jwtHelper";
 import { NextRequest, NextResponse } from "next/server";

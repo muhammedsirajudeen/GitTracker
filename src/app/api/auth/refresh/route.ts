@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { HttpStatus, HttpStatusMessage } from "@/lib/HttpStatus"
 import { generateToken, verifyToken } from "@/lib/jwtHelper"
 import { RedisOtpGetter, RedisOtpHelper } from "@/lib/redisHelper"

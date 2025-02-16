@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { HttpStatus, HttpStatusMessage } from "@/lib/HttpStatus"
 import { verifyToken } from "@/lib/jwtHelper"
 import { mintNFT } from "@/lib/mintHelper"

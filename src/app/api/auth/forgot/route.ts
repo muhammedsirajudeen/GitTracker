@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { HttpStatus, HttpStatusMessage } from "@/lib/HttpStatus"
 import { RedisGenericRemover, RedisOtpGetter } from "@/lib/redisHelper"
 import UserServiceInstance from "@/service/UserService"

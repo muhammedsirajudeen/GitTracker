@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import RepoRepositoryInstance from "@/app/repository/RepoRepository"
 import { HttpStatus, HttpStatusMessage } from "@/lib/HttpStatus"
 import { cookies } from "next/headers"

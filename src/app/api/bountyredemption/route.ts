@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { HttpStatus, HttpStatusMessage } from "@/lib/HttpStatus"
 import { GetUserGivenAccessToken } from "@/lib/tokenHelper"
 import { BountyRedemption } from "@/models/BountyRedemption"

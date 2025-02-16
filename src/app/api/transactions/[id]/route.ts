@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { HttpStatus, HttpStatusMessage } from "@/lib/HttpStatus"
 import Logger from "@/lib/LoggerHelper"
 import TransactionServiceInstance from "@/service/TransactionService"

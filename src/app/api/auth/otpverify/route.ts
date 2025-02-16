@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { RedisOtpGetter } from "@/lib/redisHelper"
 import UserServiceInstance from "@/service/UserService"
 import { NextRequest, NextResponse } from "next/server"

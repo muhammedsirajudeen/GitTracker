@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import {AxiosError} from "axios";
 import Logger from "@/lib/LoggerHelper";
 import {NextResponse} from "next/server";

@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { HttpStatus, HttpStatusMessage } from "@/lib/HttpStatus"
 import { NextResponse } from "next/server"
 import { generateSixDigitRandomNumber } from "../signup/route"

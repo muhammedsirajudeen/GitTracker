@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { verifyPassword } from "@/lib/bcryptHelper"
 import { generateToken } from "@/lib/jwtHelper"
 import UserServiceInstance from "@/service/UserService"

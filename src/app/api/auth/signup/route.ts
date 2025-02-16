@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { hashPassword } from "@/lib/bcryptHelper"
 import { sendEmail } from "@/lib/emailHelper"
 import { HttpStatus, HttpStatusMessage } from "@/lib/HttpStatus"

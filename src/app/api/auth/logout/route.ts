@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 // app/route.ts
 import { HttpStatus, HttpStatusMessage } from '@/lib/HttpStatus';
 import { RedisGenericRemover } from '@/lib/redisHelper';

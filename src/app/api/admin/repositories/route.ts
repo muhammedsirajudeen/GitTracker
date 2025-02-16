@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { HttpStatusMessage, HttpStatus } from "@/lib/HttpStatus"
 import { GetUserGivenAccessToken } from "@/lib/tokenHelper"
 import { cookies } from "next/headers"

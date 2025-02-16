@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { HttpStatusMessage, HttpStatus } from "@/lib/HttpStatus";
 import { NextRequest, NextResponse } from "next/server";
 import Logger from "@/lib/LoggerHelper";

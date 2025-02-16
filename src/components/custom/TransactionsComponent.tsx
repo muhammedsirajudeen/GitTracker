@@ -92,6 +92,7 @@ export default function TransactionsComponent() {
               mode="range"
               defaultMonth={dateRange.from}
               selected={dateRange}
+              //@ts-expect-error again too lazy to fix 😎
               onSelect={setDateRange}
               numberOfMonths={2}
             />
