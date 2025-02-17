@@ -2,7 +2,7 @@ import { Connection, Keypair, PublicKey } from "@solana/web3.js";
 import { Metaplex, keypairIdentity, irysStorage } from '@metaplex-foundation/js'; // Removed bundlrStorage import
 import { createMint, getOrCreateAssociatedTokenAccount, mintTo } from '@solana/spl-token';
 import axios from "axios";
-
+import bs58 from "bs58"
 
 
 export async function mintNFT(userAddress:string):Promise<string>{
@@ -18,8 +18,9 @@ export async function mintNFT(userAddress:string):Promise<string>{
         if(secretKey.length!==64){
             throw new Error('Invalid secret key length')
         }
-        const decodedSecretKey = new Uint8Array(secretKey); // If it's already an array of numbers
-        const payer=Keypair.fromSecretKey(decodedSecretKey)
+        // const decodedSecretKey = new Uint8Array(secretKey); // If it's already an array of numbers
+        const payer=Keypair.fromSecretKey(bs58.decode("5tj6LL784Ar9AR62UVxcybr7QnvoLmmeYv7NroHWvKSrdDHSrwusxVKxbqcpnJFhBkaEJrkzYPL7pkURxS1N31Vz"))
+        const userPublicKey=new PublicKey(userAddress)
  
         const metaplex=Metaplex.make(connection).use(keypairIdentity(payer)).use(
             irysStorage({
@@ -38,10 +39,9 @@ export async function mintNFT(userAddress:string):Promise<string>{
         )
         console.log('Mint created')
         console.log(userAddress)
-        const userPublicKey=new PublicKey(userAddress)
         const userTokenAccount=await getOrCreateAssociatedTokenAccount(connection,payer,mint,userPublicKey)
         console.log(`User Token Account: ${userTokenAccount.address.toBase58()}`);
-        await mintTo(
+        const log=await mintTo(
             connection,
             payer,
             mint,
@@ -49,6 +49,7 @@ export async function mintNFT(userAddress:string):Promise<string>{
             payer.publicKey,
             1
         )
+        console.log('Mint transaction',log)
         console.log(`Minted 1 NFT to User: ${userAddress}`);
         const metadata={
             name: 'Devnet Issue Completion NFT',
@@ -73,6 +74,7 @@ export async function mintNFT(userAddress:string):Promise<string>{
             sellerFeeBasisPoints: 0, // No royalties
             symbol: 'ISSUE',
             creators: [{ address: payer.publicKey, share: 100 }],
+            // useExistingMint:mint
             
         });
         console.log(`NFT Minted Successfully: ${nft.address.toBase58()}`);

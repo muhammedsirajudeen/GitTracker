@@ -24,11 +24,11 @@ export default class BaseRepository {
       },
     });
 
-    this._loggerClient.ping()
-      .then(() => console.log('✅ Elasticsearch connection succeeded'))
-      .catch((error) => {
-        console.error('❌ Elasticsearch connection failed:', error);
-    });
+    // this._loggerClient.ping()
+    //   .then(() => console.log('✅ Elasticsearch connection succeeded'))
+    //   .catch((error) => {
+    //     console.error('❌ Elasticsearch connection failed:', error);
+    // });
     this._logger={
       info:(message:unknown)=>{
         console.log({level:"info",message,"@timestamp":new Date().toDateString()})

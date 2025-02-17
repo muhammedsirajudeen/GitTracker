@@ -92,7 +92,7 @@ function NftCard({ nft }: { nft: NftArray }) {
     <div className="bg-card rounded-lg shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
       <div className="relative aspect-square">
         <Image
-          src={nft.image}
+          src={"https://pixcap.com/cdn/library/template/1717482087360/thumbnail/3D_NFT_Badge_Model_Of_The_Tokenization_transparent_800_emp.webp"}
           alt={nft.symbol}
           layout="fill"
           objectFit="cover"
