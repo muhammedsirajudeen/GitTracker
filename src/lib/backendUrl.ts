@@ -1,2 +1,2 @@
-export const frontendUrl="http://localhost:3000"
+export const frontendUrl="https://git-tracker-woad.vercel.app"
 export const backendUrl="https://gittracker.ddns.net"
