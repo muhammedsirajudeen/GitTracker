@@ -48,7 +48,7 @@ export default function NftAchieved({ open, setOpen, nft }: NftAchievedProps) {
                     >
                         <div className="relative mb-4">
                             <div className="flex items-center justify-center w-full">
-                                <Image src={data?.image} alt={data?.name} height={100} width={100} />
+                                <Image src={"https://pixcap.com/cdn/library/template/1717482087360/thumbnail/3D_NFT_Badge_Model_Of_The_Tokenization_transparent_800_emp.webp"} alt={data?.name} height={100} width={100} />
                             </div>
                             <Badge className="absolute top-2 right-2 bg-yellow-400 text-black font-semibold">
                                 {data?.symbol}
